@@ -33,12 +33,13 @@ test('human ownership blocks AI processing and customer reply stays human-owned'
  expect(screen.getByRole('button',{name:'Start AI processing'}).disabled).toBe(true);fireEvent.click(screen.getByRole('button',{name:'Submit reply & assess'}));
  await waitFor(()=>expect(requests.filter(r=>r.url==='/api/inbound/messages')).toHaveLength(1));expect(requests.filter(r=>r.url.endsWith('/process'))).toHaveLength(0);
 });
-test('customer reply uses same case and then latest version exactly once',async()=>{
+test('console reply simulation uses same case and then latest version exactly once',async()=>{
  current={...current,status:'WAITING_FOR_CUSTOMER',version:3};render(<App/>);await screen.findByText('Please reimburse my meal expense.');
- fireEvent.click(screen.getByRole('button',{name:'Customer view'}));fireEvent.click(await screen.findByRole('button',{name:/Send reply/}));
+ expect(screen.queryByRole('button',{name:'Customer view'})).toBeNull();
+ fireEvent.click(screen.getByRole('button',{name:'Submit reply & assess'}));
  await screen.findByText('Simulated reimbursement approved.');const inbound=requests.find(r=>r.url==='/api/inbound/messages');expect(inbound.body.caseId).toBe('case-clear');expect(inbound.body.body).toBe('42.00 EUR');
  expect(requests.filter(r=>r.url.endsWith('/process'))).toHaveLength(1);expect(requests.find(r=>r.url.endsWith('/process')).body.expectedCaseVersion).toBe(4);
- expect(screen.queryByRole('button',{name:'Reset demo'})).toBeNull();
+ expect(screen.getByRole('button',{name:'Reset demo'})).toBeTruthy();
 });
 test('temporary processing failure retries original key without resending customer message',async()=>{
  failProcess=true;render(<App/>);await screen.findByText('Please reimburse my meal expense.');fireEvent.click(screen.getByRole('button',{name:'Submit reply & assess'}));

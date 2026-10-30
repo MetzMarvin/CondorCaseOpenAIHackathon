@@ -1,6 +1,6 @@
 # Condor Care Hub · Out of The Dark
 
-Hackathon demo with an English React/Vite interface, a customer perspective and a service console sharing the same cases. System 1 owns FastAPI/SQLite state and simulated effects; System 2 supplies structured decisions; System 3 displays the outcome and recorded workflow. All demo labels and messages use English. All data, messages and financial actions are synthetic.
+Hackathon demo with an English React/Vite service console and process replay. The customer view belongs to System 1; System 3 provides Dashboard & Service and Process view only. System 1 owns FastAPI/SQLite state and simulated effects; System 2 supplies structured decisions; System 3 displays the outcome and recorded workflow. All demo labels and messages use English. All data, messages and financial actions are synthetic.
 
 ## Start locally
 
@@ -37,7 +37,7 @@ The backend creates `demo_backend/demo.sqlite` and six synthetic cases on a fres
 
 Older booking-confirmation mock records are preserved. They return `409 LEGACY_DEMO_DATA` with an explicit reset instruction instead of being silently overwritten. Use a new `DEMO_DB` path to keep those records and start an integrated rehearsal, or deliberately use **Reset demo** to replace them with the six expense scenarios.
 
-The common Pydantic contracts in `backend/contracts.py` are authoritative: JSON uses `caseId`, `version` and nested `snapshot` fields. `frontend/src/api.js` adapts display fields without making business decisions. The console and customer view call only System 1 over `/api/*`. System 1 invokes System 2 synchronously, records progress, validates ownership/version/authority, and persists accepted actions and simulated financial effects. Repeated command IDs with the same payload return the original response; conflicting payloads or stale versions return 409.
+The common Pydantic contracts in `backend/contracts.py` are authoritative: JSON uses `caseId`, `version` and nested `snapshot` fields. `frontend/src/api.js` adapts display fields without making business decisions. The System 3 console calls only System 1 over `/api/*`. The standalone customer component remains available for System 1 and is not mounted in the System 3 console. System 1 invokes System 2 synchronously, records progress, validates ownership/version/authority, and persists accepted actions and simulated financial effects. Repeated command IDs with the same payload return the original response; conflicting payloads or stale versions return 409.
 
 The demo scenarios use a meal expense of **42.00 EUR**. The incomplete case asks for receipt amount and currency; the prepared reply `42.00 EUR` supplies those facts on the same case. This is deterministic demo evidence extraction, not general text understanding or receipt parsing. Internal eligibility and previous-payment checks are synthetic sourced records owned by System 1; customers cannot grant financial authority.
 
@@ -46,9 +46,9 @@ For another compatible System 1 backend, set `API_PROXY_TARGET=http://127.0.0.1:
 ## Four-minute pitch
 
 1. **0:00–0:25:** show dashboard case counts and explain the shared case.
-2. **0:25–1:10:** select the evidence scenario, start assessment in the console, switch to the customer view, and answer the automated question with `42.00 EUR` (optionally add a synthetic receipt).
+2. **0:25–1:10:** select the evidence scenario, start assessment in the console, and use **Simulate customer reply** with `42.00 EUR`, then **Submit reply & assess** (optionally add a synthetic receipt).
 3. **1:10–2:20:** return to the same case in the service console. Show evidence, sources, accepted resolution and simulated reimbursement; replay a short part of the recorded workflow.
-4. **2:20–2:45:** return to the customer view and show the service reply and resolved status.
+4. **2:20–2:45:** show the service reply and resolved status in the console message history. Use System 1 for the customer-facing view.
 5. **2:45–3:35:** select the serious scenario, process it, show the specific handoff reason and context, then demonstrate human takeover.
 6. **3:35–4:00:** return to dashboard counts and explain the benefit.
 
