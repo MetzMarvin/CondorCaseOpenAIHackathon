@@ -32,7 +32,9 @@ class CaseServiceEvidenceTests(unittest.TestCase):
         waiting = self.client.post('/api/cases/case-evidence/process', json={
             'requestId': 'before-receipt', 'expectedCaseVersion': 1}).json()
         self.assertEqual(waiting['case']['status'], 'WAITING_FOR_CUSTOMER')
-        content = b'Total: 42.00\nCurrency: EUR\nReceipt date: 2026-10-29\nPurpose: meals\n'
+        # The case already supplies sourced expense purpose. This upload fills
+        # the missing amount/currency without introducing a differently worded purpose.
+        content = b'Total: 42.00\nCurrency: EUR\nReceipt date: 2026-10-29\n'
         uploaded = self.client.post('/api/cases/case-evidence/attachments', files={
             'file': ('receipt.txt', content, 'text/plain')})
         self.assertEqual(uploaded.status_code, 200, uploaded.text)
