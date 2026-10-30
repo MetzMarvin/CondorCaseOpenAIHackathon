@@ -53,7 +53,10 @@ Missing information or negative sentiment alone must not trigger handover.
 - Simulate AI, email, payments and integrations; clearly label simulations.
 - Add dependencies only when the demo needs them.
 - Defer extra channels, authentication and large datasets.
-- Use German UI text. Keep secrets and model calls in FastAPI.
+- Use English only throughout the demo, synthetic data, fixtures, stored AI
+  outputs, customer messages, UI text and interfaces, including API field names
+  and human-readable responses. This overrides language choices in the plan.
+- Keep secrets and model calls in FastAPI.
 - Ensure the demo works without model access using stored example outputs.
 
 ## Delivery
