@@ -18,10 +18,17 @@ python -m venv .venv
 .venv/bin/python -m backend.seed
 ```
 
-On macOS/Linux, `./start.sh` starts both servers, installs missing dependencies,
-initializes the unified database, and prints the demo URL. Its first-time environment
-setup uses Python 3.13. Press Ctrl+C to stop both servers. Override occupied ports with
-`BACKEND_PORT=8002 FRONTEND_PORT=5174 ./start.sh`.
+On macOS/Linux, `./start.sh` starts the shared backend and two frontend servers,
+installs missing dependencies, initializes the unified database, and prints their URLs.
+The parent workspace's `start.sh` wrapper runs the same launcher. Its first-time
+environment setup uses Python 3.13. Press Ctrl+C to stop all three servers.
+Override occupied ports with
+`BACKEND_PORT=8002 FRONTEND_PORT=5175 PORTAL_PORT=5176 ./start.sh`.
+
+The operations frontend opens at http://127.0.0.1:5173/ and the customer intake
+frontend at http://127.0.0.1:5174/portal. Both proxy API calls to the same backend
+on port 8000 and share case data. System 2 runs inside that backend. `DEMO_DB`
+no longer selects a database; use `CONDOR_DATA_DIR` for the unified data directory.
 
 The launcher defaults the decision stage to `AI_MODE=openai`; extraction follows
 `CONDOR_PREPARATION_MODE` from your environment or project `.env`. For an entirely offline
