@@ -48,6 +48,15 @@ class RagTests(unittest.TestCase):
         self.assertEqual(len(hits), 1)
         self.assertEqual(hits[0].chunk, chunks[0])
 
+    def test_source_filter_applies_before_fusion(self):
+        chunks = [KnowledgeChunk(source_id=source, version='v1', chunk_id='1', title=source,
+                                 source_uri='fixture:' + source, kind='legal', text='baggage rules')
+                  for source in ('treaty', 'commentary')]
+        self.rag.ingest(chunks)
+        hits = self.rag.search('baggage', source_ids=('treaty',), kind='legal')
+        self.assertEqual([hit.chunk.source_id for hit in hits], ['treaty'])
+        self.assertEqual(self.rag.search('baggage', source_ids=('missing',)), [])
+
     def test_embedding_failure_propagates(self):
         class Broken:
             def create(self, **kwargs):

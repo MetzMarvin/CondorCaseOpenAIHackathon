@@ -128,7 +128,8 @@ class KnowledgeRag:
             self.client.upsert(self.collection, points=points, wait=True)
         return len(chunks)
 
-    def search(self, query: str, limit: int = 5, kind: Literal['legal', 'policy'] | None = None):
+    def search(self, query: str, limit: int = 5, kind: Literal['legal', 'policy'] | None = None,
+               source_ids: tuple[str, ...] = ()):
         if not query.strip() or len(query) > 6000 or not 1 <= limit <= 100:
             raise ValueError('Provide a query of 1–6000 characters and a limit of 1–100')
         if kind not in (None, 'legal', 'policy'):
@@ -138,8 +139,12 @@ class KnowledgeRag:
             return []
         dense = self._dense([query])[0]
         sparse = self._sparse_vector(next(iter(self.sparse.query_embed(query))))
-        restriction = models.Filter(must=[models.FieldCondition(
-            key='kind', match=models.MatchValue(value=kind))]) if kind else None
+        conditions = []
+        if kind:
+            conditions.append(models.FieldCondition(key='kind', match=models.MatchValue(value=kind)))
+        if source_ids:
+            conditions.append(models.FieldCondition(key='source_id', match=models.MatchAny(any=list(source_ids))))
+        restriction = models.Filter(must=conditions) if conditions else None
         results = self.client.query_points(
             self.collection,
             prefetch=[
@@ -164,6 +169,7 @@ def main():
     search.add_argument('query')
     search.add_argument('--limit', type=int, default=5)
     search.add_argument('--kind', choices=['legal', 'policy'])
+    search.add_argument('--issues', action='store_true', help='Expand complaint into independent legal research queries')
     args = parser.parse_args()
     rag = KnowledgeRag()
     try:
@@ -177,8 +183,14 @@ def main():
                       for line in args.jsonl.read_text().splitlines() if line.strip()]
             print(json.dumps({'upserted': rag.ingest(chunks)}))
         else:
-            print(json.dumps([hit.model_dump() for hit in rag.search(
-                args.query, args.limit, args.kind)], indent=2))
+            if args.issues:
+                from .legal_search import search_issues
+                if args.kind == 'policy':
+                    parser.error('--issues searches legal sources only')
+                hits = search_issues(rag, args.query, limit=args.limit)
+            else:
+                hits = rag.search(args.query, args.limit, args.kind)
+            print(json.dumps([hit.model_dump() for hit in hits], indent=2))
     finally:
         rag.client.close()
 

@@ -1,0 +1,1346 @@
+{
+  "mode": "live-research-retrieval",
+  "collection": "legal_research",
+  "passage_budget": 20,
+  "total_checks": 24,
+  "coverage": {
+    "baseline": 0.625,
+    "expanded": 0.9583333333333334
+  },
+  "cases": [
+    {
+      "id": "cancellation",
+      "checks": [
+        {
+          "issue": "scope",
+          "source_id": "eu261",
+          "anchor": "Article 3 Scope",
+          "baseline": false,
+          "expanded": true
+        },
+        {
+          "issue": "defense",
+          "source_id": "eu261",
+          "anchor": "if it can prove",
+          "baseline": false,
+          "expanded": true
+        },
+        {
+          "issue": "care",
+          "source_id": "eu261",
+          "anchor": "Article 9 Right to care",
+          "baseline": true,
+          "expanded": true
+        },
+        {
+          "issue": "choice",
+          "source_id": "eu261",
+          "anchor": "offered the choice between",
+          "baseline": true,
+          "expanded": true
+        },
+        {
+          "issue": "compensation",
+          "source_id": "eu261",
+          "anchor": "EUR 250",
+          "baseline": true,
+          "expanded": true
+        }
+      ],
+      "passages": {
+        "baseline": [
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-016-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-017-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-024-part-001"
+          },
+          {
+            "source_id": "sturgeon",
+            "version": "pages-v1-5c3d8db5a67dc43a9c59e15b1a5eac83ed69154377ae6876912168b7fabdc29b",
+            "chunk_id": "page-008-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-019-part-002"
+          },
+          {
+            "source_id": "eu261",
+            "version": "pages-v1-1752ec2218ff951d68ce06f2bf1f5ae4521582c883000af80e1bf3812c954c83",
+            "chunk_id": "page-005-part-001"
+          },
+          {
+            "source_id": "sturgeon",
+            "version": "pages-v1-5c3d8db5a67dc43a9c59e15b1a5eac83ed69154377ae6876912168b7fabdc29b",
+            "chunk_id": "page-015-part-001"
+          },
+          {
+            "source_id": "sturgeon",
+            "version": "pages-v1-5c3d8db5a67dc43a9c59e15b1a5eac83ed69154377ae6876912168b7fabdc29b",
+            "chunk_id": "page-012-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-028-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-020-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-018-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-002-part-002"
+          },
+          {
+            "source_id": "air-carrier-liability-amendment",
+            "version": "pages-v1-19a44e6a08e8efc24df988aaf244438c312bfc4efed94861b09eae64b8507bbb",
+            "chunk_id": "page-003-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-029-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-013-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-022-part-002"
+          },
+          {
+            "source_id": "eu261",
+            "version": "pages-v1-1752ec2218ff951d68ce06f2bf1f5ae4521582c883000af80e1bf3812c954c83",
+            "chunk_id": "page-005-part-002"
+          },
+          {
+            "source_id": "wallentin-hermann",
+            "version": "pages-v1-a730fcd52e5674b037321f940fc6dba5be6c2bcd4dc03747ab2ff99af90c4b19",
+            "chunk_id": "page-007-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-020-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-014-part-001"
+          }
+        ],
+        "expanded": [
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-016-part-002"
+          },
+          {
+            "source_id": "eu261",
+            "version": "pages-v1-1752ec2218ff951d68ce06f2bf1f5ae4521582c883000af80e1bf3812c954c83",
+            "chunk_id": "page-004-part-002"
+          },
+          {
+            "source_id": "eu261",
+            "version": "pages-v1-1752ec2218ff951d68ce06f2bf1f5ae4521582c883000af80e1bf3812c954c83",
+            "chunk_id": "page-005-part-002"
+          },
+          {
+            "source_id": "eu261",
+            "version": "pages-v1-1752ec2218ff951d68ce06f2bf1f5ae4521582c883000af80e1bf3812c954c83",
+            "chunk_id": "page-005-part-001"
+          },
+          {
+            "source_id": "eu261",
+            "version": "pages-v1-1752ec2218ff951d68ce06f2bf1f5ae4521582c883000af80e1bf3812c954c83",
+            "chunk_id": "page-003-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-017-part-002"
+          },
+          {
+            "source_id": "eu261",
+            "version": "pages-v1-1752ec2218ff951d68ce06f2bf1f5ae4521582c883000af80e1bf3812c954c83",
+            "chunk_id": "page-002-part-001"
+          },
+          {
+            "source_id": "eu261",
+            "version": "pages-v1-1752ec2218ff951d68ce06f2bf1f5ae4521582c883000af80e1bf3812c954c83",
+            "chunk_id": "page-004-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-024-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-030-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-018-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-016-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-023-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-019-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-024-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-019-part-001"
+          },
+          {
+            "source_id": "sturgeon",
+            "version": "pages-v1-5c3d8db5a67dc43a9c59e15b1a5eac83ed69154377ae6876912168b7fabdc29b",
+            "chunk_id": "page-011-part-001"
+          },
+          {
+            "source_id": "sturgeon",
+            "version": "pages-v1-5c3d8db5a67dc43a9c59e15b1a5eac83ed69154377ae6876912168b7fabdc29b",
+            "chunk_id": "page-010-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-008-part-002"
+          },
+          {
+            "source_id": "sturgeon",
+            "version": "pages-v1-5c3d8db5a67dc43a9c59e15b1a5eac83ed69154377ae6876912168b7fabdc29b",
+            "chunk_id": "page-008-part-001"
+          }
+        ]
+      }
+    },
+    {
+      "id": "baggage",
+      "checks": [
+        {
+          "issue": "delay defense",
+          "source_id": "montreal-convention",
+          "anchor": "Article 19 Delay",
+          "baseline": false,
+          "expanded": true
+        },
+        {
+          "issue": "deadline",
+          "source_id": "montreal-convention",
+          "anchor": "within 21 days",
+          "baseline": false,
+          "expanded": true
+        },
+        {
+          "issue": "ceiling",
+          "source_id": "montreal-convention",
+          "anchor": "Article 22 Limits of liability",
+          "baseline": false,
+          "expanded": true
+        },
+        {
+          "issue": "not flat",
+          "source_id": "eu261-guidelines-2024",
+          "anchor": "It does not constitute a fixed rate",
+          "baseline": true,
+          "expanded": true
+        },
+        {
+          "issue": "revision",
+          "source_id": "icao-limit-revision",
+          "anchor": "1 519",
+          "baseline": false,
+          "expanded": false
+        }
+      ],
+      "passages": {
+        "baseline": [
+          {
+            "source_id": "air-carrier-liability-amendment",
+            "version": "pages-v1-19a44e6a08e8efc24df988aaf244438c312bfc4efed94861b09eae64b8507bbb",
+            "chunk_id": "page-004-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-035-part-002"
+          },
+          {
+            "source_id": "air-carrier-liability-amendment",
+            "version": "pages-v1-19a44e6a08e8efc24df988aaf244438c312bfc4efed94861b09eae64b8507bbb",
+            "chunk_id": "page-003-part-003"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-020-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-036-part-001"
+          },
+          {
+            "source_id": "montreal-convention",
+            "version": "pages-v1-eb979f77e1414895c72aa5491363304edacf6bdc4441ee4e5ecb4b90fc5c0c77",
+            "chunk_id": "page-006-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-002-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-022-part-002"
+          },
+          {
+            "source_id": "sturgeon",
+            "version": "pages-v1-5c3d8db5a67dc43a9c59e15b1a5eac83ed69154377ae6876912168b7fabdc29b",
+            "chunk_id": "page-015-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-017-part-002"
+          },
+          {
+            "source_id": "sturgeon",
+            "version": "pages-v1-5c3d8db5a67dc43a9c59e15b1a5eac83ed69154377ae6876912168b7fabdc29b",
+            "chunk_id": "page-017-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-014-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-013-part-002"
+          },
+          {
+            "source_id": "air-carrier-liability-amendment",
+            "version": "pages-v1-19a44e6a08e8efc24df988aaf244438c312bfc4efed94861b09eae64b8507bbb",
+            "chunk_id": "page-003-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-031-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-020-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-022-part-001"
+          },
+          {
+            "source_id": "air-carrier-liability-amendment",
+            "version": "pages-v1-19a44e6a08e8efc24df988aaf244438c312bfc4efed94861b09eae64b8507bbb",
+            "chunk_id": "page-002-part-002"
+          },
+          {
+            "source_id": "air-carrier-liability-amendment",
+            "version": "pages-v1-19a44e6a08e8efc24df988aaf244438c312bfc4efed94861b09eae64b8507bbb",
+            "chunk_id": "page-003-part-002"
+          },
+          {
+            "source_id": "sturgeon",
+            "version": "pages-v1-5c3d8db5a67dc43a9c59e15b1a5eac83ed69154377ae6876912168b7fabdc29b",
+            "chunk_id": "page-008-part-001"
+          }
+        ],
+        "expanded": [
+          {
+            "source_id": "air-carrier-liability-amendment",
+            "version": "pages-v1-19a44e6a08e8efc24df988aaf244438c312bfc4efed94861b09eae64b8507bbb",
+            "chunk_id": "page-004-part-001"
+          },
+          {
+            "source_id": "sturgeon",
+            "version": "pages-v1-5c3d8db5a67dc43a9c59e15b1a5eac83ed69154377ae6876912168b7fabdc29b",
+            "chunk_id": "page-024-part-001"
+          },
+          {
+            "source_id": "montreal-convention",
+            "version": "pages-v1-eb979f77e1414895c72aa5491363304edacf6bdc4441ee4e5ecb4b90fc5c0c77",
+            "chunk_id": "page-004-part-002"
+          },
+          {
+            "source_id": "eu261",
+            "version": "pages-v1-1752ec2218ff951d68ce06f2bf1f5ae4521582c883000af80e1bf3812c954c83",
+            "chunk_id": "page-004-part-002"
+          },
+          {
+            "source_id": "montreal-convention",
+            "version": "pages-v1-eb979f77e1414895c72aa5491363304edacf6bdc4441ee4e5ecb4b90fc5c0c77",
+            "chunk_id": "page-007-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-028-part-002"
+          },
+          {
+            "source_id": "montreal-convention",
+            "version": "pages-v1-eb979f77e1414895c72aa5491363304edacf6bdc4441ee4e5ecb4b90fc5c0c77",
+            "chunk_id": "page-005-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-022-part-002"
+          },
+          {
+            "source_id": "montreal-convention",
+            "version": "pages-v1-eb979f77e1414895c72aa5491363304edacf6bdc4441ee4e5ecb4b90fc5c0c77",
+            "chunk_id": "page-006-part-001"
+          },
+          {
+            "source_id": "montreal-convention",
+            "version": "pages-v1-eb979f77e1414895c72aa5491363304edacf6bdc4441ee4e5ecb4b90fc5c0c77",
+            "chunk_id": "page-004-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-035-part-002"
+          },
+          {
+            "source_id": "sturgeon",
+            "version": "pages-v1-5c3d8db5a67dc43a9c59e15b1a5eac83ed69154377ae6876912168b7fabdc29b",
+            "chunk_id": "page-010-part-001"
+          },
+          {
+            "source_id": "eu261",
+            "version": "pages-v1-1752ec2218ff951d68ce06f2bf1f5ae4521582c883000af80e1bf3812c954c83",
+            "chunk_id": "page-005-part-002"
+          },
+          {
+            "source_id": "montreal-convention",
+            "version": "pages-v1-eb979f77e1414895c72aa5491363304edacf6bdc4441ee4e5ecb4b90fc5c0c77",
+            "chunk_id": "page-009-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-013-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-006-part-001"
+          },
+          {
+            "source_id": "air-carrier-liability-amendment",
+            "version": "pages-v1-19a44e6a08e8efc24df988aaf244438c312bfc4efed94861b09eae64b8507bbb",
+            "chunk_id": "page-003-part-003"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-036-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-029-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-006-part-002"
+          }
+        ]
+      }
+    },
+    {
+      "id": "boarding",
+      "checks": [
+        {
+          "issue": "boarding",
+          "source_id": "eu261",
+          "anchor": "Article 4 Denied boarding",
+          "baseline": false,
+          "expanded": true
+        },
+        {
+          "issue": "exception",
+          "source_id": "eu261",
+          "anchor": "inadequate travel documentation",
+          "baseline": false,
+          "expanded": true
+        },
+        {
+          "issue": "care",
+          "source_id": "eu261",
+          "anchor": "Article 9 Right to care",
+          "baseline": true,
+          "expanded": true
+        },
+        {
+          "issue": "choice",
+          "source_id": "eu261",
+          "anchor": "offered the choice between",
+          "baseline": true,
+          "expanded": true
+        }
+      ],
+      "passages": {
+        "baseline": [
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-016-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-017-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-016-part-001"
+          },
+          {
+            "source_id": "sturgeon",
+            "version": "pages-v1-5c3d8db5a67dc43a9c59e15b1a5eac83ed69154377ae6876912168b7fabdc29b",
+            "chunk_id": "page-012-part-001"
+          },
+          {
+            "source_id": "eu261",
+            "version": "pages-v1-1752ec2218ff951d68ce06f2bf1f5ae4521582c883000af80e1bf3812c954c83",
+            "chunk_id": "page-005-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-019-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-014-part-001"
+          },
+          {
+            "source_id": "sturgeon",
+            "version": "pages-v1-5c3d8db5a67dc43a9c59e15b1a5eac83ed69154377ae6876912168b7fabdc29b",
+            "chunk_id": "page-011-part-001"
+          },
+          {
+            "source_id": "sturgeon",
+            "version": "pages-v1-5c3d8db5a67dc43a9c59e15b1a5eac83ed69154377ae6876912168b7fabdc29b",
+            "chunk_id": "page-008-part-001"
+          },
+          {
+            "source_id": "eu261",
+            "version": "pages-v1-1752ec2218ff951d68ce06f2bf1f5ae4521582c883000af80e1bf3812c954c83",
+            "chunk_id": "page-005-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-010-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-007-part-002"
+          },
+          {
+            "source_id": "wallentin-hermann",
+            "version": "pages-v1-a730fcd52e5674b037321f940fc6dba5be6c2bcd4dc03747ab2ff99af90c4b19",
+            "chunk_id": "page-007-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-019-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-002-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-018-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-024-part-001"
+          },
+          {
+            "source_id": "air-carrier-liability-amendment",
+            "version": "pages-v1-19a44e6a08e8efc24df988aaf244438c312bfc4efed94861b09eae64b8507bbb",
+            "chunk_id": "page-003-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-018-part-001"
+          },
+          {
+            "source_id": "air-carrier-liability-amendment",
+            "version": "pages-v1-19a44e6a08e8efc24df988aaf244438c312bfc4efed94861b09eae64b8507bbb",
+            "chunk_id": "page-002-part-001"
+          }
+        ],
+        "expanded": [
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-017-part-001"
+          },
+          {
+            "source_id": "eu261",
+            "version": "pages-v1-1752ec2218ff951d68ce06f2bf1f5ae4521582c883000af80e1bf3812c954c83",
+            "chunk_id": "page-004-part-001"
+          },
+          {
+            "source_id": "eu261",
+            "version": "pages-v1-1752ec2218ff951d68ce06f2bf1f5ae4521582c883000af80e1bf3812c954c83",
+            "chunk_id": "page-005-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-016-part-002"
+          },
+          {
+            "source_id": "eu261",
+            "version": "pages-v1-1752ec2218ff951d68ce06f2bf1f5ae4521582c883000af80e1bf3812c954c83",
+            "chunk_id": "page-001-part-001"
+          },
+          {
+            "source_id": "eu261",
+            "version": "pages-v1-1752ec2218ff951d68ce06f2bf1f5ae4521582c883000af80e1bf3812c954c83",
+            "chunk_id": "page-003-part-002"
+          },
+          {
+            "source_id": "eu261",
+            "version": "pages-v1-1752ec2218ff951d68ce06f2bf1f5ae4521582c883000af80e1bf3812c954c83",
+            "chunk_id": "page-005-part-001"
+          },
+          {
+            "source_id": "eu261",
+            "version": "pages-v1-1752ec2218ff951d68ce06f2bf1f5ae4521582c883000af80e1bf3812c954c83",
+            "chunk_id": "page-006-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-016-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-011-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-019-part-001"
+          },
+          {
+            "source_id": "sturgeon",
+            "version": "pages-v1-5c3d8db5a67dc43a9c59e15b1a5eac83ed69154377ae6876912168b7fabdc29b",
+            "chunk_id": "page-012-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-010-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-010-part-001"
+          },
+          {
+            "source_id": "sturgeon",
+            "version": "pages-v1-5c3d8db5a67dc43a9c59e15b1a5eac83ed69154377ae6876912168b7fabdc29b",
+            "chunk_id": "page-011-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-018-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-020-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-002-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-019-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-011-part-002"
+          }
+        ]
+      }
+    },
+    {
+      "id": "accessibility",
+      "checks": [
+        {
+          "issue": "refusal",
+          "source_id": "accessibility",
+          "anchor": "Article 3 Prevention of refusal",
+          "baseline": true,
+          "expanded": true
+        },
+        {
+          "issue": "exception",
+          "source_id": "accessibility",
+          "anchor": "Article 4 Derogations",
+          "baseline": true,
+          "expanded": true
+        },
+        {
+          "issue": "no notice",
+          "source_id": "accessibility",
+          "anchor": "If no notification is made",
+          "baseline": true,
+          "expanded": true
+        },
+        {
+          "issue": "free",
+          "source_id": "accessibility",
+          "anchor": "without additional charge",
+          "baseline": true,
+          "expanded": true
+        },
+        {
+          "issue": "dog",
+          "source_id": "accessibility",
+          "anchor": "Carriage of recognised assistance dogs",
+          "baseline": true,
+          "expanded": true
+        }
+      ],
+      "passages": {
+        "baseline": [
+          {
+            "source_id": "accessibility",
+            "version": "pages-v1-41388a43a56aa46cd587b617b01d8ea5e1296eb57e457ab80fdf8815406bcd1f",
+            "chunk_id": "page-009-part-001"
+          },
+          {
+            "source_id": "accessibility",
+            "version": "pages-v1-41388a43a56aa46cd587b617b01d8ea5e1296eb57e457ab80fdf8815406bcd1f",
+            "chunk_id": "page-005-part-002"
+          },
+          {
+            "source_id": "accessibility",
+            "version": "pages-v1-41388a43a56aa46cd587b617b01d8ea5e1296eb57e457ab80fdf8815406bcd1f",
+            "chunk_id": "page-008-part-001"
+          },
+          {
+            "source_id": "eu261",
+            "version": "pages-v1-1752ec2218ff951d68ce06f2bf1f5ae4521582c883000af80e1bf3812c954c83",
+            "chunk_id": "page-003-part-002"
+          },
+          {
+            "source_id": "accessibility",
+            "version": "pages-v1-41388a43a56aa46cd587b617b01d8ea5e1296eb57e457ab80fdf8815406bcd1f",
+            "chunk_id": "page-004-part-002"
+          },
+          {
+            "source_id": "accessibility",
+            "version": "pages-v1-41388a43a56aa46cd587b617b01d8ea5e1296eb57e457ab80fdf8815406bcd1f",
+            "chunk_id": "page-004-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-011-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-011-part-001"
+          },
+          {
+            "source_id": "eu261",
+            "version": "pages-v1-1752ec2218ff951d68ce06f2bf1f5ae4521582c883000af80e1bf3812c954c83",
+            "chunk_id": "page-006-part-002"
+          },
+          {
+            "source_id": "accessibility",
+            "version": "pages-v1-41388a43a56aa46cd587b617b01d8ea5e1296eb57e457ab80fdf8815406bcd1f",
+            "chunk_id": "page-006-part-001"
+          },
+          {
+            "source_id": "accessibility",
+            "version": "pages-v1-41388a43a56aa46cd587b617b01d8ea5e1296eb57e457ab80fdf8815406bcd1f",
+            "chunk_id": "page-001-part-001"
+          },
+          {
+            "source_id": "accessibility",
+            "version": "pages-v1-41388a43a56aa46cd587b617b01d8ea5e1296eb57e457ab80fdf8815406bcd1f",
+            "chunk_id": "page-002-part-001"
+          },
+          {
+            "source_id": "accessibility",
+            "version": "pages-v1-41388a43a56aa46cd587b617b01d8ea5e1296eb57e457ab80fdf8815406bcd1f",
+            "chunk_id": "page-001-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-010-part-002"
+          },
+          {
+            "source_id": "accessibility",
+            "version": "pages-v1-41388a43a56aa46cd587b617b01d8ea5e1296eb57e457ab80fdf8815406bcd1f",
+            "chunk_id": "page-002-part-002"
+          },
+          {
+            "source_id": "accessibility",
+            "version": "pages-v1-41388a43a56aa46cd587b617b01d8ea5e1296eb57e457ab80fdf8815406bcd1f",
+            "chunk_id": "page-006-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-019-part-001"
+          },
+          {
+            "source_id": "accessibility",
+            "version": "pages-v1-41388a43a56aa46cd587b617b01d8ea5e1296eb57e457ab80fdf8815406bcd1f",
+            "chunk_id": "page-005-part-003"
+          },
+          {
+            "source_id": "accessibility",
+            "version": "pages-v1-41388a43a56aa46cd587b617b01d8ea5e1296eb57e457ab80fdf8815406bcd1f",
+            "chunk_id": "page-004-part-003"
+          },
+          {
+            "source_id": "air-carrier-liability-amendment",
+            "version": "pages-v1-19a44e6a08e8efc24df988aaf244438c312bfc4efed94861b09eae64b8507bbb",
+            "chunk_id": "page-003-part-001"
+          }
+        ],
+        "expanded": [
+          {
+            "source_id": "accessibility",
+            "version": "pages-v1-41388a43a56aa46cd587b617b01d8ea5e1296eb57e457ab80fdf8815406bcd1f",
+            "chunk_id": "page-009-part-001"
+          },
+          {
+            "source_id": "eu261",
+            "version": "pages-v1-1752ec2218ff951d68ce06f2bf1f5ae4521582c883000af80e1bf3812c954c83",
+            "chunk_id": "page-004-part-001"
+          },
+          {
+            "source_id": "accessibility",
+            "version": "pages-v1-41388a43a56aa46cd587b617b01d8ea5e1296eb57e457ab80fdf8815406bcd1f",
+            "chunk_id": "page-004-part-001"
+          },
+          {
+            "source_id": "accessibility",
+            "version": "pages-v1-41388a43a56aa46cd587b617b01d8ea5e1296eb57e457ab80fdf8815406bcd1f",
+            "chunk_id": "page-005-part-001"
+          },
+          {
+            "source_id": "accessibility",
+            "version": "pages-v1-41388a43a56aa46cd587b617b01d8ea5e1296eb57e457ab80fdf8815406bcd1f",
+            "chunk_id": "page-006-part-002"
+          },
+          {
+            "source_id": "eu261",
+            "version": "pages-v1-1752ec2218ff951d68ce06f2bf1f5ae4521582c883000af80e1bf3812c954c83",
+            "chunk_id": "page-005-part-002"
+          },
+          {
+            "source_id": "accessibility",
+            "version": "pages-v1-41388a43a56aa46cd587b617b01d8ea5e1296eb57e457ab80fdf8815406bcd1f",
+            "chunk_id": "page-005-part-002"
+          },
+          {
+            "source_id": "eu261",
+            "version": "pages-v1-1752ec2218ff951d68ce06f2bf1f5ae4521582c883000af80e1bf3812c954c83",
+            "chunk_id": "page-001-part-001"
+          },
+          {
+            "source_id": "accessibility",
+            "version": "pages-v1-41388a43a56aa46cd587b617b01d8ea5e1296eb57e457ab80fdf8815406bcd1f",
+            "chunk_id": "page-001-part-001"
+          },
+          {
+            "source_id": "eu261",
+            "version": "pages-v1-1752ec2218ff951d68ce06f2bf1f5ae4521582c883000af80e1bf3812c954c83",
+            "chunk_id": "page-003-part-002"
+          },
+          {
+            "source_id": "eu261",
+            "version": "pages-v1-1752ec2218ff951d68ce06f2bf1f5ae4521582c883000af80e1bf3812c954c83",
+            "chunk_id": "page-005-part-001"
+          },
+          {
+            "source_id": "accessibility",
+            "version": "pages-v1-41388a43a56aa46cd587b617b01d8ea5e1296eb57e457ab80fdf8815406bcd1f",
+            "chunk_id": "page-006-part-001"
+          },
+          {
+            "source_id": "eu261",
+            "version": "pages-v1-1752ec2218ff951d68ce06f2bf1f5ae4521582c883000af80e1bf3812c954c83",
+            "chunk_id": "page-006-part-001"
+          },
+          {
+            "source_id": "accessibility",
+            "version": "pages-v1-41388a43a56aa46cd587b617b01d8ea5e1296eb57e457ab80fdf8815406bcd1f",
+            "chunk_id": "page-008-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-011-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-016-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-019-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-010-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-010-part-001"
+          },
+          {
+            "source_id": "sturgeon",
+            "version": "pages-v1-5c3d8db5a67dc43a9c59e15b1a5eac83ed69154377ae6876912168b7fabdc29b",
+            "chunk_id": "page-011-part-001"
+          }
+        ]
+      }
+    },
+    {
+      "id": "downgrade",
+      "checks": [
+        {
+          "issue": "downgrade",
+          "source_id": "eu261",
+          "anchor": "Article 10 Upgrading and downgrading",
+          "baseline": true,
+          "expanded": true
+        },
+        {
+          "issue": "long haul rate",
+          "source_id": "eu261",
+          "anchor": "75 % of the price",
+          "baseline": false,
+          "expanded": true
+        }
+      ],
+      "passages": {
+        "baseline": [
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-014-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-014-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-017-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-024-part-001"
+          },
+          {
+            "source_id": "eu261",
+            "version": "pages-v1-1752ec2218ff951d68ce06f2bf1f5ae4521582c883000af80e1bf3812c954c83",
+            "chunk_id": "page-005-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-020-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-016-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-017-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-016-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-002-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-002-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-033-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-018-part-001"
+          },
+          {
+            "source_id": "eu261",
+            "version": "pages-v1-1752ec2218ff951d68ce06f2bf1f5ae4521582c883000af80e1bf3812c954c83",
+            "chunk_id": "page-005-part-001"
+          },
+          {
+            "source_id": "montreal-convention",
+            "version": "pages-v1-eb979f77e1414895c72aa5491363304edacf6bdc4441ee4e5ecb4b90fc5c0c77",
+            "chunk_id": "page-009-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-023-part-001"
+          },
+          {
+            "source_id": "sturgeon",
+            "version": "pages-v1-5c3d8db5a67dc43a9c59e15b1a5eac83ed69154377ae6876912168b7fabdc29b",
+            "chunk_id": "page-011-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-015-part-002"
+          },
+          {
+            "source_id": "montreal-convention",
+            "version": "pages-v1-eb979f77e1414895c72aa5491363304edacf6bdc4441ee4e5ecb4b90fc5c0c77",
+            "chunk_id": "page-007-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-020-part-002"
+          }
+        ],
+        "expanded": [
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-014-part-001"
+          },
+          {
+            "source_id": "eu261",
+            "version": "pages-v1-1752ec2218ff951d68ce06f2bf1f5ae4521582c883000af80e1bf3812c954c83",
+            "chunk_id": "page-005-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-014-part-002"
+          },
+          {
+            "source_id": "eu261",
+            "version": "pages-v1-1752ec2218ff951d68ce06f2bf1f5ae4521582c883000af80e1bf3812c954c83",
+            "chunk_id": "page-006-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-017-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-024-part-001"
+          }
+        ]
+      }
+    },
+    {
+      "id": "injury",
+      "checks": [
+        {
+          "issue": "injury",
+          "source_id": "montreal-convention",
+          "anchor": "Article 17 Death and injury",
+          "baseline": true,
+          "expanded": true
+        },
+        {
+          "issue": "defenses",
+          "source_id": "montreal-convention",
+          "anchor": "Article 21 Compensation",
+          "baseline": true,
+          "expanded": true
+        },
+        {
+          "issue": "limitation",
+          "source_id": "montreal-convention",
+          "anchor": "Article 35 Limitation of actions",
+          "baseline": true,
+          "expanded": true
+        }
+      ],
+      "passages": {
+        "baseline": [
+          {
+            "source_id": "air-carrier-liability-amendment",
+            "version": "pages-v1-19a44e6a08e8efc24df988aaf244438c312bfc4efed94861b09eae64b8507bbb",
+            "chunk_id": "page-003-part-002"
+          },
+          {
+            "source_id": "wallentin-hermann",
+            "version": "pages-v1-a730fcd52e5674b037321f940fc6dba5be6c2bcd4dc03747ab2ff99af90c4b19",
+            "chunk_id": "page-005-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-035-part-001"
+          },
+          {
+            "source_id": "montreal-convention",
+            "version": "pages-v1-eb979f77e1414895c72aa5491363304edacf6bdc4441ee4e5ecb4b90fc5c0c77",
+            "chunk_id": "page-004-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-036-part-001"
+          },
+          {
+            "source_id": "montreal-convention",
+            "version": "pages-v1-eb979f77e1414895c72aa5491363304edacf6bdc4441ee4e5ecb4b90fc5c0c77",
+            "chunk_id": "page-005-part-001"
+          },
+          {
+            "source_id": "montreal-convention",
+            "version": "pages-v1-eb979f77e1414895c72aa5491363304edacf6bdc4441ee4e5ecb4b90fc5c0c77",
+            "chunk_id": "page-001-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-034-part-001"
+          },
+          {
+            "source_id": "air-carrier-liability-amendment",
+            "version": "pages-v1-19a44e6a08e8efc24df988aaf244438c312bfc4efed94861b09eae64b8507bbb",
+            "chunk_id": "page-004-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-014-part-001"
+          },
+          {
+            "source_id": "montreal-convention",
+            "version": "pages-v1-eb979f77e1414895c72aa5491363304edacf6bdc4441ee4e5ecb4b90fc5c0c77",
+            "chunk_id": "page-004-part-003"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-035-part-002"
+          },
+          {
+            "source_id": "accessibility",
+            "version": "pages-v1-41388a43a56aa46cd587b617b01d8ea5e1296eb57e457ab80fdf8815406bcd1f",
+            "chunk_id": "page-009-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-034-part-002"
+          },
+          {
+            "source_id": "montreal-convention",
+            "version": "pages-v1-eb979f77e1414895c72aa5491363304edacf6bdc4441ee4e5ecb4b90fc5c0c77",
+            "chunk_id": "page-007-part-002"
+          },
+          {
+            "source_id": "montreal-convention",
+            "version": "pages-v1-eb979f77e1414895c72aa5491363304edacf6bdc4441ee4e5ecb4b90fc5c0c77",
+            "chunk_id": "page-004-part-002"
+          },
+          {
+            "source_id": "sturgeon",
+            "version": "pages-v1-5c3d8db5a67dc43a9c59e15b1a5eac83ed69154377ae6876912168b7fabdc29b",
+            "chunk_id": "page-010-part-001"
+          },
+          {
+            "source_id": "air-carrier-liability-amendment",
+            "version": "pages-v1-19a44e6a08e8efc24df988aaf244438c312bfc4efed94861b09eae64b8507bbb",
+            "chunk_id": "page-003-part-003"
+          },
+          {
+            "source_id": "montreal-convention",
+            "version": "pages-v1-eb979f77e1414895c72aa5491363304edacf6bdc4441ee4e5ecb4b90fc5c0c77",
+            "chunk_id": "page-006-part-001"
+          },
+          {
+            "source_id": "montreal-convention",
+            "version": "pages-v1-eb979f77e1414895c72aa5491363304edacf6bdc4441ee4e5ecb4b90fc5c0c77",
+            "chunk_id": "page-007-part-001"
+          }
+        ],
+        "expanded": [
+          {
+            "source_id": "air-carrier-liability-amendment",
+            "version": "pages-v1-19a44e6a08e8efc24df988aaf244438c312bfc4efed94861b09eae64b8507bbb",
+            "chunk_id": "page-003-part-002"
+          },
+          {
+            "source_id": "montreal-convention",
+            "version": "pages-v1-eb979f77e1414895c72aa5491363304edacf6bdc4441ee4e5ecb4b90fc5c0c77",
+            "chunk_id": "page-004-part-001"
+          },
+          {
+            "source_id": "montreal-convention",
+            "version": "pages-v1-eb979f77e1414895c72aa5491363304edacf6bdc4441ee4e5ecb4b90fc5c0c77",
+            "chunk_id": "page-004-part-003"
+          },
+          {
+            "source_id": "montreal-convention",
+            "version": "pages-v1-eb979f77e1414895c72aa5491363304edacf6bdc4441ee4e5ecb4b90fc5c0c77",
+            "chunk_id": "page-007-part-002"
+          },
+          {
+            "source_id": "wallentin-hermann",
+            "version": "pages-v1-a730fcd52e5674b037321f940fc6dba5be6c2bcd4dc03747ab2ff99af90c4b19",
+            "chunk_id": "page-005-part-001"
+          },
+          {
+            "source_id": "montreal-convention",
+            "version": "pages-v1-eb979f77e1414895c72aa5491363304edacf6bdc4441ee4e5ecb4b90fc5c0c77",
+            "chunk_id": "page-004-part-002"
+          },
+          {
+            "source_id": "montreal-convention",
+            "version": "pages-v1-eb979f77e1414895c72aa5491363304edacf6bdc4441ee4e5ecb4b90fc5c0c77",
+            "chunk_id": "page-006-part-002"
+          },
+          {
+            "source_id": "montreal-convention",
+            "version": "pages-v1-eb979f77e1414895c72aa5491363304edacf6bdc4441ee4e5ecb4b90fc5c0c77",
+            "chunk_id": "page-009-part-002"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-035-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-034-part-001"
+          },
+          {
+            "source_id": "eu261-guidelines-2024",
+            "version": "pages-v1-57c0b6704512c45f3714ca6e7d1e1f2c77e945cc5d176037095352ee29c73d04",
+            "chunk_id": "page-036-part-001"
+          },
+          {
+            "source_id": "montreal-convention",
+            "version": "pages-v1-eb979f77e1414895c72aa5491363304edacf6bdc4441ee4e5ecb4b90fc5c0c77",
+            "chunk_id": "page-006-part-001"
+          },
+          {
+            "source_id": "montreal-convention",
+            "version": "pages-v1-eb979f77e1414895c72aa5491363304edacf6bdc4441ee4e5ecb4b90fc5c0c77",
+            "chunk_id": "page-011-part-001"
+          },
+          {
+            "source_id": "air-carrier-liability-amendment",
+            "version": "pages-v1-19a44e6a08e8efc24df988aaf244438c312bfc4efed94861b09eae64b8507bbb",
+            "chunk_id": "page-001-part-001"
+          }
+        ]
+      }
+    }
+  ]
+}
