@@ -42,15 +42,20 @@ def main():
             elif url.path == "/api/evidence":
                 aid = parse_qs(url.query).get("id", [""])[0]
                 evidence = next((r for r in rows(folder / "runtime/attachments.jsonl") if r["id"] == aid), None)
+                scope = "runtime"
+                if evidence is None:
+                    future = [a for reply in rows(folder / "evaluation/simulator.jsonl") for a in reply.get("attachments", [])]
+                    evidence = next((r for r in future if r["id"] == aid), None)
+                    scope = "evaluation"
                 if evidence is None:
                     self.send_error(404)
                     return
-                path = (folder / "runtime" / evidence["path"]).resolve()
-                if not path.is_relative_to(folder / "runtime/attachments"):
+                path = (folder / scope / evidence["path"]).resolve()
+                if not path.is_relative_to(folder / scope / "attachments"):
                     self.send_error(403)
                     return
                 body = path.read_bytes()
-                media = "text/html; charset=utf-8"
+                media = evidence["media_type"]
             elif url.path in ("/", "/index.html", "/app.js", "/style.css"):
                 filename = "index.html" if url.path == "/" else url.path[1:]
                 body = (HERE / filename).read_bytes()

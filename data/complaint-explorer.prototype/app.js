@@ -5,7 +5,7 @@ const title = value => String(value ?? '').replaceAll('_', ' ').replace(/^\w/, c
 const number = value => Number(value).toLocaleString('en-GB');
 const names = {A:'Overview', B:'Case inbox', C:'Action board'};
 const actionNames = {resolve_demo:'Demo resolution', request_missing_info:'Missing evidence', request_clarification:'Clarification', escalate_human:'Specialist handoff'};
-const state = {variant: new URLSearchParams(location.search).get('variant') || 'A', selected:null, page:0, tab:'complaint', boardLimit:20, filters:{search:'', category:'', language:'', scenario:'', action:'', split:''}};
+const state = {variant: new URLSearchParams(location.search).get('variant') || 'A', selected:null, page:0, tab:'complaint', boardLimit:20, clarifications:{}, filters:{search:'', category:'', language:'', scenario:'', action:'', split:''}};
 if (!names[state.variant]) state.variant = 'A';
 let data, all = [], filtered = [], by = {};
 const countBy = (items, get) => items.reduce((result, item) => (result[get(item)] = (result[get(item)] || 0) + 1, result), {});
@@ -89,6 +89,18 @@ function VariantC() {
 
 function empty() { return '<div class="empty">No complaints match these filters. Try another search or reset the filters.</div>'; }
 
+function evidencePreview(a) {
+  const url = `/api/evidence?id=${encodeURIComponent(a.id)}`;
+  return `<section class="evidence"><a href="${url}" target="_blank" rel="noopener">↗ ${esc(title(a.kind))} · ${a.media_type==='image/png'?'PNG image':'PDF document'}</a><p class="mono">${esc(a.id)} · ${number(a.size_bytes)} bytes</p>${a.media_type==='image/png'?`<a href="${url}" target="_blank" rel="noopener"><img class="document-image" loading="lazy" src="${url}" alt="Synthetic ${esc(title(a.kind))}"></a>`:`<details><summary>Preview PDF</summary><iframe title="Synthetic ${esc(title(a.kind))}" loading="lazy" src="${url}"></iframe></details>`}</section>`;
+}
+
+function clarificationPreview(r) {
+  const fixture = by.simulator[r.c.id];
+  if (!fixture) return '';
+  const stage = state.clarifications[r.c.id] || 0;
+  return `<section class="clarification"><h3>Missing-information walkthrough</h3><p class="muted">Recorded mock exchange. No agent is running and nothing is sent or saved.</p><p>Requested: <strong>${esc(fixture.requested_fields.map(title).join(', '))}</strong></p>${stage===0?`<button class="quiet" data-clarify="1">Preview the customer question →</button>`:`<div class="conversation outgoing"><small>MOCK AGENT · Waiting for customer</small><p>${esc(fixture.expected_question)}</p></div>${stage===1?'<button class="quiet" data-clarify="2">Simulate customer reply and upload →</button>':`<div class="conversation incoming"><small>MOCK CUSTOMER · Same thread ${esc(fixture.thread_id)}</small><p>${esc(fixture.reply_body)}</p></div>${fixture.attachments.map(evidencePreview).join('')}<p><strong>Ready for reassessment.</strong> The new upload must be extracted and checked before any decision.</p><p class="muted">Reference after successful checks: ${esc(actionNames[fixture.expected_after_reply] || title(fixture.expected_after_reply))}.${fixture.replaces_attachment_ids.length?' The earlier conflicting or unreadable file remains in the audit history.':''}</p><button class="quiet" data-clarify="0">Reset walkthrough</button>`}`}</section>`;
+}
+
 function detail(r) {
   const {c,booking,contact,label,flights} = r;
   const messages = c.message_ids.map(id=>by.messages[id]);
@@ -97,7 +109,7 @@ function detail(r) {
   const delay = flight.actual_arrival ? Math.round((Date.parse(flight.actual_arrival)-Date.parse(flight.scheduled_arrival))/60000) : 'Cancelled';
   const raw = {case:c,contact,booking,flights,messages,attachments,events:data.events.filter(e=>e.case_id===c.id),synthetic_reference:label,provenance:by.provenance[c.id],future_customer_reply:by.simulator[c.id] || null};
   let body = '';
-  if (state.tab === 'complaint') body = `<div class="small-label">FROM ${esc(contact.email)} · ${esc(c.created_at)}</div><div class="message">${esc(c.description)}</div><div class="facts">${fact('Booking',booking.reference)}${fact('Route',`${flight.origin} → ${flight.destination}`)}${fact('Flight',flight.flight_number)}${fact('Passengers',booking.passengers.length)}${fact('Scheduled arrival',flight.scheduled_arrival)}${fact('Actual arrival / delay',`${flight.actual_arrival || 'No arrival · cancelled'} / ${delay}${typeof delay==='number'?' min':''}`)}</div><h3>Evidence attached to the first message</h3>${attachments.length ? attachments.map(a=>`<a class="evidence" href="/api/evidence?id=${encodeURIComponent(a.id)}" target="_blank" rel="noopener">↗ ${esc(title(a.kind))} <span class="mono">${esc(a.id)}</span><br><small>Booking ${esc(a.booking_reference)}${a.amount_eur===null?'':` · EUR ${esc(a.amount_eur)}`} · HTML mock document</small></a>`).join('') : '<p class="muted">No attachment supplied in the initial message.</p>'}`;
+  if (state.tab === 'complaint') body = `<div class="small-label">FROM ${esc(contact.email)} · ${esc(c.created_at)}</div><div class="message">${esc(c.description)}</div><div class="facts">${fact('Booking',booking.reference)}${fact('Route',`${flight.origin} → ${flight.destination}`)}${fact('Flight',flight.flight_number)}${fact('Passengers',booking.passengers.length)}${fact('Scheduled arrival',flight.scheduled_arrival)}${fact('Actual arrival / delay',`${flight.actual_arrival || 'No arrival · cancelled'} / ${delay}${typeof delay==='number'?' min':''}`)}</div>${clarificationPreview(r)}<h3>Evidence attached to the first message</h3>${attachments.length ? attachments.map(evidencePreview).join('') : '<p class="muted">No attachment supplied in the initial message.</p>'}`;
   else if (state.tab === 'expectations') body = `<div class="expected"><small>SYNTHETIC REFERENCE · NOT EXPERT REVIEWED</small><h3>${esc(actionNames[label.expected_next_action])}</h3><p>Reason: ${esc(title(label.reason))}</p><p>Missing: ${esc(label.missing_fields.join(', ') || 'None specified')}</p></div><div class="facts">${fact('Primary / all topics',label.categories.map(title).join(' / '))}${fact('Scenario',title(label.scenario))}${fact('Severity',title(label.severity))}${fact('Sentiment',title(label.sentiment))}${fact('Evaluation split',label.split)}${fact('Policy',label.policy_version)}</div><p class="muted">No legal entitlement or compensation amount is asserted. Anger does not itself trigger a handoff.</p>${by.simulator[c.id] ? `<h3 style="margin-top:24px">Hidden customer follow-up fixture</h3><p class="muted">Test-harness data, excluded from the initial runtime input.</p><div class="message">${esc(by.simulator[c.id].reply_body)}</div>` : ''}`;
   else body = `<div class="raw">${Object.entries(raw).map(([name,value])=>`<details ${name==='case'?'open':''}><summary>${esc(title(name))}</summary><pre>${esc(JSON.stringify(value,null,2))}</pre></details>`).join('')}</div>`;
   return `<article class="detail"><div class="detail-header"><span class="mono muted">${esc(c.id)} · ${esc(c.language.toUpperCase())} · ${esc(c.status)} · ${esc(c.channel)}</span><h2>${esc(c.subject)}</h2>${pill(label.expected_next_action)} <span class="pill">${esc(label.split)}</span></div><div class="detail-body"><div class="tabs">${[['complaint','Complaint & facts'],['expectations','Test expectations'],['raw','Full JSON']].map(([id,name])=>`<button class="tab ${state.tab===id?'active':''}" data-tab="${id}">${name}</button>`).join('')}</div>${body}</div></article>`;
@@ -118,6 +130,7 @@ function renderOverlay() {
   $('overlay').querySelector('.drawer').scrollTop = previousScroll;
   document.body.style.overflow = 'hidden';
   $('overlay').querySelector('[data-close]').focus({preventScroll:true});
+  $('state').textContent = JSON.stringify({...state,matching_cases:filtered.length,total_cases:all.length,data_modified:false},null,2);
 }
 
 function closeOverlay() {
@@ -144,11 +157,11 @@ for (const id of Object.keys(state.filters)) $(id).addEventListener(id==='search
   if (data) render();
 });
 $('reset').onclick = () => { for (const id in state.filters) {state.filters[id]='';$(id).value='';}state.page=0;state.boardLimit=20;render(); };
-$('reload').onclick = () => {closeOverlay();load();};
+$('reload').onclick = () => {closeOverlay();state.clarifications={};load();};
 $('previous').onclick = () => cycle(-1);
 $('next').onclick = () => cycle(1);
 document.addEventListener('click',event=>{
-  const target = event.target.closest('[data-case],[data-page],[data-filter],[data-more],[data-tab],[data-close]');
+  const target = event.target.closest('[data-case],[data-page],[data-filter],[data-more],[data-tab],[data-close],[data-clarify]');
   if (!target) { if (event.target.classList.contains('overlay-shade')) closeOverlay(); return; }
   if (target.dataset.case) openCase(target.dataset.case);
   if (target.dataset.page) {state.page+=Number(target.dataset.page);if(state.variant==='B')state.selected=filtered[state.page*15]?.c.id;render();}
@@ -156,6 +169,7 @@ document.addEventListener('click',event=>{
   if (target.dataset.more) {state.boardLimit+=20;render();}
   if (target.dataset.tab) {state.tab=target.dataset.tab;if (!$('overlay').hidden) renderOverlay();else render();}
   if (target.dataset.close) closeOverlay();
+  if (target.dataset.clarify!==undefined) {state.clarifications[state.selected]=Number(target.dataset.clarify);if(!$('overlay').hidden)renderOverlay();else render();}
 });
 document.addEventListener('keydown',event=>{
   if (event.key==='Escape') closeOverlay();
