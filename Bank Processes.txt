@@ -1,0 +1,5 @@
+Bank Processes:
+	Lack of:
+		-Simlicity
+		-Software Integration
+		-Transparancy
