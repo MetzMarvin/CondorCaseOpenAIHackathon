@@ -6,8 +6,15 @@ from openai import OpenAI
 from pydantic import BaseModel, ConfigDict, Field
 
 from backend.contracts import ProgressUpdate, RunResult
-from backend.ai_service.assessment import INTAKE_REQUIREMENTS, POLICY, SERIOUS_ISSUES
-from backend.ai_service.customer_email import CustomerEmail, EMAIL_INSTRUCTIONS
+from backend.ai_service.customer_email import CustomerEmail
+from backend.ai_service.context import expert_context
+
+
+class Citation(BaseModel):
+    model_config = ConfigDict(extra='forbid', frozen=True)
+    source_id: str
+    version: str
+    passage_id: str
 
 
 class ExpertReview(BaseModel):
@@ -16,6 +23,7 @@ class ExpertReview(BaseModel):
         'A justified HANDOFF or REQUEST_INFORMATION is supported even when settlement is unsupported or evidence is missing.')
     summary: str = Field(min_length=1)
     source_ids: list[str]
+    citations: list[Citation] = Field(default_factory=list)
 
 
 class ExpertDraft(BaseModel):
@@ -49,18 +57,9 @@ reported safety issue before agreeing it needs specialist review.
 """
 
 
-def run_experts(request, baseline, emit_progress, settings):
-    allowed_sources = {s.source_id for s in baseline.assessment.sources}
-    context = {
-        'trigger': request.trigger,
-        'approved_policy': {'source': POLICY.model_dump(),
-                            'intake_requirements': INTAKE_REQUIREMENTS,
-                            'serious_issues': sorted(SERIOUS_ISSUES)},
-        'snapshot': request.snapshot.model_dump(mode='json', exclude={'attachments'}),
-        'attachment_metadata': [dict(attachment_id=a.attachment_id, filename=a.filename,
-                                     media_type=a.media_type) for a in request.snapshot.attachments],
-        'validated_recommendation': baseline.model_dump(mode='json'),
-    }
+def run_experts(request, baseline, emit_progress, settings, *, bundle):
+    context = expert_context(bundle, baseline)
+    expected_citations = {Citation(**c) for c in context['required_citations']}
     # Explicit endpoint avoids inheriting a third-party OPENAI_BASE_URL.
     with OpenAI(api_key=settings.api_key, base_url='https://api.openai.com/v1',
                 timeout=settings.timeout, max_retries=0) as client:
@@ -73,51 +72,43 @@ def run_experts(request, baseline, emit_progress, settings):
             )
             if response.status != 'completed' or response.output_parsed is None:
                 raise ValueError('Expert response incomplete or refused')
-            return response.output_parsed
+            return schema.model_validate(response.output_parsed.model_dump())
 
-        for step, role in (
-            ('extract_evidence', 'Evidence expert: check the supplied facts, provenance and missing evidence against the recommendation.'),
-            ('retrieve_policy', 'Policy expert: assess the recommendation against the synthetic policy, conflicts, seriousness and financial authority.'),
-        ):
+        for step in ('extract_evidence', 'retrieve_policy'):
             emit_progress(ProgressUpdate(step_id=step, type='step.started',
                                          summary='OpenAI expert review started.', simulation=False))
-            review = call(role, ExpertReview)
-            if not review.supported or not set(review.source_ids) <= allowed_sources:
-                raise ValueError('Expert review could not validate recommendation')
-            context[step] = review.model_dump()
-            emit_progress(ProgressUpdate(step_id=step, type='step.completed', summary=review.summary,
-                                         source_ids=tuple(review.source_ids), simulation=False))
+            review = call('Review the deterministic next action. Cite every required source and every exact selected passage, including prerequisites and exceptions.', ExpertReview)
+            if (not review.supported or set(review.source_ids) != set(context['required_source_ids'])
+                    or set(review.citations) != expected_citations or len(review.citations) != len(expected_citations)):
+                raise ValueError('Expert review could not validate exact support')
+            # Free-text reviews are neither forwarded to another model nor displayed.
+            emit_progress(ProgressUpdate(step_id=step, type='step.completed', summary='Expert support review completed.',
+                                         source_ids=tuple(context['required_source_ids']), simulation=False))
         emit_progress(ProgressUpdate(step_id='assess', type='step.started',
-                                     summary='OpenAI communication expert is drafting the proposal.', simulation=False))
+                                     summary='OpenAI communication expert is checking the reviewed template.', simulation=False))
         action = baseline.proposed_action
         if action.type == 'REQUEST_INFORMATION':
             emit_progress(ProgressUpdate(step_id='request_information', type='step.started',
-                summary='Generating a customer follow-up email draft.', simulation=False))
-            draft = call(EMAIL_INSTRUCTIONS, CustomerEmail)
-        else:
-            draft = call('Communication expert: explain the reviewed decision and draft the customer reply, '
-                         'or an internal handoff summary. Explicitly label any financial action as a demo proposal. '
-                         'Preserve every amount and currency.', ExpertDraft)
-        if draft.action_type != action.type:
-            raise ValueError('Expert changed the authorized action')
+                summary='Checking the customer follow-up template.', simulation=False))
+        schema = CustomerEmail if action.type == 'REQUEST_INFORMATION' else ExpertDraft
+        draft = call('Return reviewed_draft exactly. You may change only sentiment. Do not paraphrase substantive text, questions or explanations.', schema)
+        expected = dict(context['reviewed_draft'])
+        expected['sentiment'] = draft.sentiment
+        if draft.model_dump() != expected:
+            raise ValueError('Expert changed a reviewed substantive template')
         payload = action.payload.model_dump()
         if action.type == 'REQUEST_INFORMATION':
             payload['question_de'] = draft.render(request.case_id, action.payload.missing_facts)
             emit_progress(ProgressUpdate(step_id='request_information', type='step.completed',
                 summary='Customer email draft prepared; delivery is pending case-service validation.', simulation=False))
-        elif action.type == 'RESOLVE':
-            payload.update(reply_de=draft.customer_message, explanation=draft.explanation)
-        else:
-            payload['summary'] = draft.explanation + '\n' + draft.customer_message
         action_data = action.model_dump()
         action_data['payload'] = payload
         assessment = baseline.assessment.model_dump()
-        assessment.update(sentiment=draft.sentiment, next_action_explanation=draft.explanation)
+        assessment['sentiment'] = draft.sentiment
         data = baseline.model_dump()
         data.update(proposed_action=action_data, assessment=assessment, simulation=False)
         result = RunResult.model_validate(data)
-        emit_progress(ProgressUpdate(step_id='assess', type='step.completed',
-                                     summary=draft.explanation, simulation=False))
+        emit_progress(ProgressUpdate(step_id='assess', type='step.completed', summary='Reviewed communication template validated.', simulation=False))
         emit_progress(ProgressUpdate(step_id='validate_action', type='step.completed',
                                      summary='Live expert proposal validated; execution belongs to the case service.', simulation=False))
         return result
