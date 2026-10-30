@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from backend.ai_service.assessment import INTERNAL_FACTS, SERIOUS_ISSUES
 from backend.ai_service.questions import QUESTIONS
 from backend.contracts import Fact, RunRequest, SourceRef, TechnicalError
-from backend.ai_service.evidence import EvidenceScope, LookupRequest, ReadOnlyEvidenceAdapters
+from backend.ai_service.evidence import EvidenceScope, LookupRequest, LookupResult, ReadOnlyEvidenceAdapters, RecordReader
 
 
 @dataclass(frozen=True)
@@ -31,21 +31,13 @@ def prepare_evidence(request: RunRequest, adapters: ReadOnlyEvidenceAdapters | N
         matches = tuple(name for name in matches if name not in supplied_matches)
         if matches:
             scope = EvidenceScope(case_id=request.case_id, case_version=request.case_version)
-            try:
-                result = adapters.crm.lookup(LookupRequest(scope=scope, snapshot=snapshot, fact_names=matches))
-            except Exception:
-                return _failure('EVIDENCE_UNAVAILABLE', 'CRM evidence access failed.', True)
-            if result.scope != scope:
-                return _failure('EVIDENCE_SCOPE_VIOLATION', 'CRM evidence does not match the requested case version.')
-            if result.status == 'unavailable':
-                return _failure('EVIDENCE_UNAVAILABLE', 'CRM evidence is unavailable.', result.error.retryable)
+            allowed = {'customer_match', 'booking_match', 'flight_match', 'booking_reference', 'flight_number', 'flight_date'}
+            result, error = _validated_lookup(adapters.crm,
+                LookupRequest(scope=scope, snapshot=snapshot, fact_names=matches), allowed, crm=True)
+            if error:
+                return PreparedEvidence(None, error)
             unmatched = result.status in {'not_found', 'ambiguous'}
             if result.status == 'found':
-                if result.freshness != 'current':
-                    return _failure('EVIDENCE_STALE', 'CRM evidence requires refresh at the current case version.', True)
-                allowed = {'customer_match', 'booking_match', 'flight_match', 'booking_reference', 'flight_number', 'flight_date'}
-                if any(fact.name not in allowed for fact in result.facts):
-                    return _failure('INVALID_ADAPTER_EVIDENCE', 'CRM returned facts outside its evidence authority.')
                 if not set(matches) <= {fact.name for fact in result.facts if fact.value == 'matched'}:
                     return _failure('INTERNAL_EVIDENCE_REQUIRED', 'CRM returned incomplete match evidence.')
                 snapshot = snapshot.model_copy(update={'booking_context': snapshot.booking_context + result.facts})
@@ -54,20 +46,13 @@ def prepare_evidence(request: RunRequest, adapters: ReadOnlyEvidenceAdapters | N
         needed = tuple(name for name in ('expense_eligibility', 'payment_history') if name not in supplied)
         if needed:
             scope = EvidenceScope(case_id=request.case_id, case_version=request.case_version)
-            try:
-                result = adapters.operational.lookup(LookupRequest(scope=scope, snapshot=snapshot, fact_names=needed))
-            except Exception:
-                return _failure('EVIDENCE_UNAVAILABLE', 'Internal evidence access failed.', True)
-            if result.scope != scope:
-                return _failure('EVIDENCE_SCOPE_VIOLATION', 'Evidence does not match the requested case version.')
-            if result.status == 'unavailable':
-                return _failure('EVIDENCE_UNAVAILABLE', 'Internal evidence is unavailable.', result.error.retryable)
+            result, error = _validated_lookup(adapters.operational,
+                LookupRequest(scope=scope, snapshot=snapshot, fact_names=needed),
+                INTERNAL_FACTS - {'legal_regime', 'policy_version'})
+            if error:
+                return PreparedEvidence(None, error)
             if result.status != 'found':
                 return _failure('INTERNAL_EVIDENCE_REQUIRED', 'Required internal records could not be established.')
-            if result.freshness != 'current':
-                return _failure('EVIDENCE_STALE', 'Internal evidence requires refresh at the current case version.', True)
-            if any(fact.name not in INTERNAL_FACTS - {'legal_regime', 'policy_version'} for fact in result.facts):
-                return _failure('INVALID_ADAPTER_EVIDENCE', 'Operational reader returned facts outside its evidence authority.')
             found = {fact.name for fact in result.facts if fact.sources and fact.value not in (None, '')}
             if not set(needed) <= found:
                 return _failure('INTERNAL_EVIDENCE_REQUIRED', 'Required internal records are incomplete.')
@@ -78,3 +63,29 @@ def prepare_evidence(request: RunRequest, adapters: ReadOnlyEvidenceAdapters | N
 
 def _failure(code: str, message: str, retryable: bool = False) -> PreparedEvidence:
     return PreparedEvidence(None, TechnicalError(code=code, message=message, retryable=retryable))
+
+
+def _validated_lookup(reader: RecordReader, request: LookupRequest,
+                      allowed: set[str], *, crm: bool = False) -> tuple[LookupResult | None, TechnicalError | None]:
+    label = 'CRM' if crm else 'Internal'
+    try:
+        result = reader.lookup(request)
+    except Exception:
+        return None, TechnicalError(code='EVIDENCE_UNAVAILABLE', message=f'{label} evidence access failed.', retryable=True)
+    try:
+        # Model instances can bypass validation through model_copy/model_construct.
+        result = LookupResult.model_validate(result.model_dump())
+    except Exception:
+        return None, TechnicalError(code='INVALID_ADAPTER_EVIDENCE', message=f'{label} reader returned invalid evidence.', retryable=False)
+    if result.scope != request.scope:
+        message = 'CRM evidence' if crm else 'Evidence'
+        return None, TechnicalError(code='EVIDENCE_SCOPE_VIOLATION', message=f'{message} does not match the requested case version.', retryable=False)
+    if result.status == 'unavailable':
+        return None, TechnicalError(code='EVIDENCE_UNAVAILABLE', message=f'{label} evidence is unavailable.', retryable=result.error.retryable)
+    if result.status == 'found':
+        if result.freshness != 'current':
+            return None, TechnicalError(code='EVIDENCE_STALE', message=f'{label} evidence requires refresh at the current case version.', retryable=True)
+        if any(fact.name not in allowed for fact in result.facts):
+            message = 'CRM' if crm else 'Operational reader'
+            return None, TechnicalError(code='INVALID_ADAPTER_EVIDENCE', message=f'{message} returned facts outside its evidence authority.', retryable=False)
+    return result, None

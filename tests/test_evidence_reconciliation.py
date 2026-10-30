@@ -94,3 +94,18 @@ class ReconciliationTests(unittest.TestCase):
         prepared = prepare_evidence(request, create_evidence_adapters(crm=FakeRecordReader({scope: LookupResult(scope=scope, status='ambiguous')})))
         self.assertIsNone(prepared.error)
         self.assertEqual([item.name for item in assess(prepared.request.snapshot, prepared.sources).missing], ['booking_reference'])
+
+    def test_malformed_reader_results_fail_closed_at_preparation_boundary(self):
+        original = demo_request('clear')
+        request = original.model_copy(update={'snapshot': original.snapshot.model_copy(update={'flight_context': ()})})
+        scope = EvidenceScope(case_id=request.case_id, case_version=request.case_version)
+        valid = LookupResult(scope=scope, status='found', facts=original.snapshot.flight_context,
+            observed_at=datetime.now(timezone.utc), freshness='current')
+        for change in ({'observed_at': None}, {'observed_at': datetime(2026, 10, 30)},
+                       {'facts': tuple(f.model_copy(update={'sources': ()}) for f in valid.facts)},
+                       {'status': 'invented'}):
+            with self.subTest(change=change):
+                reader = FakeRecordReader({scope: valid.model_copy(update=change)})
+                prepared = prepare_evidence(request, create_evidence_adapters(operational=reader))
+                self.assertIsNone(prepared.request)
+                self.assertEqual(prepared.error.code, 'INVALID_ADAPTER_EVIDENCE')
