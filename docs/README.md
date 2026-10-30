@@ -1,7 +1,12 @@
 # Hackathon-Dokumentation
 
+- [External contract review and integration task plan](planning/external-contract-review-task-plan.md): assessed coverage, concrete gaps, subsystem owners and prioritized test-first tasks.
+
 - [Frontend design guidelines](architecture/frontend-design-guidelines.md): design language extracted from the demo, including colors, typography, layouts, component patterns, interaction rules and a developer checklist.
+- [Lauffähiger System-3-Mock](../README.md): Startanleitung, Demo-Szenarien, Präsentationsansicht und Integration mit System 1.
+- [Demo-Prüfprotokoll](planning/demo-verification.md): tatsächlich ausgeführte Tests und bekannte Grenzen.
 - [Subsystems and interface contracts](architecture/subsystems-and-contracts.md): drei Entwicklungsbereiche, synchrone KI-Verarbeitung, gemeinsame Datenmodelle, API-Verträge und Ereignisse für die 3-Stunden-Demo.
+- [System 3: TDD-Subtasks](planning/service-operations-tdd-tasks.md): priorisierte Checkliste für Service Operations & Live Demo Console; erstes lauffähiges Beispiel, drei Kernabläufe und abschließende Demo-Prüfung.
 
 - [Hackathon-Plan](planning/hackathon-plan.md): Problemstatement, Ziele, MVP, Architektur, Salesforce-Dummy, Datenkonzept, Kennzahlen und Demo-Ablauf.
 - [Visueller Plan](planning/visual-plan.html): interaktive Übersicht mit „Einfacher Fall“, „Beleg fehlt“, „Schwerwiegender Fall“ und „Verärgert, aber klar“. KI stellt klare Rückfragen selbst und bearbeitet unterstützte Fälle automatisch. Menschen übernehmen bei Fähigkeits-/Befugnisgrenzen oder schwerwiegenden Sachverhalten. Die Sentimentanalyse der Kundentexte unterstützt Tonalität und Priorisierung; Stimmung allein löst keine Übergabe aus.

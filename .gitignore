@@ -1,2 +1,28 @@
 # Windows download metadata
 *:Zone.Identifier
+
+# Local demo runtime
+.venv/
+__pycache__/
+*.pyc
+demo_backend/*.sqlite*
+demo_backend/attachments/*
+!demo_backend/attachments/.gitkeep
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+
+# Generated caches, reports and local machine files
+.vite/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+coverage/
+.coverage
+htmlcov/
+playwright-report/
+test-results/
+*.log
+.DS_Store
