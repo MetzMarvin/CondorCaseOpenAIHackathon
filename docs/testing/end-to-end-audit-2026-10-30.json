@@ -57,16 +57,16 @@
     "check": "identical portal submission returns same receipt",
     "passed": true,
     "expected": {
-      "messageId": "1fef61f6181f48aa9aff9db7871aeb2a",
-      "caseId": "case-059a0ba4bc344e51a8796bacfa10f428",
+      "messageId": "1337f05cb7314001a41d5cf87437c4ff",
+      "caseId": "case-2c10f58b26264e2d98fda99a95df11dd",
       "caseVersion": 1,
-      "customerCaseUrl": "/portal/cases/case-059a0ba4bc344e51a8796bacfa10f428"
+      "customerCaseUrl": "/portal/cases/case-2c10f58b26264e2d98fda99a95df11dd"
     },
     "observed": {
-      "messageId": "1fef61f6181f48aa9aff9db7871aeb2a",
-      "caseId": "case-059a0ba4bc344e51a8796bacfa10f428",
+      "messageId": "1337f05cb7314001a41d5cf87437c4ff",
+      "caseId": "case-2c10f58b26264e2d98fda99a95df11dd",
       "caseVersion": 1,
-      "customerCaseUrl": "/portal/cases/case-059a0ba4bc344e51a8796bacfa10f428"
+      "customerCaseUrl": "/portal/cases/case-2c10f58b26264e2d98fda99a95df11dd"
     }
   },
   {
@@ -180,7 +180,7 @@
   {
     "check": "identical upload retry is idempotent",
     "passed": false,
-    "expected": "11d49889-e254-4207-86e0-2ca56054a512",
-    "observed": "12922999-ba3b-4e89-8ec5-647f1dde2cdb"
+    "expected": "a17c47bf-cec4-484a-9247-87c8a0e17cbe",
+    "observed": "cd44844b-074d-4fa0-833a-56358eca5812"
   }
 ]
