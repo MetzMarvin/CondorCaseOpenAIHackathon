@@ -161,6 +161,21 @@ Attachments are sent as metadata only; extracting their contents still requires
 System 1's case-scoped evidence adapter. Live experts do not expand the approved
 demo entitlement rules or independently execute actions.
 
+When live processing returns `REQUEST_INFORMATION`, the third expert automatically
+generates a customer follow-up email. It includes a case-reference subject, an
+empathetic opening, one question per outstanding fact, reply instructions and a
+signature. Missing, extra or duplicate question IDs fail validation. The complete
+plain-text draft (including its `Subject:` line) is returned in the existing
+`proposedAction.payload.questionDe` field, so no shared contract changes are needed.
+`request_information` progress events indicate draft generation, not delivery.
+System 1 must validate and record/send the simulated outbound message and retain
+the case/thread association. Specialist `HANDOFF` actions do not generate customer
+follow-up emails. Offline mode retains the reviewed deterministic question body.
+
+A synthetic email generated during a live smoke test is saved in
+[`backend/ai_service/customer_email_example.txt`](backend/ai_service/customer_email_example.txt)
+for review without model access. No email was sent during that test.
+
 The integration follows the official
 [OpenAI structured output guide](https://developers.openai.com/api/docs/guides/structured-outputs).
 Run `python -m unittest discover -s tests -p 'test_ai_service.py' -v` to check the

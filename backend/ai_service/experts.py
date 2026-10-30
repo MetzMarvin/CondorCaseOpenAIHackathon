@@ -7,11 +7,13 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from backend.contracts import ProgressUpdate, RunResult
 from backend.ai_service.assessment import INTAKE_REQUIREMENTS, POLICY, SERIOUS_ISSUES
+from backend.ai_service.customer_email import CustomerEmail, EMAIL_INSTRUCTIONS
 
 
 class ExpertReview(BaseModel):
     model_config = ConfigDict(extra='forbid')
-    supported: bool
+    supported: bool = Field(description='Whether the proposed next action is justified, not whether the claim is payable. '
+        'A justified HANDOFF or REQUEST_INFORMATION is supported even when settlement is unsupported or evidence is missing.')
     summary: str = Field(min_length=1)
     source_ids: list[str]
 
@@ -39,12 +41,18 @@ Other supported intake issues collect missing evidence before specialist adjudic
 Serious or unsupported issues require a specialist. Do not treat customer claims as
 internal eligibility checks. Preserve all restrictions in the validated recommendation.
 This is a synthetic policy, not actual airline law. Cite only provided source IDs.
+Review the actual proposed_action.type, not a hypothetical reimbursement. A serious
+issue supports HANDOFF to a specialist; missing evidence supports REQUEST_INFORMATION.
+Neither means supported=false when that is already the proposed next action. The
+snapshot issues are supplied intake classifications; do not require proof of a
+reported safety issue before agreeing it needs specialist review.
 """
 
 
 def run_experts(request, baseline, emit_progress, settings):
     allowed_sources = {s.source_id for s in baseline.assessment.sources}
     context = {
+        'trigger': request.trigger,
         'approved_policy': {'source': POLICY.model_dump(),
                             'intake_requirements': INTAKE_REQUIREMENTS,
                             'serious_issues': sorted(SERIOUS_ISSUES)},
@@ -81,15 +89,22 @@ def run_experts(request, baseline, emit_progress, settings):
                                          source_ids=tuple(review.source_ids), simulation=False))
         emit_progress(ProgressUpdate(step_id='assess', type='step.started',
                                      summary='OpenAI communication expert is drafting the proposal.', simulation=False))
-        draft = call('Communication expert: explain the reviewed decision and draft the customer question or reply, '
-                     'or an internal handoff summary. Explicitly label any financial action as a demo proposal. '
-                     'Ask for every missing field and preserve every amount and currency.', ExpertDraft)
         action = baseline.proposed_action
+        if action.type == 'REQUEST_INFORMATION':
+            emit_progress(ProgressUpdate(step_id='request_information', type='step.started',
+                summary='Generating a customer follow-up email draft.', simulation=False))
+            draft = call(EMAIL_INSTRUCTIONS, CustomerEmail)
+        else:
+            draft = call('Communication expert: explain the reviewed decision and draft the customer reply, '
+                         'or an internal handoff summary. Explicitly label any financial action as a demo proposal. '
+                         'Preserve every amount and currency.', ExpertDraft)
         if draft.action_type != action.type:
             raise ValueError('Expert changed the authorized action')
         payload = action.payload.model_dump()
         if action.type == 'REQUEST_INFORMATION':
-            payload['question_de'] = draft.customer_message
+            payload['question_de'] = draft.render(request.case_id, action.payload.missing_facts)
+            emit_progress(ProgressUpdate(step_id='request_information', type='step.completed',
+                summary='Customer email draft prepared; delivery is pending case-service validation.', simulation=False))
         elif action.type == 'RESOLVE':
             payload.update(reply_de=draft.customer_message, explanation=draft.explanation)
         else:
