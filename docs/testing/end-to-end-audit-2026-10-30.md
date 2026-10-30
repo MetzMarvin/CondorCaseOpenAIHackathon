@@ -2,7 +2,7 @@
 
 The seeded operations demo works. The entire application is **not yet connected end to end**: customer intake/preparation and operations/AI execution use separate case stores and incompatible HTTP contracts. New free-text claims also expose decision errors that the fixture-based tests do not catch.
 
-Audited on 30 October 2026, Windows, Python 3.14.0 and Node 24.11.1. Application revision: `5bf9a3d`, after updating main from `1371585` to `1009500` and restoring local intake/preparation work. All exercised messages, uploads and payments were synthetic; AI and preparation were explicitly offline. Existing user databases were not reset.
+Audited on 30 October 2026, Windows, Python 3.14.0 and Node 24.11.1. Final application revision: **`1660d21`** (includes remote System 2 update `8727444`). Initial checks ran at `5bf9a3d`; the full Python suite, frontend tests/build, all 29 HTTP probes and three core browser flows were repeated from an isolated checkout of `1660d21`. All exercised messages, uploads and payments were synthetic; AI and preparation were explicitly offline. Existing user databases were not reset.
 
 ## Update and preservation
 
@@ -10,23 +10,26 @@ Audited on 30 October 2026, Windows, Python 3.14.0 and Node 24.11.1. Application
 - Preserved the remote operations frontend, tests, dependency lock and configurable proxy. Restored the local customer portal at `/portal`, loading its styles separately from the operations console.
 - Combined environment examples and documented the two backend startup paths. Preserved local intake/preparation code, fixtures, tests and notes.
 - Kept the pre-update Git stash as a recovery copy. Overlapping earlier frontend configuration remains recoverable there; it was reconciled with the remote configuration rather than overwriting it.
-- A separate `feature/unified-system1` worktree appeared during the audit. It was not modified or included in these results.
+- During the audit, remote main advanced to `8727444`; its System 2 changes were merged and pushed as `1660d21`. A separate `feature/unified-system1` task then started a merge in the shared working folder. That in-progress merge was left untouched. Final checks used an isolated `codex/e2e-audit` checkout; this report does not certify that later unified implementation.
 
 ## Checks actually performed
 
 | Check | Result | Scope and qualification |
 |---|---|---|
-| Full Python suite, native Windows encoding | 105 passed, 1 failed; 85 subtests passed | The failure reads a UTF-8 evaluation artifact using the platform's default encoding. |
-| Full Python suite with `-X utf8` | **106 passed; 85 subtests passed** | Includes intake, preparation, contracts, AI routing, mocked provider calls, data pipeline and operations API. A locked SQLite temporary-file cleanup traceback still occurs at interpreter exit. |
+| Earlier suite at `5bf9a3d`, native Windows encoding | 105 passed, 1 failed; 85 subtests passed | The failure reads a UTF-8 evaluation artifact using the platform's default encoding. The same earlier suite passed 106 tests with `-X utf8`. |
+| Final full Python suite with `-X utf8` | **205 passed, 2 failed; 143 subtests passed** | Includes intake, preparation, contracts, AI routing, scoped evidence, local retrieval, mocked provider calls, data pipeline and operations API. Both failures are Windows SQLite cleanup in `tests/test_email_delivery.py`. An additional engine cleanup traceback occurs at interpreter exit. |
 | Frontend tests | **10 passed in 3 files** | Component/API tests use mocked fetch. They are not full browser integration tests and do not cover the current portal component. |
 | Frontend production build | **Passed** | Both portal and operations bundles built. Browser flows used the Vite development servers, not the production bundle. |
 | Python dependency compatibility | **Passed** | `pip check`: no broken requirements. |
-| Standalone offline AI evaluation | **19/19 scenarios passed** | Snapshots and proposed actions, not customer-to-operations integration. |
+| Standalone offline AI evaluation | **19/19 scenarios passed** | Repeated on the final revision; snapshots and proposed actions, not customer-to-operations integration. |
+| New synthetic legal fixtures | **20/20 executed without technical failure** | 19 handoffs and one information request. The script validates fixtures and runs proposals; it does not score legal acceptance criteria. |
 | Additional live HTTP audit | **11/29 expectations met; 18 gaps reproduced** | Two isolated local servers. Some expectations describe the intended unified contract, which the current separate slices do not implement. [Exact expected/observed results](end-to-end-audit-2026-10-30.json). |
 | Policy package validation, working checkout | **Failed** | Byte-hash manifest differs after Windows CRLF conversion. |
 | Policy package validation, isolated Git-byte copy | **Passed** | 49 rules, 30 sources, 9 templates and 24 table checks. Not application execution of the 20 legal/workflow acceptance specifications. |
 
 The first Python attempt also encountered an inaccessible pytest temporary folder. Re-running with a fresh repository-local `--basetemp` resolved that environment problem. Five pinned raw source files had CRLF bytes while their manifest and Git blobs expected LF. Their contents differed only by line endings; restoring the verified Git bytes made pipeline checks pass. The committed `.gitattributes` already protects these raw files on future checkouts.
+
+The expanded suite initially could not collect four retrieval test modules because the optional `qdrant-client` and NumPy dependencies were absent. Installing `requirements-rag.txt` and `requirements-extraction.txt` enabled the final run. Retrieval tests used in-memory Qdrant and fake embeddings; no hosted vector service or live embedding model was exercised.
 
 An existing Vite process held `esbuild.exe` open and prevented `npm ci`. That project process was stopped, the locked dependencies were installed, and tests/build succeeded with normal filesystem access. Restricted execution had separately failed to load the Vite configuration.
 
@@ -74,7 +77,7 @@ flowchart LR
 | Events | Optional case filter, 200-record page and cursor | Required case filter, unbounded result | Console fetches one page and does not follow cursors, which would truncate activity after integration with the intake feed. |
 | Seed identities | `case-clear` means flight delay; `case-evidence` means hotel expenses and a stored request | Same IDs mean meal expense fixtures with different facts/statuses | Same ID is not the same business case across the stores. |
 | Preparation | Sourced documents and mock enrichment, no decisions | Fixture-derived snapshots, narrow amount parser, no preparation call | Uploaded evidence does not flow through preparation into the operations decision. |
-| AI configuration | `CONDOR_PREPARATION_MODE=offline/live` | `AI_MODE=offline/auto/openai` | Launcher forces `openai` plus fallback, even if the caller requested offline mode. |
+| AI configuration | `CONDOR_PREPARATION_MODE=offline/live` | `AI_MODE=offline/auto/openai` | Separate modes need deliberate configuration. The latest launcher honors explicit offline mode, defaults to openai, and preserves failed runs on provider errors. |
 
 The shared wire contracts also retain `questionDe` and `replyDe` while carrying English content. That is a naming collision with the supplied English-only API-field requirement; migrating those names needs coordinated backend/frontend changes rather than an isolated rename.
 
@@ -127,11 +130,12 @@ The operations API accepts whitespace-only messages, invalid sender strings and 
 ### P2 — Windows setup and verification are not reproducible as documented
 
 - The default Python test command fails one evaluation-artifact comparison on UTF-8 characters. Use explicit `encoding='utf-8'` in the test's file reads; `-X utf8` demonstrated the cause.
-- `demo_backend/test_api.py` retains an open SQLAlchemy engine when its temporary directory is cleaned. Tests pass but Windows reports a locked database at exit. Dispose the test engine before cleanup.
+- The two failing email-delivery tests use `with sqlite3.connect(...)`, which commits/rolls back but does not close the connection. Windows cannot delete `outbox.sqlite3` during cleanup. Use `contextlib.closing` or an explicit close in those tests. The implementation already uses closing.
+- The operations/evidence test modules retain an open SQLAlchemy engine when their temporary directory is cleaned. Windows reports a locked database at interpreter exit. Dispose the test engine before cleanup.
 - The policy manifest hashes raw bytes and lacks line-ending protection. All 12 manifest inputs/outputs matched after CRLF-to-LF normalization; an isolated copy of Git blobs validated successfully. Pin their line endings instead of rebuilding platform-specific hashes.
-- `start.sh` assumes `.venv/bin/python` and Bash/Python 3.13 provisioning. This Windows checkout uses `.venv/Scripts/python.exe`. The shell launcher also hardcodes live AI plus fallback and checks only whether Vite exists before deciding to install frontend dependencies.
+- `start.sh` assumes `.venv/bin/python` and Bash/Python 3.13 provisioning. This Windows checkout uses `.venv/Scripts/python.exe`. The updated shell launcher now honors explicit `AI_MODE=offline` and keeps provider failures visible, correcting the earlier forced-live/fallback behavior. It still checks only whether Vite exists before deciding to install frontend dependencies.
 
-**Next change:** Provide a Windows launcher, honor explicit offline mode, and make dependency setup follow the lockfile. Keep the runtime startup paths and tested interpreter requirements consistent in README/AGENTS.
+**Next change:** Provide a Windows launcher and make dependency setup follow the lockfile and include test extras when running the full suite. Keep the runtime startup paths and tested interpreter requirements consistent in README/AGENTS.
 
 ### P2 — The current tests prove components more strongly than the complete journey
 
@@ -143,13 +147,13 @@ Frontend tests mock HTTP and include the removed `CustomerView` component. Syste
 
 Missing for the requested combined demo: shared persistence, one inbound/attachment contract, prepared-evidence classification, an operations preparation/retry view, customer-visible outcomes from operations actions, canonical fixtures, and regression coverage across those boundaries. The operations UI also lacks a new inbound email form; it can simulate replies to existing cases, while new intake is API-only or through the separate portal.
 
-The operator-policy/RAG package is a standalone draft; the AI workflow uses synthetic expense policy v2. Its 20 legal/workflow specifications are not application tests. Connecting the broader policy package is separate work and does not establish real-world legal entitlement.
+The merged System 2 adds scoped evidence adapters, extraction/reconciliation, approved knowledge retrieval, diagnostics and separate legal research retrieval. The operations backend still calls the unconfigured processor: it does not bind the readers or diagnostic sink. The simulated email outbox also remains a standalone adapter. The AI action workflow uses approved synthetic expense policy v2; legal research results do not authorize payments. The operator-policy package remains a draft, and its 20 legal/workflow specifications are not application tests. Connecting the broader policy package is separate work and does not establish real-world legal entitlement.
 
 Authentication, real email, actual payments, real Salesforce, workers, brokers, large datasets and production load/security certification remain deliberately outside the hackathon scope. Live model/provider behavior, production-bundle browser serving, multi-browser/device accessibility and fullscreen were not tested in this audit.
 
 ## Reproduce
 
-From repository root, with installed dependencies and new disposable data paths:
+From a checkout of `1660d21`, with installed backend dependencies plus `requirements-rag.txt` and `requirements-extraction.txt`, and new disposable data paths:
 
 ```powershell
 $env:AI_MODE = 'offline'
@@ -161,7 +165,7 @@ $env:CONDOR_PREPARATION_MODE = 'offline'
 
 Run `npm ci`, `npm test` and `npm run build` from `frontend`.
 
-Start `demo_backend.app:app` on 8011 with `DEMO_DB` pointing to a new test SQLite file. Start `backend.main:app` on 8012 with `CONDOR_DATA_DIR` pointing to a new test directory. Then:
+The final frozen-checkout run used ports 8021/8022 and frontend 5184; the following example uses 8011/8012. Start `demo_backend.app:app` on 8011 with `DEMO_DB` pointing to a new test SQLite file. Start `backend.main:app` on 8012 with `CONDOR_DATA_DIR` pointing to a new test directory. Then:
 
 ```powershell
 ./.venv/Scripts/python.exe tests/audit_http.py --operations http://127.0.0.1:8011 --intake http://127.0.0.1:8012 --output CondorCaseOpenAIHackathon/output/audit-http.json
