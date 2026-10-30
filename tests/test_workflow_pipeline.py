@@ -64,6 +64,8 @@ class WorkflowPipelineTests(unittest.TestCase):
 
     def test_missing_attachment_adapter_fails_instead_of_ignoring_attachment(self):
         request, _ = self.document_case('Total: 12.34')
+        request = request.model_copy(update={'snapshot': request.snapshot.model_copy(update={
+            'flight_context': demo_request('clear').snapshot.flight_context})})
         result = process_case(request, lambda _: None)
         self.assertEqual(result.status, 'FAILED')
         self.assertEqual(result.technical_error.code, 'ATTACHMENT_ADAPTER_UNCONFIGURED')
@@ -86,7 +88,8 @@ class WorkflowPipelineTests(unittest.TestCase):
         selected = selected.model_copy(update={'passages': tuple(p.model_copy(update={'version': '3'}) for p in selected.passages)})
         events = []
         result = create_processor(retriever=lambda _: selected)(demo_request('clear'), events.append)
-        self.assertEqual(result.proposed_action.type, 'RESOLVE')
+        self.assertEqual(result.proposed_action.type, 'HANDOFF')
+        self.assertEqual(result.proposed_action.payload.reason_code, 'UNSUPPORTED_ACTION')
         self.assertEqual([s.version for s in result.proposed_action.sources if s.source_id == 'demo-expense-policy'], ['3'])
         self.assertIn('demo-expense-policy', next(e.source_ids for e in events if e.step_id == 'retrieve_policy' and e.type == 'step.completed'))
 
@@ -98,5 +101,5 @@ class WorkflowPipelineTests(unittest.TestCase):
         self.assertEqual(result.status, 'SUCCEEDED')
         prepared = experts.call_args.args[0]
         self.assertIn(1234, [f.value for f in prepared.snapshot.known_facts if f.name == 'receipt_amount_minor'])
-        self.assertEqual({p.role for p in experts.call_args.kwargs['knowledge'].passages},
+        self.assertEqual({p.role for p in experts.call_args.kwargs['bundle'].retrieval.passages},
                          {'RULE', 'PREREQUISITE', 'EXCEPTION'})

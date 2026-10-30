@@ -1,35 +1,52 @@
 """Synchronous, offline demo assessment. Never executes proposed actions."""
 from typing import Callable
 from datetime import date
-from functools import partial
+from dataclasses import replace
+from hashlib import sha256
 from uuid import NAMESPACE_URL, uuid5
 
 from backend.contracts import (
-    Fact, SourceRef, Assessment, Handoff, HandoffPayload, InformationPayload, ProgressUpdate,
+    SourceRef, Fact, Assessment, Handoff, HandoffPayload, InformationPayload, ProgressUpdate,
     RequestInformation, ResolutionPayload, Resolve, RunRequest, RunResult, TechnicalError,
 )
-from backend.ai_service.assessment import CONTROL_FACTS, INTERNAL_FACTS, Decision, assess
-from backend.ai_service.evidence import AttachmentRequest, EvidenceScope, create_evidence_adapters
-from backend.ai_service.extraction import DocumentExtractor
+from backend.ai_service.assessment import assess, Decision, INTERNAL_FACTS
+from backend.ai_service.questions import information_message, QUESTIONS, missing_fact
+from backend.ai_service.retrieval import RetrievalQuery, RetrievalResult, retrieve
 from backend.ai_service.reconciliation import prepare_evidence
-from backend.ai_service.retrieval import RetrievalQuery, retrieve
-from backend.ai_service.questions import QUESTIONS, missing_fact
-from backend.ai_service.questions import information_message
+from backend.ai_service.evidence import AttachmentRequest, AttachmentResult, EvidenceScope
+from backend.ai_service.extraction import DocumentExtractor, ExtractionResult
+from backend.ai_service.context import ProcessingBundle
 
 ProgressCallback = Callable[[ProgressUpdate], None]
 
+# This implementation adjudicates only this reviewed synthetic policy content.
+# A new card/version requires a coordinated deterministic rule implementation.
+EXPENSE_POLICY_HASH = '3bf29bc02f767a9772c7aac3ec6a5f214a217ba7d9de0fcbb0b3f1dd716022ed'
+EXPENSE_SUPPORT = {'expense-rule', 'expense-prerequisites', 'expense-exceptions'}
 
-def create_processor(*, adapters=None, extractor=None, retriever=None, context_callback=None):
-    """Bind backend-owned dependencies while preserving the two-argument contract."""
-    return partial(_process_case, adapters=adapters, extractor=extractor, retriever=retriever, context_callback=context_callback)
+
+def supports_implemented_expense_rule(passages):
+    selected = {p.passage_id for p in passages if p.source_id == 'demo-expense-policy'
+                and p.version == '2' and p.content_hash == EXPENSE_POLICY_HASH
+                and p.source_kind == 'demo_assumption'}
+    return EXPENSE_SUPPORT <= selected and any(p.passage_id == 'expense-rule'
+        and p.source_id == 'demo-expense-policy' and p.version == '2'
+        and p.rule_key == 'expense_reimbursement' and p.decision == 'supported' for p in passages)
+
+
+def create_processor(*, adapters=None, extractor=None, retriever=None):
+    """Bind offline dependencies without changing the synchronous call signature."""
+    def processor(request, emit_progress):
+        return run_workflow(request, emit_progress, bundle=ProcessingBundle(request),
+                            adapters=adapters, extractor=extractor, retriever=retriever)
+    return processor
 
 
 def process_case(request: RunRequest, emit_progress: ProgressCallback) -> RunResult:
-    return _process_case(request, emit_progress)
+    return create_processor()(request, emit_progress)
 
 
-def _process_case(request: RunRequest, emit_progress: ProgressCallback, *,
-                  adapters=None, extractor=None, retriever=None, context_callback=None) -> RunResult:
+def run_workflow(request, emit_progress, *, bundle, adapters=None, extractor=None, retriever=None):
     """Assess System 1's read-only snapshot and propose one action, or fail safely."""
     identity = dict(run_id=request.run_id, case_id=request.case_id,
                     based_on_case_version=request.case_version)
@@ -39,95 +56,119 @@ def _process_case(request: RunRequest, emit_progress: ProgressCallback, *,
         if snapshot.owner.type != 'AI' or snapshot.status != 'IN_PROGRESS':
             return RunResult(**identity, status='FAILED', technical_error=TechnicalError(
                 code='INVALID_AI_CONTEXT', message='Processing requires an active AI-owned case.', retryable=False))
-        emit_progress(ProgressUpdate(step_id=step, type='step.started', summary='Preparing case-scoped evidence.'))
+        emit_progress(ProgressUpdate(step_id=step, type='step.started', summary='Checking supplied evidence.'))
         customer_facts = []
+        unreadable_without_source = False
         scope = EvidenceScope(case_id=request.case_id, case_version=request.case_version)
-        reader = (adapters or create_evidence_adapters()).attachments
-        extractor = extractor or DocumentExtractor()
         for message in snapshot.messages:
-            if message.sender in {snapshot.owner.id, 'AI', 'SYSTEM'}:
+            if message.sender in {snapshot.owner.id, 'AI', 'SYSTEM', 'condor-service@example.com'}:
                 continue
             extracted_message = DocumentExtractor().extract_message(message, scope)
+            bundle.extractions.append(extracted_message)
             if extracted_message.error:
-                emit_progress(ProgressUpdate(step_id=step, type='step.failed',
-                                             summary=extracted_message.error.message))
                 return RunResult(**identity, status='FAILED', technical_error=extracted_message.error)
-            customer_facts.extend(Fact(name=c.name, value=c.value, sources=(c.provenance.source,))
-                                  for c in extracted_message.candidates)
-        for reference in snapshot.attachments:
-            attachment = reader.read(AttachmentRequest(scope=scope, reference=reference))
-            if attachment.scope != scope or attachment.reference != reference:
-                raise ValueError('Attachment scope mismatch')
-            extracted = extractor.extract(attachment)
-            if extracted.scope != scope:
-                raise ValueError('Extraction scope mismatch')
-            if extracted.error:
-                emit_progress(ProgressUpdate(step_id=step, type='step.failed', summary=extracted.error.message))
-                return RunResult(**identity, status='FAILED', technical_error=extracted.error)
-            customer_facts.extend(Fact(name=c.name, value=c.value, sources=(c.provenance.source,))
-                                  for c in extracted.candidates)
-            if extracted.status == 'unreadable':
-                customer_facts.append(Fact(name='receipt_readable', value=False,
-                    sources=(attachment.source or SourceRef(source_id=reference.attachment_id, version=str(request.case_version)),)))
+            for candidate in extracted_message.candidates:
+                provenance = candidate.provenance
+                if (provenance.source != SourceRef(source_id=message.message_id, version=str(scope.case_version))
+                        or provenance.content_hash != sha256(message.body.encode('utf-8')).hexdigest()
+                        or message.body[provenance.span_start:provenance.span_end] != provenance.original_value):
+                    raise ValueError('Message extraction provenance mismatch')
+                customer_facts.append(Fact(name=candidate.name, value=candidate.value,
+                                           sources=(provenance.source,)))
+        if adapters is not None:
+            scope = EvidenceScope(case_id=request.case_id, case_version=request.case_version)
+            for reference in snapshot.attachments:
+                attachment = AttachmentResult.model_validate(adapters.attachments.read(AttachmentRequest(scope=scope, reference=reference)).model_dump())
+                if attachment.scope != scope or attachment.reference != reference:
+                    return RunResult(**identity, status='FAILED', technical_error=TechnicalError(
+                        code='EVIDENCE_SCOPE_VIOLATION', message='Attachment access returned a different scope.', retryable=False))
+                bundle.attachments.append(attachment)
+                extracted = ExtractionResult.model_validate((extractor or DocumentExtractor()).extract(attachment).model_dump())
+                if extracted.scope != scope:
+                    raise ValueError('Extraction scope mismatch')
+                bundle.extractions.append(extracted)
+                if extracted.status == 'parser_failure':
+                    return RunResult(**identity, status='FAILED', technical_error=extracted.error)
+                if extracted.status == 'unreadable':
+                    if attachment.source:
+                        customer_facts.append(Fact(name='receipt_readable', value=False, sources=(attachment.source,)))
+                    else:
+                        unreadable_without_source = True
+                for candidate in extracted.candidates:
+                    provenance = candidate.provenance
+                    if provenance.page < 1 or provenance.span_start < 0 or provenance.span_end <= provenance.span_start or provenance.span_end - provenance.span_start != len(provenance.original_value):
+                        raise ValueError('Invalid extraction span')
+                    if candidate.provenance.source != attachment.source or candidate.provenance.content_hash != attachment.content_hash:
+                        raise ValueError('Extraction provenance mismatch')
+                    customer_facts.append(Fact(name=candidate.name, value=candidate.value, sources=(candidate.provenance.source,)))
         prepared = prepare_evidence(request, adapters, customer_facts=tuple(customer_facts))
         if prepared.error:
-            emit_progress(ProgressUpdate(step_id=step, type='step.failed', summary=prepared.error.message))
             return RunResult(**identity, status='FAILED', technical_error=prepared.error)
-        snapshot = prepared.request.snapshot
+        request = prepared.request
+        bundle.effective_request = request
+        snapshot = request.snapshot
         facts = snapshot.known_facts + snapshot.customer_context + snapshot.booking_context + snapshot.flight_context
-        emit_progress(ProgressUpdate(step_id=step, type='step.completed', summary='Case evidence prepared.',
-                                     source_ids=tuple(s.source_id for s in prepared.sources)))
-        step = 'retrieve_policy'
-        emit_progress(ProgressUpdate(step_id=step, type='step.started', summary='Retrieving approved applicable knowledge.'))
-        # Conflicting or unsourced applicability values cannot select a rule.
-        values = {}
-        applicability_evidence = tuple(fact for fact in snapshot.known_facts + snapshot.customer_context
-            if fact.name not in INTERNAL_FACTS | CONTROL_FACTS) + snapshot.booking_context + snapshot.flight_context
-        for fact in applicability_evidence:
-            if fact.sources:
-                values.setdefault(fact.name, set()).add(str(fact.value))
-        applicability = {name: next(iter(items)) for name, items in values.items() if len(items) == 1}
-        event_date = None
-        try:
-            event_date = date.fromisoformat(applicability.get('event_date', applicability.get('flight_date', '')))
-        except ValueError:
-            pass
-        knowledge = (retriever or retrieve)(RetrievalQuery(issue_tags=snapshot.issues,
-            event_date=event_date, applicability_facts=applicability))
-        if knowledge.status == 'FAILED':
-            emit_progress(ProgressUpdate(step_id=step, type='step.failed', summary=knowledge.reason))
-            return RunResult(**identity, status='FAILED', technical_error=TechnicalError(
-                code=knowledge.error_code or 'KNOWLEDGE_UNAVAILABLE', message=knowledge.reason, retryable=True))
-        policy_sources = tuple(dict.fromkeys(SourceRef(source_id=p.source_id, version=p.version) for p in knowledge.passages))
-        sources = tuple(dict.fromkeys((*policy_sources, *prepared.sources)))
-        emit_progress(ProgressUpdate(step_id=step, type='step.completed', summary=knowledge.reason,
-                                     source_ids=tuple(s.source_id for s in policy_sources)))
-        if context_callback is not None:
-            context_callback(prepared.request, knowledge)
+        sources = tuple(dict.fromkeys(source for fact in facts for source in fact.sources))
+        emit_progress(ProgressUpdate(step_id=step, type='step.completed', summary='Supplied evidence references collected.',
+                                     source_ids=tuple(dict.fromkeys(source.source_id for source in sources))))
         step = 'assess'
         emit_progress(ProgressUpdate(step_id=step, type='step.started', summary='Checking evidence gaps and specialist needs.'))
         decision = assess(snapshot, sources)
-        # Evidence collection and serious-case routing remain possible without a
-        # resolution rule. A financial proposal always requires positive support.
-        if not decision.error and not decision.reason:
-            if knowledge.status == 'UNCLEAR_RULE':
-                decision = Decision(reason='UNCLEAR_RULE', explanation=knowledge.reason)
-            elif knowledge.status == 'APPLICABILITY_GAP':
-                gaps = tuple('flight_date' if gap == 'event_date' else gap for gap in knowledge.gaps)
-                if any(gap not in QUESTIONS for gap in gaps):
-                    decision = Decision(error=TechnicalError(code='INTERNAL_EVIDENCE_REQUIRED',
-                        message='Internal knowledge applicability facts are required.', retryable=False))
-                else:
-                    missing = {item.name: item for item in decision.missing}
-                    missing.update((gap, missing_fact(gap)) for gap in gaps)
-                    decision = Decision(missing=tuple(missing.values()), explanation=knowledge.reason)
-            elif not decision.missing and (knowledge.status != 'SUPPORTED' or not any(
-                    p.role == 'RULE' and p.rule_key == 'expense_reimbursement' and p.decision == 'supported'
-                    for p in knowledge.passages)):
-                decision = Decision(reason='UNSUPPORTED_ACTION', explanation='No approved rule supports automatic reimbursement.')
         if decision.error:
             emit_progress(ProgressUpdate(step_id=step, type='step.failed', summary=decision.error.message))
             return RunResult(**identity, status='FAILED', technical_error=decision.error)
+        if unreadable_without_source and not decision.reason:
+            missing = {m.name: m for m in decision.missing}
+            missing['receipt_readable'] = missing_fact('receipt_readable')
+            decision = Decision(missing=tuple(missing.values()), explanation='Readable expense evidence is needed to continue the review.')
+        step = 'retrieve_policy'
+        values = {}
+        conflicts = set()
+        for fact in facts:
+            if fact.sources and isinstance(fact.value, str):
+                if fact.name in values and values[fact.name] != fact.value:
+                    conflicts.add(fact.name)
+                values[fact.name] = fact.value
+        for name in conflicts:
+            values.pop(name, None)
+        # Internal applicability cannot be spoofed through customer evidence.
+        for name in INTERNAL_FACTS:
+            values.pop(name, None)
+        for fact in snapshot.booking_context + snapshot.flight_context:
+            if fact.sources and isinstance(fact.value, str) and fact.name not in conflicts:
+                values[fact.name] = fact.value
+        try:
+            event_date = date.fromisoformat(values['flight_date']) if 'flight_date' in values else None
+        except ValueError:
+            event_date = None
+        knowledge = RetrievalResult.model_validate((retriever or retrieve)(RetrievalQuery(issue_tags=snapshot.issues,
+            event_date=event_date, applicability_facts=values)).model_dump())
+        bundle.retrieval = knowledge
+        if knowledge.status == 'FAILED':
+            return RunResult(**identity, status='FAILED', technical_error=TechnicalError(
+                code=knowledge.error_code or 'KNOWLEDGE_UNAVAILABLE', message='Approved knowledge retrieval failed.', retryable=True))
+        if not decision.reason:
+            if knowledge.status == 'APPLICABILITY_GAP':
+                names = tuple('flight_date' if n == 'event_date' else n for n in knowledge.gaps)
+                if not names or any(n not in QUESTIONS for n in names):
+                    return RunResult(**identity, status='FAILED', technical_error=TechnicalError(
+                        code='INTERNAL_APPLICABILITY_REQUIRED', message='Internal applicability facts are required.', retryable=False))
+                decision = Decision(missing=tuple({m.name: m for m in (*(missing_fact(n) for n in names), *decision.missing)}.values()),
+                                    explanation='Travel or customer evidence is needed to establish policy applicability.')
+            elif not decision.missing and knowledge.status == 'UNCLEAR_RULE':
+                decision = Decision(reason='UNCLEAR_RULE', explanation='Applicable approved rules require specialist reconciliation.')
+            elif not decision.missing and (knowledge.status != 'SUPPORTED' or not supports_implemented_expense_rule(knowledge.passages)):
+                decision = Decision(reason='UNSUPPORTED_ACTION', explanation='No approved applicable rule supports this expense proposal.')
+        selected_sources = tuple(dict.fromkeys(SourceRef(source_id=p.source_id, version=p.version) for p in knowledge.passages))
+        sources = tuple(dict.fromkeys((*selected_sources, *sources)))
+        if decision.position:
+            decision = replace(decision, position=decision.position.model_copy(update={'sources': sources}))
+        emit_progress(ProgressUpdate(step_id=step, type='step.completed', summary='Approved knowledge applicability checked.',
+                                     source_ids=tuple(s.source_id for s in selected_sources)))
+        step = 'assess'
+        if adapters is None and snapshot.attachments and decision.missing and not decision.reason:
+            return RunResult(**identity, status='FAILED', technical_error=TechnicalError(
+                code='ATTACHMENT_ADAPTER_UNCONFIGURED', message='Attached evidence requires a configured case-scoped reader.', retryable=False))
         desired = 'HANDOFF' if decision.reason else 'REQUEST_INFORMATION' if decision.missing else 'RESOLVE'
         reason, explanation = decision.reason, decision.explanation
         if desired not in snapshot.permitted_actions:
@@ -139,7 +180,7 @@ def _process_case(request: RunRequest, emit_progress: ProgressCallback, *,
         assessment = Assessment(issues=snapshot.issues, missing_facts=decision.missing,
                                 severity='serious' if decision.serious else 'ordinary', sentiment='not_assessed',
                                 sources=sources, next_action_explanation=explanation)
-        emit_progress(ProgressUpdate(step_id=step, type='step.completed', summary=explanation))
+        emit_progress(ProgressUpdate(step_id=step, type='step.completed', summary='Deterministic assessment completed.'))
         envelope = dict(action_id=str(uuid5(NAMESPACE_URL, f'{request.case_id}/{request.run_id}/{request.case_version}/{desired}')),
                         case_id=request.case_id, run_id=request.run_id, expected_case_version=request.case_version, sources=sources)
         if desired == 'HANDOFF':
@@ -158,7 +199,7 @@ def _process_case(request: RunRequest, emit_progress: ProgressCallback, *,
             action = Resolve(**envelope, type=desired, payload=ResolutionPayload(
                 outcome='DEMO_REIMBURSEMENT', explanation=explanation, sources=sources,
                 reply_de='Thank you for sharing the details and evidence. We are sorry for the inconvenience with your journey. '
-                         f'Your expense reimbursement of {amount} has been approved under the demo policy. '
+                         f'Your expense reimbursement of {amount} is proposed under the demo policy, subject to case-service validation. '
                          'This is a simulation; no real payment has been made.\n\nKind regards,\nYour Customer Care team',
                 financial_positions=(position,)))
         step = 'validate_action'
