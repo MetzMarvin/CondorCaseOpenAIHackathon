@@ -12,7 +12,7 @@ from uuid import NAMESPACE_URL, uuid5
 
 from dotenv import dotenv_values
 from openai import OpenAI
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, JsonValue
 from qdrant_client import QdrantClient, models
 
 from .settings import ROOT
@@ -30,6 +30,12 @@ class LegalProvenance(BaseModel):
     language: str
 
 
+class PolicyProvenance(BaseModel):
+    """Original research record, including applicability and mandatory controls."""
+    source_record: dict[str, JsonValue]
+    runtime_enabled: Literal[False] = False
+
+
 class KnowledgeChunk(BaseModel):
     """One curated passage; stable source/version/chunk IDs enable repeat imports."""
     model_config = ConfigDict(extra='forbid', str_strip_whitespace=True)
@@ -41,6 +47,7 @@ class KnowledgeChunk(BaseModel):
     kind: Literal['legal', 'policy']
     text: str = Field(min_length=1, max_length=6000)
     provenance: LegalProvenance | None = None
+    policy_provenance: PolicyProvenance | None = None
 
 
 class SearchHit(BaseModel):
