@@ -13,6 +13,8 @@ class ProcessingBundle:
 
     mode: str = 'unknown'
     model: str | None = None
+    model_started: bool = False
+    retrieval_configuration_version: str = 'lexical-approved-v1'
 
 
 def expert_context(bundle, baseline, *, max_bytes=32000):
