@@ -1,4 +1,5 @@
 import sqlite3
+from contextlib import closing
 import tempfile
 import unittest
 from pathlib import Path
@@ -41,7 +42,7 @@ class EmailDeliveryTests(unittest.TestCase):
         original = self.sender.send_authorized(action, 'customer@example.test')
         repeated = SimulatedEmailSender(self.database).send_authorized(action, 'customer@example.test')
         self.assertEqual(original, repeated)
-        with sqlite3.connect(self.database) as connection:
+        with closing(sqlite3.connect(self.database)) as connection:
             self.assertEqual(connection.execute('SELECT count(*) FROM email_outbox').fetchone()[0], 1)
         with self.assertRaises(ValueError):
             self.sender.send_authorized(action, 'different@example.test')
@@ -69,5 +70,5 @@ class EmailDeliveryTests(unittest.TestCase):
             bad = action.model_copy(update={'payload': action.payload.model_copy(update={'question_de': draft})})
             with self.subTest(draft=draft), self.assertRaises(ValueError):
                 self.sender.send_authorized(bad, 'customer@example.test')
-        with sqlite3.connect(self.database) as connection:
+        with closing(sqlite3.connect(self.database)) as connection:
             self.assertEqual(connection.execute('SELECT count(*) FROM email_outbox').fetchone()[0], 0)

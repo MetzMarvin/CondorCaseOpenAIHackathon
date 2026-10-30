@@ -16,7 +16,8 @@ from starlette.exceptions import HTTPException
 from .intake_contracts import CaseSummary, EventFeed, InboundMessage, IntakeReceipt, PortalCase
 from .database import Attachment, Case, Database, Event, Message, Preparation
 from .preparation import PreparationService, recover, view
-from .contracts import ProcessRequest
+from .contracts import ProcessRequest, CaseDetail, ProcessResponse, TakeoverRequest, ActionResponse, ProposedAction
+from .operations import Operations, detail
 from .fixtures import seed
 from .intake import IncomingFile, IntakeError, IntakeService, MAX_FILE_BYTES
 
@@ -34,6 +35,8 @@ def create_app(data_dir: Path | None = None, seed_demo: bool = True):
             seed(app.state.db)
         recover(app.state.db)
         app.state.preparation = PreparationService(app.state.db)
+        app.state.operations = Operations(app.state.db, app.state.preparation)
+        app.state.operations.recover()
         yield
         app.state.db.engine.dispose()
 
@@ -41,7 +44,7 @@ def create_app(data_dir: Path | None = None, seed_demo: bool = True):
 
     @app.exception_handler(IntakeError)
     async def intake_error(_, exc):
-        return JSONResponse(status_code=exc.status, content={"error": {"code": exc.code, "message": exc.message}})
+        return JSONResponse(status_code=exc.status, content={"error": {"code": exc.code, "message": exc.message, "currentCaseVersion": getattr(exc, "current_version", None)}})
 
     @app.exception_handler(RequestValidationError)
     async def validation_error(_, exc):
@@ -107,8 +110,7 @@ def create_app(data_dir: Path | None = None, seed_demo: bool = True):
             for field, value in ((Case.status, status), (Case.queue, queue), (Case.owner, owner)):
                 if value is not None:
                     query = query.where(field == value)
-            return [dict(caseId=c.id, subject=c.subject, status=c.status, owner={'type': c.owner, 'id': 'demo-operator' if c.owner == 'HUMAN' else c.queue or 'demo-ai'}, queue=c.queue,
-                         version=c.version, category='UNCLASSIFIED', priority='NORMAL', nextAction='ASSESS_INTAKE') for c in session.scalars(query)]
+            return [detail(session, c) for c in session.scalars(query)]
 
     @app.get("/api/portal/cases/{case_id}", response_model=PortalCase)
     def portal_case(case_id: str, request: Request):
@@ -151,7 +153,7 @@ def create_app(data_dir: Path | None = None, seed_demo: bool = True):
                     raise IntakeError(404, "CASE_NOT_FOUND", "This case was not found.")
                 query = query.where(Event.case_id == caseId)
             rows = list(session.scalars(query))
-            return {"events": [dict(eventId=e.id, caseId=e.case_id, sequence=e.sequence, type=e.type,
+            return {"events": [dict(eventId=e.id, caseId=e.case_id, sequence=e.sequence, runId=e.run_id, type=e.type,
                                     stepId=e.step_id, timestamp=e.timestamp, summary=e.summary, data=e.data) for e in rows],
                     "cursor": rows[-1].sequence if rows else after}
 
@@ -174,6 +176,23 @@ def create_app(data_dir: Path | None = None, seed_demo: bool = True):
     @app.post("/api/cases/{case_id}/prepare")
     def prepare_case(case_id: str, payload: ProcessRequest, request: Request):
         return request.app.state.preparation.prepare(case_id, payload.expected_case_version, payload.request_id)
+
+    @app.get('/api/cases/{case_id}', response_model=CaseDetail)
+    def internal_case(case_id: str, request: Request):
+        with request.app.state.db.session() as session:
+            return detail(session, request.app.state.operations.get(session, case_id))
+
+    @app.post('/api/cases/{case_id}/process', response_model=ProcessResponse)
+    def process(case_id: str, payload: ProcessRequest, request: Request):
+        return request.app.state.operations.process(case_id, payload)
+
+    @app.post('/api/cases/{case_id}/takeover', response_model=CaseDetail)
+    def takeover(case_id: str, payload: TakeoverRequest, request: Request):
+        return request.app.state.operations.mutate(case_id, payload, takeover=True)
+
+    @app.post('/api/cases/{case_id}/actions', response_model=ActionResponse)
+    def action(case_id: str, payload: ProposedAction, request: Request):
+        return request.app.state.operations.mutate(case_id, payload)
 
     return app
 

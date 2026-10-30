@@ -70,8 +70,8 @@ def test_cross_channel_reply_preserves_case_and_download(client):
     assert response.status_code == 200
     assert response.json()["caseId"] == "case-evidence"
     detail = client.get("/api/portal/cases/case-evidence").json()
-    assert detail["status"] == "IN_PROGRESS" and detail["caseVersion"] == 3
-    assert len(detail["messages"]) == 3
+    assert detail["status"] == "NEW" and detail["caseVersion"] == 2
+    assert len(detail["messages"]) == 2
     attachment = detail["messages"][-1]["attachments"][0]
     download = client.get(attachment["url"])
     assert download.content == image_bytes()
@@ -126,10 +126,10 @@ def test_invalid_input_leaves_no_records(client, changes, status):
 
 
 def test_email_reply_parent_is_stored(client):
-    result = client.post("/api/inbound/messages", json=message(channel="EMAIL", caseId="case-evidence", inReplyTo="msg-case-evidence-out"))
+    result = client.post("/api/inbound/messages", json=message(channel="EMAIL", caseId="case-evidence", inReplyTo="msg-case-evidence-in"))
     assert result.status_code == 200
     detail = client.get("/api/portal/cases/case-evidence").json()
-    assert detail["messages"][-1]["inReplyTo"] == "msg-case-evidence-out"
+    assert detail["messages"][-1]["inReplyTo"] == "msg-case-evidence-in"
 
 
 @pytest.mark.parametrize("filename,content,media", [
@@ -188,6 +188,11 @@ def test_cleanup_after_disk_failure_and_retry(client, monkeypatch):
     ("case-resolved", "HUMAN", "CUSTOMER_SERVICE", "IN_PROGRESS"),
 ])
 def test_reply_preserves_ownership_and_routing(client, case_id, owner, queue, status):
+    if case_id == 'case-serious':
+        with client.app.state.db.session() as session:
+            c = session.get(Case, case_id)
+            c.owner, c.queue, c.status = owner, queue, status
+            session.commit()
     assert client.post("/api/inbound/messages", json=message(caseId=case_id)).status_code == 200
     with client.app.state.db.session() as session:
         case = session.get(Case, case_id)

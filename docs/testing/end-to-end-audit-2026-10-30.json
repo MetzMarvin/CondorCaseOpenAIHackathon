@@ -1,0 +1,186 @@
+[
+  {
+    "check": "portal payload accepted by operations API",
+    "passed": false,
+    "expected": 200,
+    "observed": 422
+  },
+  {
+    "check": "portal payload accepted by intake API",
+    "passed": true,
+    "expected": 200,
+    "observed": 200
+  },
+  {
+    "check": "portal case visible in operations store",
+    "passed": false,
+    "expected": 200,
+    "observed": 404
+  },
+  {
+    "check": "operations backend customer projection",
+    "passed": false,
+    "expected": 200,
+    "observed": 404
+  },
+  {
+    "check": "intake backend internal detail",
+    "passed": false,
+    "expected": 200,
+    "observed": 404
+  },
+  {
+    "check": "intake backend processing endpoint",
+    "passed": false,
+    "expected": 200,
+    "observed": 404
+  },
+  {
+    "check": "operations reply payload accepted by intake",
+    "passed": false,
+    "expected": 200,
+    "observed": 422
+  },
+  {
+    "check": "portal projection excludes operational internals",
+    "passed": true,
+    "expected": [],
+    "observed": []
+  },
+  {
+    "check": "intake preparation available",
+    "passed": true,
+    "expected": 200,
+    "observed": 200
+  },
+  {
+    "check": "identical portal submission returns same receipt",
+    "passed": true,
+    "expected": {
+      "messageId": "1337f05cb7314001a41d5cf87437c4ff",
+      "caseId": "case-2c10f58b26264e2d98fda99a95df11dd",
+      "caseVersion": 1,
+      "customerCaseUrl": "/portal/cases/case-2c10f58b26264e2d98fda99a95df11dd"
+    },
+    "observed": {
+      "messageId": "1337f05cb7314001a41d5cf87437c4ff",
+      "caseId": "case-2c10f58b26264e2d98fda99a95df11dd",
+      "caseVersion": 1,
+      "customerCaseUrl": "/portal/cases/case-2c10f58b26264e2d98fda99a95df11dd"
+    }
+  },
+  {
+    "check": "changed portal retry conflicts",
+    "passed": true,
+    "expected": 409,
+    "observed": 409
+  },
+  {
+    "check": "new supported expense resolves",
+    "passed": true,
+    "expected": "RESOLVED",
+    "observed": "RESOLVED"
+  },
+  {
+    "check": "negative sentiment alone does not hand off",
+    "passed": true,
+    "expected": "RESOLVE",
+    "observed": "RESOLVE"
+  },
+  {
+    "check": "explicit new injury hands off",
+    "passed": true,
+    "expected": "SERIOUS_ISSUE",
+    "observed": "SERIOUS_ISSUE"
+  },
+  {
+    "check": "specialist reply preserves waiting status",
+    "passed": false,
+    "expected": "WAITING_FOR_SPECIALIST",
+    "observed": "IN_PROGRESS"
+  },
+  {
+    "check": "missing evidence automatically requested",
+    "passed": true,
+    "expected": "REQUEST_INFORMATION",
+    "observed": "REQUEST_INFORMATION"
+  },
+  {
+    "check": "missing evidence keeps AI ownership",
+    "passed": true,
+    "expected": "AI",
+    "observed": "AI"
+  },
+  {
+    "check": "new serious allegation in reply prevents resolution",
+    "passed": false,
+    "expected": "HANDOFF",
+    "observed": "RESOLVE"
+  },
+  {
+    "check": "baggage complaint is not paid as a meal",
+    "passed": false,
+    "expected": true,
+    "observed": false
+  },
+  {
+    "check": "injured wording triggers serious review",
+    "passed": false,
+    "expected": "HANDOFF",
+    "observed": "RESOLVE"
+  },
+  {
+    "check": "negative amount is not converted into a positive payment",
+    "passed": false,
+    "expected": true,
+    "observed": false
+  },
+  {
+    "check": "provided currency is no longer requested",
+    "passed": false,
+    "expected": false,
+    "observed": true
+  },
+  {
+    "check": "authority limit hands off",
+    "passed": true,
+    "expected": "AUTHORITY_LIMIT",
+    "observed": "AUTHORITY_LIMIT"
+  },
+  {
+    "check": "handoff includes previous clarification attempts",
+    "passed": false,
+    "expected": true,
+    "observed": false
+  },
+  {
+    "check": "operations preserves inbound channel",
+    "passed": false,
+    "expected": "PORTAL",
+    "observed": "EMAIL"
+  },
+  {
+    "check": "operations rejects invalid sender",
+    "passed": false,
+    "expected": 422,
+    "observed": 200
+  },
+  {
+    "check": "operations rejects blank body",
+    "passed": false,
+    "expected": 422,
+    "observed": 200
+  },
+  {
+    "check": "operations rejects unsupported attachment type",
+    "passed": false,
+    "expected": 422,
+    "observed": 200
+  },
+  {
+    "check": "identical upload retry is idempotent",
+    "passed": false,
+    "expected": "a17c47bf-cec4-484a-9247-87c8a0e17cbe",
+    "observed": "cd44844b-074d-4fa0-833a-56358eca5812"
+  }
+]
