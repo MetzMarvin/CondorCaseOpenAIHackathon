@@ -4,7 +4,10 @@ The [subsystem agreement](subsystems-and-contracts.md) governs ownership.
 [Shared Pydantic models](../../backend/contracts.py) now define the Python/JSON
 boundary; [System 2 protocol](../../backend/ai_service/__init__.py) defines the
 synchronous callable shape. The System 2 processor now implements this interface with deterministic offline
-demo logic and recorded outputs. The operations API in `demo_backend/app.py` calls the shared processor. The separate intake API in `backend/main.py` implements customer intake and preparation. They currently use separate persistence and incompatible inbound request/response shapes; integration between them remains pending. The older TypeScript exploration is not authoritative.
+demo logic and recorded outputs. The authoritative API is `backend.main:app`: intake, preparation, internal case detail,
+processing, takeover and human actions share one SQLite database. `demo_backend.app:app`
+is a compatibility launcher and does not open or import its former database. The console
+uses the intake request/receipt format below. The older TypeScript exploration is not authoritative.
 
 ```mermaid
 flowchart LR
@@ -78,11 +81,35 @@ Validate locally:
 
 ```sh
 python3 -m venv .venv
-.venv/bin/pip install -r requirements.txt
+.venv/bin/python -m pip install -r backend/requirements-lock.txt
 .venv/bin/python -m unittest discover -s tests -p 'test_contracts.py' -v
 ```
 
 Intake uses the shared `CaseSummary` and `EventPage` without parallel versions.
 The old `InboundMessageRequest` is retained for earlier design consumers; the implemented
 intake model adds subject, strict channels and explicit reply references and does not
-accept arbitrary attachment IDs. AI integration and full internal case views remain deferred.
+accept arbitrary attachment IDs. The unified service provides AI orchestration and full internal case views.
+
+
+## Unified persistence and projections
+
+Startup applies an additive schema migration to existing intake databases and creates
+operation records for runs, idempotent commands, action execution, owners and simulated
+financial positions. Event records include nullable runId. Original intake data and file
+references are retained. Legacy operations history is deliberately not imported.
+
+Internal CaseDetail includes staff attachment references; a separate processing snapshot
+removes original attachment access while retaining extractedDocuments and preparationDiagnostics.
+Message direction and subject are explicit. PortalCase excludes operational and internal fields.
+
+System 2's interpretation adapter converts original messages and extracted text into issues
+and normalized evidence before assessment. System 1 never classifies completeness in preparation.
+Offline interpretation is restricted to stored examples; it never fabricates evidence for
+unknown customer input. Financial authority and eligibility checks are supplied internally.
+
+The console accepts an IntakeReceipt, fetches CaseDetail, then calls process explicitly.
+Uploads use the atomic inbound multipart contract, not a standalone attachment endpoint.
+The reset extension is disabled; use a fresh CONDOR_DATA_DIR. A process starts only on an
+AI-owned NEW or IN_PROGRESS case. The transition to IN_PROGRESS increments the version;
+the immutable run snapshot uses that version. Stale results remain in run history but cannot
+apply effects. The configured demo operator is demo-agent; human reassignment to AI is deferred.

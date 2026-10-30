@@ -38,6 +38,8 @@ class AttachmentRef(Contract):
 
 
 class Message(Contract):
+    direction: Literal["INBOUND", "OUTBOUND"] = "INBOUND"
+    subject: str = ""
     message_id: Id
     channel: Text
     sender: Text

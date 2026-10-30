@@ -1,6 +1,8 @@
 # Subsystems and interface contracts
 
-Status: shared contracts and operations demo endpoints are implemented in `backend/contracts.py` and `demo_backend/app.py`. The separate intake/preparation implementation is in `backend/main.py`. Both are preserved, but they are not yet connected to a single authoritative case store. See README for their distinct startup paths.
+Status: unified implementation agreement. `backend.main:app` owns intake, preparation,
+case details, synchronous System 2 orchestration, action execution and takeover.
+`demo_backend.app:app` is only a compatibility launcher for the same application.
 
 This document translates the subsystem proposal into the scope in [AGENTS.md](../../AGENTS.md). Use the [hackathon plan](../planning/hackathon-plan.md) as business context. Where the broader plan or architecture diagrams imply workers, mandatory approvals, extra channels or large datasets, the current demo scope below takes precedence.
 
@@ -16,7 +18,7 @@ Start with 6–10 synthetic cases. Simulate AI, email, payments and integrations
 | **2. Orchestrated AI Service** | Extract evidence; identify issues; assess completeness, severity and sentiment; retrieve approved knowledge; formulate questions, resolutions and handoffs | Synchronous workflow, stored AI outputs, source references, structured assessments and run diagnostics; no direct case writes |
 | **3. Service Operations & Live Demo Console** | Show queues and case details; simulate incoming claims/replies; enable human takeover and handling; display activity and, after core flows work, a process graph | React UI and presentation state; all business changes go through System 1 |
 
-System 1 supplies intake capabilities; the customer portal exposes only submission, case-specific correspondence and evidence updates. Email simulation, operational case lists and staff response controls belong to the separate operations service. The portal includes submission, a case link, customer-visible correspondence and follow-up uploads. Login and a full account experience remain deferred. System 2's knowledge fixtures are distinct from System 1's Salesforce-style customer and case records.
+System 1 supplies intake capabilities; the customer portal exposes only submission, case-specific correspondence and evidence updates. Email simulation, operational case lists and staff response controls belong to the operations console, using this same System 1 backend. The portal includes submission, a case link, customer-visible correspondence and follow-up uploads. Login and a full account experience remain deferred. System 2's knowledge fixtures are distinct from System 1's Salesforce-style customer and case records.
 
 The central rule: **System 1 owns the case, System 2 proposes the next action, and System 3 lets people inspect and act.** Valid AI actions execute automatically through System 1. This does not introduce mandatory human approval.
 
@@ -93,7 +95,7 @@ Use JSON over HTTP. Pydantic models are the schema source of truth. React consum
 | `POST /api/cases/{caseId}/actions` | Accepts a human action using the shared action envelope; returns the updated case and execution result |
 | `GET /api/events?caseId=…&after=…` | Returns ordered events and a cursor for the next poll; an omitted cursor starts from the beginning |
 
-For the future integrated demo, the console explicitly submits a message and then calls `/process`; it must not also trigger an implicit second run. The implemented intake-only slice never calls `/process` and generates no customer reply. A received reply reopens reassessment on the existing case. Human-owned cases require an explicit reassignment before automated processing resumes.
+In the integrated demo, the console explicitly submits a message and then calls `/process`; it must not also trigger an implicit second run. Intake starts preparation only. The console explicitly calls `/process`; validated actions generate simulated customer replies. A received reply reopens reassessment on the existing case. Human-owned cases require an explicit reassignment before automated processing resumes.
 
 Demo identities are fixed fixtures, not real authentication. Ordinary clients cannot grant themselves authority or choose arbitrary financial limits. Enforce the supported demo roles/actions in System 1. Authentication and production access control remain deferred.
 
@@ -159,7 +161,7 @@ Integrate the three flows before adding graph polish or metrics. Check duplicate
 - Case lists use the shared `CaseSummary` wire shape: `owner` is an object and `version` is the case version. Intake receipts and portal details use `caseVersion`.
 - Implemented routes: `/api/health`, `POST /api/inbound/messages`, `GET /api/cases`,
   `GET /api/portal/cases/{caseId}`, case-scoped attachment downloads and `GET /api/events`.
-  Other routes in the broader tables remain future contracts.
+  The detail, process, takeover and action routes in the broader tables are now supplied by the unified operations service.
 - New messages create `NEW` cases. Replies require an existing `caseId`; EMAIL replies
   additionally require `inReplyTo` identifying a customer-visible message in that case.
   A portal reply can omit `inReplyTo`. No correlation by subject, name or sender.
@@ -179,13 +181,13 @@ Integrate the three flows before adding graph polish or metrics. Check duplicate
 - Accepted messages emit `step.completed` (`intake`) and `case.updated`, both with null
   `runId`, monotonic sequence and `simulation: true`. Replays create no new events.
   Event polling returns at most 200 ordered records; `cursor` is the last returned sequence.
-- Six stable seed cases: `case-clear`, `case-evidence`, `case-serious`, `case-incomplete`,
+- Core intake seed cases: `case-clear`, `case-evidence`, `case-serious`, `case-incomplete`,
   `case-human`, `case-resolved`. Existing seed data is never reset on restart.
   Seeded outbound messages carry `storedExample: true`; they were not generated by intake.
-- Customer routes: `/portal`, `/portal/cases/{caseId}`. The former `/email` and `/demo/cases` screens are removed from this frontend. Email intake APIs remain available for the separate service; the customer portal always submits `PORTAL` messages.
+- Customer routes: `/portal`, `/portal/cases/{caseId}`. The former `/email` and `/demo/cases` screens are removed from this frontend. Email intake APIs remain available through the unified service; the customer portal always submits `PORTAL` messages.
   The message-style form requires only email, subject and body; evidence is optional.
   Failed submissions retain input and the retry ID while mounted. Login, draft persistence
-  across navigation, mailbox connectivity and automatic responses are deferred.
+  across navigation and mailbox connectivity are deferred. Automatic simulated responses are generated only by validated processing actions.
 
 See [README](../../README.md) for setup, the sample receipt and acceptance checks.
 
@@ -199,7 +201,7 @@ The [editable architecture](condor-claims-architecture.drawio) and [workflow pre
 System 1 now atomically queues accepted versions and synchronously prepares them after intake
 commit. Read/retry endpoints are `/api/preparation/queue`, `/api/cases/{caseId}/preparation`
 and `POST /api/cases/{caseId}/prepare` (shared ProcessRequest). Retry keys are independent
-of decision runs. Pending seed cases require explicit preparation. No decision run is implicit.
+of decision runs. Pending seed cases can be prepared explicitly or by the process endpoint. No decision run is implicit.
 Preparation extracts identifiers and facts only; System 2 retains topic classification,
 completeness and action decisions. Missing matches are lookup outcomes. Technical extraction
 failures yield a degraded prepared claim, never an automatic specialist handoff.
@@ -212,4 +214,34 @@ is explicit. Sources are message IDs, attachment/page IDs or versioned Salesforc
 Preparation states are independent of business status and case.queue. Completion checks
 case version; replies supersede earlier entries. Human ownership is never overwritten.
 The run adapter requires a current AI-owned IN_PROGRESS case and server-owned authority.
-No action execution or automatic invocation of System 2 is implemented by this extension.
+Preparation itself invokes no decision service or actions; the unified operations endpoint owns those steps.
+
+
+## Unified operations delivery
+
+One database under CONDOR_DATA_DIR is authoritative for portal and console. Existing intake
+cases and uploads survive additive migration; old demo_backend/demo.sqlite is left untouched.
+Fresh databases seed ten cases, with clear/evidence/serious cases beginning at NEW. Existing
+fixtures are never overwritten. Use a new data directory for a fresh demo; reset is disabled.
+
+Operations persist immutable run inputs, results, command fingerprints/responses, accepted
+actions and financial ledger entries. System 2 calls run outside database write transactions.
+The final apply transaction rechecks identity, version, ownership, transition and authority,
+then commits message, ledger, state and event changes together. Failed/stale runs remain
+visible without business effects. Startup marks interrupted runs failed; explicitly retry a
+new assessment with a new request ID. Completed request replay returns the original response.
+
+Takeover is restricted to demo-agent, increments case version and invalidates older AI
+results. Customer replies retain human ownership. Reassignment to AI is deferred. Financial
+authority is reimbursement up to 10,000 EUR minor units, aggregated across proposed positions;
+compensation/goodwill are not authorized. Prior payment blocks duplicate financial effects.
+
+Preparation remains factual extraction/enrichment. System 2 interprets topics and normalizes
+evidence using sourced text. No raw PDFs or original file access references enter decision
+snapshots. Staff case details retain attachment links separately. Unknown offline inputs fail
+explicitly rather than turning into invented evidence. The configured offline fixtures support
+clear resolution, request/reply/resolution, and serious handoff/takeover/human resolution.
+
+All HTTP errors use the shared error envelope; version conflicts include currentCaseVersion.
+Events carry runId for decision activity and use the shared monotonic cursor. Message direction
+and subject are explicit shared fields. UI business data always comes from System 1.
