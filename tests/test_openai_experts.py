@@ -9,7 +9,7 @@ from backend.ai_service.experts import ExpertDraft, ExpertReview
 from backend.ai_service.customer_email import CustomerEmail, EmailQuestion
 from backend.ai_service.fixtures import demo_request
 from backend.ai_service.settings import Settings
-from backend.ai_service.workflow import process_case as offline
+from backend.ai_service.workflow import process_case as offline, run_workflow
 
 
 class OpenAIExpertTests(unittest.TestCase):
@@ -126,7 +126,7 @@ class OpenAIExpertTests(unittest.TestCase):
             raise RuntimeError('storage unavailable')
 
         with patch.dict(os.environ, {'AI_FALLBACK_OFFLINE': '1'}), \
-                patch('backend.ai_service.service.run_workflow', wraps=__import__('backend.ai_service.workflow', fromlist=['run_workflow']).run_workflow) as baseline:
+                patch('backend.ai_service.service.run_workflow', wraps=run_workflow) as baseline:
             result = process_case(demo_request('clear'), broken_callback)
             self.assertEqual(result.status, 'FAILED')
             self.assertFalse(result.simulation)
