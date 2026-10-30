@@ -1,0 +1,13 @@
+{
+  "dataset": "policy-violations",
+  "count": 20,
+  "synthetic": true,
+  "policy_id": "CONDOR-CS-EN",
+  "policy_version": "0.1.0",
+  "policy_status": "draft_review_required",
+  "policy_sha256": "484eb1c3e1ee37885186b2df97150496891cdb78fcb8db4871680d33ebfffc33",
+  "source_dataset": "data/examples/legal-checks/runtime/complaints.jsonl",
+  "automatically_loaded_by_app": false,
+  "engine_evaluation_performed": true,
+  "engine_evaluation_report": "backend/ai_service/evaluation/policy_audit_report.json"
+}

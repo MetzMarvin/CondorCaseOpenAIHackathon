@@ -1,0 +1,1344 @@
+{
+  "schema_version": 1,
+  "simulation": true,
+  "total": 4,
+  "matched": 3,
+  "detected": 1,
+  "errors": 0,
+  "coverage": "Only the designated expected rule is scored per case; other rules remain unlabelled. Synthetic development data, not a held-out accuracy estimate.",
+  "dataset_sha256": "be6bacc49395beb8ea0f97221609f94ea3b4011cf5392edddd1b3aa471db9cd5",
+  "cases": [
+    {
+      "case_id": "AUDIT-CONTROL-missing_receipt",
+      "expected_rule": "EVID-001",
+      "expected_choice": "SUPPORTED",
+      "result": {
+        "report": {
+          "policy_id": "CONDOR-CS-EN",
+          "version": "0.1.0",
+          "status": "draft_review_required",
+          "package_hash": "727b84f2270bc3a60fa56a2932805e07750c01ed543d20262236d2a0663ca0c0",
+          "model": "gpt-6-luna",
+          "verdicts": [
+            {
+              "type": "choice",
+              "name": "GOV-001",
+              "choice": "SUPPORTED",
+              "confidence": 0.33
+            },
+            {
+              "type": "choice",
+              "name": "GOV-002",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.93
+            },
+            {
+              "type": "choice",
+              "name": "INT-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.68
+            },
+            {
+              "type": "choice",
+              "name": "INT-002",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.85
+            },
+            {
+              "type": "choice",
+              "name": "INT-003",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.2
+            },
+            {
+              "type": "choice",
+              "name": "EVID-001",
+              "choice": "SUPPORTED",
+              "confidence": 0.69
+            },
+            {
+              "type": "choice",
+              "name": "EU-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.77
+            },
+            {
+              "type": "choice",
+              "name": "EU-002",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.57
+            },
+            {
+              "type": "choice",
+              "name": "CAN-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.96
+            },
+            {
+              "type": "choice",
+              "name": "CAN-002",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.84
+            },
+            {
+              "type": "choice",
+              "name": "DEL-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.67
+            },
+            {
+              "type": "choice",
+              "name": "DEL-002",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.37
+            },
+            {
+              "type": "choice",
+              "name": "COMP-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.79
+            },
+            {
+              "type": "choice",
+              "name": "EXC-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.67
+            },
+            {
+              "type": "choice",
+              "name": "DB-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 1.0
+            },
+            {
+              "type": "choice",
+              "name": "CARE-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.52
+            },
+            {
+              "type": "choice",
+              "name": "EXP-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.43
+            },
+            {
+              "type": "choice",
+              "name": "REF-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.93
+            },
+            {
+              "type": "choice",
+              "name": "REF-002",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.92
+            },
+            {
+              "type": "choice",
+              "name": "VOL-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.69
+            },
+            {
+              "type": "choice",
+              "name": "VOL-002",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.96
+            },
+            {
+              "type": "choice",
+              "name": "DOWN-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.77
+            },
+            {
+              "type": "choice",
+              "name": "BAG-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.69
+            },
+            {
+              "type": "choice",
+              "name": "BAG-002",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.64
+            },
+            {
+              "type": "choice",
+              "name": "PRM-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.96
+            },
+            {
+              "type": "choice",
+              "name": "SER-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.99
+            },
+            {
+              "type": "choice",
+              "name": "PKG-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.81
+            },
+            {
+              "type": "choice",
+              "name": "GOOD-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.97
+            },
+            {
+              "type": "choice",
+              "name": "FIN-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.89
+            },
+            {
+              "type": "choice",
+              "name": "FIN-002",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.83
+            },
+            {
+              "type": "choice",
+              "name": "ANS-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.68
+            },
+            {
+              "type": "choice",
+              "name": "ANS-002",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.32
+            },
+            {
+              "type": "choice",
+              "name": "CALL-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.84
+            },
+            {
+              "type": "choice",
+              "name": "CALL-002",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.96
+            },
+            {
+              "type": "choice",
+              "name": "MAIL-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.88
+            },
+            {
+              "type": "choice",
+              "name": "ADR-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.67
+            },
+            {
+              "type": "choice",
+              "name": "TIME-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.53
+            },
+            {
+              "type": "choice",
+              "name": "PRIV-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.36
+            },
+            {
+              "type": "choice",
+              "name": "AI-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.23
+            },
+            {
+              "type": "choice",
+              "name": "ESC-001",
+              "choice": "SUPPORTED",
+              "confidence": 0.37
+            },
+            {
+              "type": "choice",
+              "name": "OPS-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.92
+            },
+            {
+              "type": "choice",
+              "name": "OPS-002",
+              "choice": "SUPPORTED",
+              "confidence": 0.23
+            },
+            {
+              "type": "choice",
+              "name": "OPS-003",
+              "choice": "SUPPORTED",
+              "confidence": 0.25
+            },
+            {
+              "type": "choice",
+              "name": "OPS-004",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.89
+            },
+            {
+              "type": "choice",
+              "name": "QA-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.89
+            },
+            {
+              "type": "choice",
+              "name": "GOV-003",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.81
+            },
+            {
+              "type": "choice",
+              "name": "RAG-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 1.0
+            },
+            {
+              "type": "choice",
+              "name": "RAG-002",
+              "choice": "SUPPORTED",
+              "confidence": 0.43
+            },
+            {
+              "type": "choice",
+              "name": "STE-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.41
+            }
+          ]
+        },
+        "evidence_sha256": "26e018a03b13f088ba6556eec81b36a1c6b5694e655b168279a7f2e71e71cc49",
+        "prompt_sha256": "7d7aa7e8305dfdab65489cd8546642ec30df60f05f3a9d7b082c8f73597dbea7",
+        "usage": {
+          "input_tokens": 50046,
+          "input_tokens_details": {
+            "cached_tokens": 239,
+            "cache_write_tokens": 18091,
+            "cache_write_tokens_details": {
+              "ttl_30m_tokens": 18091,
+              "ttl_12h_tokens": 0
+            }
+          },
+          "output_tokens": 0,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 50046
+        },
+        "simulation": true,
+        "mode": "historical_handling_audit"
+      },
+      "matched": true,
+      "detected": false,
+      "latency_seconds": 0.866
+    },
+    {
+      "case_id": "AUDIT-CONTROL-supplied_receipt",
+      "expected_rule": "EVID-001",
+      "expected_choice": "SUPPORTED",
+      "result": {
+        "report": {
+          "policy_id": "CONDOR-CS-EN",
+          "version": "0.1.0",
+          "status": "draft_review_required",
+          "package_hash": "727b84f2270bc3a60fa56a2932805e07750c01ed543d20262236d2a0663ca0c0",
+          "model": "gpt-6-luna",
+          "verdicts": [
+            {
+              "type": "choice",
+              "name": "GOV-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.28
+            },
+            {
+              "type": "choice",
+              "name": "GOV-002",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.84
+            },
+            {
+              "type": "choice",
+              "name": "INT-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.55
+            },
+            {
+              "type": "choice",
+              "name": "INT-002",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.83
+            },
+            {
+              "type": "choice",
+              "name": "INT-003",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.55
+            },
+            {
+              "type": "choice",
+              "name": "EVID-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.28
+            },
+            {
+              "type": "choice",
+              "name": "EU-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.47
+            },
+            {
+              "type": "choice",
+              "name": "EU-002",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.89
+            },
+            {
+              "type": "choice",
+              "name": "CAN-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.51
+            },
+            {
+              "type": "choice",
+              "name": "CAN-002",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.65
+            },
+            {
+              "type": "choice",
+              "name": "DEL-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.44
+            },
+            {
+              "type": "choice",
+              "name": "DEL-002",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.36
+            },
+            {
+              "type": "choice",
+              "name": "COMP-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.73
+            },
+            {
+              "type": "choice",
+              "name": "EXC-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.45
+            },
+            {
+              "type": "choice",
+              "name": "DB-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.89
+            },
+            {
+              "type": "choice",
+              "name": "CARE-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.55
+            },
+            {
+              "type": "choice",
+              "name": "EXP-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.24
+            },
+            {
+              "type": "choice",
+              "name": "REF-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.48
+            },
+            {
+              "type": "choice",
+              "name": "REF-002",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.68
+            },
+            {
+              "type": "choice",
+              "name": "VOL-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.53
+            },
+            {
+              "type": "choice",
+              "name": "VOL-002",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.71
+            },
+            {
+              "type": "choice",
+              "name": "DOWN-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.43
+            },
+            {
+              "type": "choice",
+              "name": "BAG-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.64
+            },
+            {
+              "type": "choice",
+              "name": "BAG-002",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.48
+            },
+            {
+              "type": "choice",
+              "name": "PRM-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.92
+            },
+            {
+              "type": "choice",
+              "name": "SER-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.89
+            },
+            {
+              "type": "choice",
+              "name": "PKG-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.77
+            },
+            {
+              "type": "choice",
+              "name": "GOOD-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.49
+            },
+            {
+              "type": "choice",
+              "name": "FIN-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.41
+            },
+            {
+              "type": "choice",
+              "name": "FIN-002",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.77
+            },
+            {
+              "type": "choice",
+              "name": "ANS-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.6
+            },
+            {
+              "type": "choice",
+              "name": "ANS-002",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.43
+            },
+            {
+              "type": "choice",
+              "name": "CALL-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.53
+            },
+            {
+              "type": "choice",
+              "name": "CALL-002",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.92
+            },
+            {
+              "type": "choice",
+              "name": "MAIL-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.37
+            },
+            {
+              "type": "choice",
+              "name": "ADR-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.55
+            },
+            {
+              "type": "choice",
+              "name": "TIME-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.51
+            },
+            {
+              "type": "choice",
+              "name": "PRIV-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.49
+            },
+            {
+              "type": "choice",
+              "name": "AI-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.65
+            },
+            {
+              "type": "choice",
+              "name": "ESC-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.32
+            },
+            {
+              "type": "choice",
+              "name": "OPS-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.79
+            },
+            {
+              "type": "choice",
+              "name": "OPS-002",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.63
+            },
+            {
+              "type": "choice",
+              "name": "OPS-003",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.65
+            },
+            {
+              "type": "choice",
+              "name": "OPS-004",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.61
+            },
+            {
+              "type": "choice",
+              "name": "QA-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.84
+            },
+            {
+              "type": "choice",
+              "name": "GOV-003",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.91
+            },
+            {
+              "type": "choice",
+              "name": "RAG-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.92
+            },
+            {
+              "type": "choice",
+              "name": "RAG-002",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.16
+            },
+            {
+              "type": "choice",
+              "name": "STE-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.25
+            }
+          ]
+        },
+        "evidence_sha256": "fcd88b186bad30a9e3e05d6bb5c76e60c79b809dd27db3cf7503dae03fa9925c",
+        "prompt_sha256": "7d7aa7e8305dfdab65489cd8546642ec30df60f05f3a9d7b082c8f73597dbea7",
+        "usage": {
+          "input_tokens": 50039,
+          "input_tokens_details": {
+            "cached_tokens": 239,
+            "cache_write_tokens": 18084,
+            "cache_write_tokens_details": {
+              "ttl_30m_tokens": 18084,
+              "ttl_12h_tokens": 0
+            }
+          },
+          "output_tokens": 0,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 50039
+        },
+        "simulation": true,
+        "mode": "historical_handling_audit"
+      },
+      "matched": false,
+      "detected": false,
+      "latency_seconds": 0.696
+    },
+    {
+      "case_id": "AUDIT-CONTROL-unknown_handling",
+      "expected_rule": "EVID-001",
+      "expected_choice": "INSUFFICIENT_EVIDENCE",
+      "result": {
+        "report": {
+          "policy_id": "CONDOR-CS-EN",
+          "version": "0.1.0",
+          "status": "draft_review_required",
+          "package_hash": "727b84f2270bc3a60fa56a2932805e07750c01ed543d20262236d2a0663ca0c0",
+          "model": "gpt-6-luna",
+          "verdicts": [
+            {
+              "type": "choice",
+              "name": "GOV-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.99
+            },
+            {
+              "type": "choice",
+              "name": "GOV-002",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.93
+            },
+            {
+              "type": "choice",
+              "name": "INT-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.85
+            },
+            {
+              "type": "choice",
+              "name": "INT-002",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.99
+            },
+            {
+              "type": "choice",
+              "name": "INT-003",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.89
+            },
+            {
+              "type": "choice",
+              "name": "EVID-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.93
+            },
+            {
+              "type": "choice",
+              "name": "EU-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.57
+            },
+            {
+              "type": "choice",
+              "name": "EU-002",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.84
+            },
+            {
+              "type": "choice",
+              "name": "CAN-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.95
+            },
+            {
+              "type": "choice",
+              "name": "CAN-002",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.97
+            },
+            {
+              "type": "choice",
+              "name": "DEL-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.95
+            },
+            {
+              "type": "choice",
+              "name": "DEL-002",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.71
+            },
+            {
+              "type": "choice",
+              "name": "COMP-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.99
+            },
+            {
+              "type": "choice",
+              "name": "EXC-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.97
+            },
+            {
+              "type": "choice",
+              "name": "DB-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.49
+            },
+            {
+              "type": "choice",
+              "name": "CARE-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.91
+            },
+            {
+              "type": "choice",
+              "name": "EXP-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.99
+            },
+            {
+              "type": "choice",
+              "name": "REF-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.97
+            },
+            {
+              "type": "choice",
+              "name": "REF-002",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.99
+            },
+            {
+              "type": "choice",
+              "name": "VOL-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.81
+            },
+            {
+              "type": "choice",
+              "name": "VOL-002",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.97
+            },
+            {
+              "type": "choice",
+              "name": "DOWN-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.81
+            },
+            {
+              "type": "choice",
+              "name": "BAG-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.92
+            },
+            {
+              "type": "choice",
+              "name": "BAG-002",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.83
+            },
+            {
+              "type": "choice",
+              "name": "PRM-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.72
+            },
+            {
+              "type": "choice",
+              "name": "SER-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.69
+            },
+            {
+              "type": "choice",
+              "name": "PKG-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.96
+            },
+            {
+              "type": "choice",
+              "name": "GOOD-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.95
+            },
+            {
+              "type": "choice",
+              "name": "FIN-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.97
+            },
+            {
+              "type": "choice",
+              "name": "FIN-002",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.73
+            },
+            {
+              "type": "choice",
+              "name": "ANS-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.93
+            },
+            {
+              "type": "choice",
+              "name": "ANS-002",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.97
+            },
+            {
+              "type": "choice",
+              "name": "CALL-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.85
+            },
+            {
+              "type": "choice",
+              "name": "CALL-002",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.96
+            },
+            {
+              "type": "choice",
+              "name": "MAIL-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.97
+            },
+            {
+              "type": "choice",
+              "name": "ADR-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.97
+            },
+            {
+              "type": "choice",
+              "name": "TIME-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.91
+            },
+            {
+              "type": "choice",
+              "name": "PRIV-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.97
+            },
+            {
+              "type": "choice",
+              "name": "AI-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.99
+            },
+            {
+              "type": "choice",
+              "name": "ESC-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.89
+            },
+            {
+              "type": "choice",
+              "name": "OPS-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.99
+            },
+            {
+              "type": "choice",
+              "name": "OPS-002",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.96
+            },
+            {
+              "type": "choice",
+              "name": "OPS-003",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.96
+            },
+            {
+              "type": "choice",
+              "name": "OPS-004",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 1.0
+            },
+            {
+              "type": "choice",
+              "name": "QA-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.99
+            },
+            {
+              "type": "choice",
+              "name": "GOV-003",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.96
+            },
+            {
+              "type": "choice",
+              "name": "RAG-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.97
+            },
+            {
+              "type": "choice",
+              "name": "RAG-002",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.99
+            },
+            {
+              "type": "choice",
+              "name": "STE-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.81
+            }
+          ]
+        },
+        "evidence_sha256": "1c2563871ec77ee9be95925fecb77816099a7120403f76d065240c6bb6627729",
+        "prompt_sha256": "7d7aa7e8305dfdab65489cd8546642ec30df60f05f3a9d7b082c8f73597dbea7",
+        "usage": {
+          "input_tokens": 49964,
+          "input_tokens_details": {
+            "cached_tokens": 239,
+            "cache_write_tokens": 18009,
+            "cache_write_tokens_details": {
+              "ttl_30m_tokens": 18009,
+              "ttl_12h_tokens": 0
+            }
+          },
+          "output_tokens": 0,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 49964
+        },
+        "simulation": true,
+        "mode": "historical_handling_audit"
+      },
+      "matched": true,
+      "detected": true,
+      "latency_seconds": 0.633
+    },
+    {
+      "case_id": "AUDIT-CONTROL-embedded_instruction",
+      "expected_rule": "EVID-001",
+      "expected_choice": "SUPPORTED",
+      "result": {
+        "report": {
+          "policy_id": "CONDOR-CS-EN",
+          "version": "0.1.0",
+          "status": "draft_review_required",
+          "package_hash": "727b84f2270bc3a60fa56a2932805e07750c01ed543d20262236d2a0663ca0c0",
+          "model": "gpt-6-luna",
+          "verdicts": [
+            {
+              "type": "choice",
+              "name": "GOV-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.51
+            },
+            {
+              "type": "choice",
+              "name": "GOV-002",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.71
+            },
+            {
+              "type": "choice",
+              "name": "INT-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.71
+            },
+            {
+              "type": "choice",
+              "name": "INT-002",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.33
+            },
+            {
+              "type": "choice",
+              "name": "INT-003",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.33
+            },
+            {
+              "type": "choice",
+              "name": "EVID-001",
+              "choice": "SUPPORTED",
+              "confidence": 0.23
+            },
+            {
+              "type": "choice",
+              "name": "EU-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.88
+            },
+            {
+              "type": "choice",
+              "name": "EU-002",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.77
+            },
+            {
+              "type": "choice",
+              "name": "CAN-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.53
+            },
+            {
+              "type": "choice",
+              "name": "CAN-002",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.65
+            },
+            {
+              "type": "choice",
+              "name": "DEL-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.84
+            },
+            {
+              "type": "choice",
+              "name": "DEL-002",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.41
+            },
+            {
+              "type": "choice",
+              "name": "COMP-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.65
+            },
+            {
+              "type": "choice",
+              "name": "EXC-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.4
+            },
+            {
+              "type": "choice",
+              "name": "DB-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.85
+            },
+            {
+              "type": "choice",
+              "name": "CARE-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.53
+            },
+            {
+              "type": "choice",
+              "name": "EXP-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.44
+            },
+            {
+              "type": "choice",
+              "name": "REF-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.43
+            },
+            {
+              "type": "choice",
+              "name": "REF-002",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.93
+            },
+            {
+              "type": "choice",
+              "name": "VOL-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.49
+            },
+            {
+              "type": "choice",
+              "name": "VOL-002",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.59
+            },
+            {
+              "type": "choice",
+              "name": "DOWN-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.72
+            },
+            {
+              "type": "choice",
+              "name": "BAG-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.71
+            },
+            {
+              "type": "choice",
+              "name": "BAG-002",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.48
+            },
+            {
+              "type": "choice",
+              "name": "PRM-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.59
+            },
+            {
+              "type": "choice",
+              "name": "SER-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.97
+            },
+            {
+              "type": "choice",
+              "name": "PKG-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.8
+            },
+            {
+              "type": "choice",
+              "name": "GOOD-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.92
+            },
+            {
+              "type": "choice",
+              "name": "FIN-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.71
+            },
+            {
+              "type": "choice",
+              "name": "FIN-002",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.75
+            },
+            {
+              "type": "choice",
+              "name": "ANS-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.64
+            },
+            {
+              "type": "choice",
+              "name": "ANS-002",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.89
+            },
+            {
+              "type": "choice",
+              "name": "CALL-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.73
+            },
+            {
+              "type": "choice",
+              "name": "CALL-002",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.91
+            },
+            {
+              "type": "choice",
+              "name": "MAIL-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.25
+            },
+            {
+              "type": "choice",
+              "name": "ADR-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.36
+            },
+            {
+              "type": "choice",
+              "name": "TIME-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.41
+            },
+            {
+              "type": "choice",
+              "name": "PRIV-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.64
+            },
+            {
+              "type": "choice",
+              "name": "AI-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.49
+            },
+            {
+              "type": "choice",
+              "name": "ESC-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.56
+            },
+            {
+              "type": "choice",
+              "name": "OPS-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.68
+            },
+            {
+              "type": "choice",
+              "name": "OPS-002",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.25
+            },
+            {
+              "type": "choice",
+              "name": "OPS-003",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.43
+            },
+            {
+              "type": "choice",
+              "name": "OPS-004",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.84
+            },
+            {
+              "type": "choice",
+              "name": "QA-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.84
+            },
+            {
+              "type": "choice",
+              "name": "GOV-003",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.87
+            },
+            {
+              "type": "choice",
+              "name": "RAG-001",
+              "choice": "INSUFFICIENT_EVIDENCE",
+              "confidence": 0.84
+            },
+            {
+              "type": "choice",
+              "name": "RAG-002",
+              "choice": "SUPPORTED",
+              "confidence": 0.72
+            },
+            {
+              "type": "choice",
+              "name": "STE-001",
+              "choice": "NOT_APPLICABLE",
+              "confidence": 0.09
+            }
+          ]
+        },
+        "evidence_sha256": "6e713641dbbf9668da675d8554321fee9860d09dbe32cf4c0a8ee99463d3252a",
+        "prompt_sha256": "7d7aa7e8305dfdab65489cd8546642ec30df60f05f3a9d7b082c8f73597dbea7",
+        "usage": {
+          "input_tokens": 50051,
+          "input_tokens_details": {
+            "cached_tokens": 239,
+            "cache_write_tokens": 18096,
+            "cache_write_tokens_details": {
+              "ttl_30m_tokens": 18096,
+              "ttl_12h_tokens": 0
+            }
+          },
+          "output_tokens": 0,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 50051
+        },
+        "simulation": true,
+        "mode": "historical_handling_audit"
+      },
+      "matched": true,
+      "detected": false,
+      "latency_seconds": 0.613
+    }
+  ]
+}

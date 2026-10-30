@@ -1,5 +1,11 @@
 # Working with complaint data
 
+Twenty explicitly synthetic policy-violation variants are available in
+[`examples/policy-violations/`](examples/policy-violations/README.md), with shared-contract
+snapshots and separate stored findings citing the draft customer-service policy.
+These are authored bad-handling examples, not discovered production incidents,
+and are not automatically loaded into the live case list.
+
 ## Legal framework examples and final-demo reminder
 
 Review on 2026-10-30: the existing 30 complaint cases and 13 baggage cases are
