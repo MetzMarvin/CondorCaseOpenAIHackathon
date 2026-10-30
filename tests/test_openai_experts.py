@@ -5,6 +5,7 @@ from unittest.mock import patch
 
 from backend.ai_service import process_case
 from backend.ai_service.experts import ExpertDraft, ExpertReview
+from backend.ai_service.customer_email import CustomerEmail, EmailQuestion
 from backend.ai_service.fixtures import demo_request
 from backend.ai_service.settings import Settings
 from backend.ai_service.workflow import process_case as offline
@@ -17,7 +18,7 @@ class OpenAIExpertTests(unittest.TestCase):
         self.addCleanup(self.env.stop)
 
     def test_all_live_flows_use_all_experts_and_preserve_authority(self):
-        for scenario in ('clear', 'missing', 'reply', 'serious', 'unsupported'):
+        for scenario in ('clear', 'missing', 'partial_reply', 'reply', 'serious', 'unsupported'):
             with self.subTest(scenario=scenario), patch('backend.ai_service.experts.OpenAI') as client:
                 request = demo_request(scenario)
                 before = request.model_dump_json()
@@ -27,6 +28,11 @@ class OpenAIExpertTests(unittest.TestCase):
                 draft = ExpertDraft(action_type=baseline.proposed_action.type,
                     explanation='The reviewed evidence supports this demo proposal.',
                     sentiment='negative', customer_message='Customer care draft.')
+                if baseline.proposed_action.type == 'REQUEST_INFORMATION':
+                    draft = CustomerEmail(action_type='REQUEST_INFORMATION', explanation='Missing evidence.',
+                        sentiment='negative', opening='Thank you for contacting us.', questions=[
+                            EmailQuestion(fact_name=f.name, question='Please provide ' + f.name + '.')
+                            for f in baseline.proposed_action.payload.missing_facts])
                 parse = client.return_value.__enter__.return_value.responses.parse
                 parse.side_effect = [SimpleNamespace(status='completed', output_parsed=value)
                                      for value in (review, review, draft)]
@@ -41,6 +47,13 @@ class OpenAIExpertTests(unittest.TestCase):
                 self.assertEqual(request.model_dump_json(), before)
                 self.assertEqual(result.proposed_action.action_id, baseline.proposed_action.action_id)
                 self.assertEqual(result.proposed_action.type, baseline.proposed_action.type)
+                if result.proposed_action.type == 'REQUEST_INFORMATION':
+                    self.assertIn('Subject: More information needed', result.proposed_action.payload.question_de)
+                    self.assertIn('request_information', [event.step_id for event in events])
+                    if scenario == 'partial_reply':
+                        self.assertNotIn('receipt_currency', result.proposed_action.payload.question_de)
+                else:
+                    self.assertNotIn('request_information', [event.step_id for event in events])
                 if result.proposed_action.type == 'RESOLVE':
                     self.assertEqual(result.proposed_action.payload.financial_positions,
                                      baseline.proposed_action.payload.financial_positions)
@@ -67,6 +80,17 @@ class OpenAIExpertTests(unittest.TestCase):
             self.assertEqual(result.status, 'SUCCEEDED')
             self.assertTrue(result.simulation)
             client.assert_not_called()
+
+    def test_incomplete_email_fails_the_run_instead_of_proposing_it(self):
+        with patch('backend.ai_service.experts.OpenAI') as client:
+            review = ExpertReview(supported=True, summary='Supported next action.', source_ids=[])
+            draft = CustomerEmail(action_type='REQUEST_INFORMATION', explanation='Evidence missing.',
+                sentiment='neutral', opening='Thank you for contacting us.', questions=[])
+            client.return_value.__enter__.return_value.responses.parse.side_effect = [
+                SimpleNamespace(status='completed', output_parsed=value) for value in (review, review, draft)]
+            result = process_case(demo_request('missing'), lambda _: None)
+            self.assertEqual(result.status, 'FAILED')
+            self.assertIsNone(result.proposed_action)
 
     def test_missing_key_is_failed_run(self):
         with patch.dict(os.environ, {'OPENAI_API_KEY': ''}):
