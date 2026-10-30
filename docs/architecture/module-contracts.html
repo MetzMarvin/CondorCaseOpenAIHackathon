@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Condor Care Hub · Module contracts</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1220;--card:#131f32;--line:#2a3d57;--text:#e8eff9;--muted:#a8b9cf;--blue:#70baff;--green:#75dfb4;--amber:#ffd18b}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,sans-serif}main{max-width:1200px;margin:auto;padding:48px 24px}h1{font-size:clamp(30px,5vw,48px);line-height:1.1;margin:10px 0 16px}h2{font-size:23px;margin:36px 0 16px}h3{margin:0 0 8px;font-size:19px}p{margin:8px 0;color:var(--muted)}.eyebrow{color:var(--blue);text-transform:uppercase;letter-spacing:.12em;font-size:12px;font-weight:700}.badge{display:inline-block;border:1px solid var(--line);border-radius:30px;padding:4px 12px;font-size:12px;color:var(--amber);margin-top:12px}.diagram{margin-top:26px;padding:24px;background:var(--card);border:1px solid var(--line);border-radius:18px}.flow{display:grid;grid-template-columns:1fr 170px 1fr 170px 1fr;align-items:center;gap:12px}.node{border:1px solid var(--line);border-top:3px solid var(--blue);border-radius:12px;padding:20px;background:var(--bg);min-height:180px}.node.case{border-top-color:var(--green)}.node.ai{border-top-color:var(--amber)}.node small{color:var(--muted)}.arrow{text-align:center;font-size:12px;color:var(--muted)}.arrow b{display:block;font-size:26px;color:var(--blue);line-height:1.2}.authority{text-align:center;margin-top:24px;padding:14px;border:1px dashed var(--green);border-radius:10px;color:var(--green)}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.card{padding:22px;border:1px solid var(--line);border-radius:14px;background:var(--card)}code{font:13px/1.6 ui-monospace,monospace;color:var(--blue);overflow-wrap:anywhere}ul{padding-left:20px;color:var(--muted);margin-bottom:0}li{margin:6px 0}.type{font:12px ui-monospace,monospace;color:var(--green);margin-bottom:12px}details{border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:12px 0;background:var(--card)}summary{cursor:pointer;font-weight:650}pre{overflow:auto;padding:16px;background:var(--bg);border-radius:8px;color:var(--blue);font:13px/1.7 ui-monospace,monospace}.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;padding:13px 16px;border-bottom:1px solid var(--line)}th{background:var(--card);color:var(--muted)}tr:last-child td{border-bottom:0}.verb{font:11px ui-monospace,monospace;color:var(--green);display:inline-block;width:40px}a{color:var(--blue)}.note{border-left:3px solid var(--amber);padding:8px 18px;margin-top:24px}footer{margin-top:36px;color:var(--muted);font-size:13px}@media(max-width:950px){.flow{grid-template-columns:1fr}.node{min-height:0}.arrow b{transform:rotate(90deg)}.grid{grid-template-columns:1fr}main{padding:28px 16px}}
+</style>
+</head>
+<body><main>
+<div class="eyebrow">Condor Care Hub / Architecture</div>
+<h1>Three modules. One case owner.</h1>
+<p>System 1 owns the case. System 2 proposes the next action. System 3 lets people inspect and act.</p>
+<span class="badge">Pydantic contracts implemented · Routes and AI workflow still pending</span>
+<section class="diagram" aria-label="Module interaction diagram">
+<div class="flow">
+<div class="node"><div class="eyebrow">System 3</div><h3>Operations console</h3><p>React / JavaScript</p><small>Case views, demo messages, human takeover and activity.</small></div>
+<div class="arrow">HTTP requests<b>→</b><code>InboundMessageRequest<br>ProcessRequest<br>TakeoverRequest<br>ProposedAction</code><b>←</b>Case details + results + events</div>
+<div class="node case"><div class="eyebrow">System 1</div><h3>Intake &amp; case service</h3><p>FastAPI / persistence</p><small>Creates snapshots, validates authority, applies actions and records events.</small></div>
+<div class="arrow">Synchronous call<b>→</b><code>RunRequest<br>+ emit_progress</code><b>←</b><code>RunResult<br>ProgressUpdate</code></div>
+<div class="node ai"><div class="eyebrow">System 2</div><h3>AI orchestration</h3><p>Python / stored outputs</p><small>Read-only evidence, approved knowledge, assessments and German replies.</small></div>
+</div>
+<div class="authority">System 1 alone writes case records, resolves case-scoped evidence references and executes simulated messages or financial actions.</div>
+</section>
+<h2>The AI boundary</h2>
+<p><code>process_case(request: RunRequest, emit_progress: ProgressCallback) → RunResult</code></p>
+<div class="grid">
+<div class="card"><div class="type">INPUT · RunRequest</div><h3>Versioned snapshot</h3><ul><li>Schema version, run ID, case ID, case version and trigger</li><li>Status, owner, messages and attachments</li><li>Facts and source references</li><li>Customer, booking and flight context</li><li>Permitted actions and financial limits</li></ul></div>
+<div class="card"><div class="type">CALLBACK · ProgressUpdate</div><h3>Observable progress</h3><ul><li>Agreed step ID</li><li>Started, completed or failed</li><li>Display-safe summary and source IDs</li><li>Explicit simulation flag</li></ul><p>System 1 assigns event IDs, sequence numbers and timestamps.</p></div>
+<div class="card"><div class="type">OUTPUT · RunResult</div><h3>Decision or failure</h3><ul><li>Run ID, case ID and snapshot version</li><li>Success: assessment + typed action</li><li>Failure: technical error, no action</li><li>Explicit simulation flag</li></ul><p>Action IDs and version must match the run result.</p></div>
+</div>
+<h2>Three typed business actions</h2>
+<p>Common envelope: <code>actionId · caseId · expectedCaseVersion · runId (AI) · sources · type · payload</code></p>
+<div class="grid">
+<div class="card"><div class="type">REQUEST_INFORMATION</div><h3>Ask for evidence</h3><p>Missing facts, reasons and a German customer-facing question.</p><ul><li>Simulated outbound question</li><li>Status → WAITING_FOR_CUSTOMER</li><li>Current owner retained</li></ul></div>
+<div class="card"><div class="type">RESOLVE</div><h3>Resolve a supported case</h3><p>Outcome, explanation, versioned sources, German reply and financial positions.</p><ul><li>Compensation / reimbursement / goodwill</li><li>Integer minor units + currency</li><li>Status → RESOLVED after execution</li></ul></div>
+<div class="card"><div class="type">HANDOFF</div><h3>Prepare specialist handling</h3><p>Reason code, queue, summary, facts, evidence, unresolved questions and prior attempts.</p><ul><li>Concrete reason required</li><li>Status → WAITING_FOR_SPECIALIST</li><li>Missing evidence or anger alone is insufficient</li></ul></div>
+</div>
+<h2>Console ↔ FastAPI contracts</h2>
+<div class="table-wrap"><table><thead><tr><th>Endpoint</th><th>Request</th><th>Response</th></tr></thead><tbody>
+<tr><td><span class="verb">GET</span><code>/api/cases</code></td><td>status / queue / owner filters</td><td><code>list[CaseSummary]</code></td></tr>
+<tr><td><span class="verb">GET</span><code>/api/cases/{caseId}</code></td><td>Case ID</td><td><code>CaseDetail</code></td></tr>
+<tr><td><span class="verb">POST</span><code>/api/inbound/messages</code></td><td><code>InboundMessageRequest</code></td><td><code>CaseDetail</code></td></tr>
+<tr><td><span class="verb">POST</span><code>/api/cases/{caseId}/attachments</code></td><td>Multipart file</td><td><code>AttachmentRef</code></td></tr>
+<tr><td><span class="verb">GET</span><code>/api/cases/{caseId}/attachments/{attachmentId}</code></td><td>Case + attachment IDs</td><td>File bytes + media type</td></tr>
+<tr><td><span class="verb">POST</span><code>/api/cases/{caseId}/process</code></td><td><code>ProcessRequest</code></td><td><code>ProcessResponse</code></td></tr>
+<tr><td><span class="verb">POST</span><code>/api/cases/{caseId}/takeover</code></td><td><code>TakeoverRequest</code></td><td><code>CaseDetail</code></td></tr>
+<tr><td><span class="verb">POST</span><code>/api/cases/{caseId}/actions</code></td><td><code>ProposedAction</code> (human: no run ID)</td><td><code>ActionResponse</code></td></tr>
+<tr><td><span class="verb">GET</span><code>/api/events</code></td><td>caseId / after cursor</td><td><code>EventPage</code></td></tr>
+</tbody></table></div>
+<h2>Inspect model relationships</h2>
+<details open><summary>Case and run models</summary><pre>CaseDetail extends CaseSummary
+├── snapshot: CaseSnapshot
+│   ├── owner: Owner
+│   ├── messages: Message[]
+│   ├── attachments: AttachmentRef[]
+│   ├── knownFacts / context: Fact[] → SourceRef[]
+│   ├── missingInformation: MissingFact[]
+│   └── financialLimits: FinancialLimit[]
+├── sourceReferences: SourceRef[]
+├── runResults: RunResult[]
+│   ├── assessment: Assessment?
+│   ├── proposedAction: RequestInformation | Resolve | Handoff | null
+│   └── technicalError: TechnicalError?
+└── history: ProcessEvent[]</pre></details>
+<details><summary>HTTP requests and responses</summary><pre>InboundMessageRequest → messageId, channel, sender, body,
+                        attachmentIds, caseId?, threadId?
+ProcessRequest        → requestId, expectedCaseVersion
+TakeoverRequest       → actionId, expectedCaseVersion, operatorId
+ProcessResponse       → runResult, appliedAction?, case
+ActionResponse        → case, executionResult
+ExecutionResult       → actionId, caseVersion, simulation
+ApiError              → code, message, currentCaseVersion?</pre></details>
+<details><summary>Events, polling and replay</summary><pre>EventPage
+├── events: ProcessEvent[]
+│   ├── schemaVersion, eventId, caseId, runId?
+│   ├── sequence, timestamp, summary, data
+│   ├── type: step.started / step.completed / step.failed
+│   │         case.updated / owner.changed / action.applied / run.failed
+│   └── stepId: required for step events
+└── cursor: next polling cursor
+
+Agreed steps:
+intake · extract_evidence · assess · retrieve_policy · validate_action
+request_information · wait_for_customer · send_reply · human_handoff</pre><p>Progress does not change the case version. System 1 owns event ordering. Animation of stored events must be labeled as replay.</p></details>
+<div class="note"><strong>Validation is implemented; execution remains an integration task.</strong><p>Pydantic checks payload structure, IDs, versions, action variants and failure consistency. System 1 still implements permission checks, atomic state transitions, idempotency, stale-result rejection and HTTP error mapping. Human takeover invalidates older AI proposals.</p></div>
+<footer>Local, self-contained reference · No external scripts, fonts or services<br><a href="module-contracts.md">Contract documentation</a> · <a href="subsystems-and-contracts.md">Subsystem agreement</a> · <a href="../../backend/contracts.py">Pydantic source</a></footer>
+</main></body></html>

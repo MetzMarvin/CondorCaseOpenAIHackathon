@@ -1,2 +1,13 @@
 # Windows download metadata
 *:Zone.Identifier
+
+# Rebuildable pipeline outputs; pinned raw snapshot and small examples are tracked.
+__pycache__/
+*.pyc
+data/normalized/
+data/processed/
+
+# Local Python environments and tooling caches
+.venv/
+.pytest_cache/
+.ruff_cache/
