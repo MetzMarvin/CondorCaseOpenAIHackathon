@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-002
+Record: baggage
+
+PIR dated 2026-10-01 records nonarrival. Delivery status is delivered, but delivery timestamp and acknowledgement are missing from the available snapshot. No admission of permanent loss or reported damage.

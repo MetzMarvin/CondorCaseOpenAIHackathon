@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-004
+Record: snapshot_facts
+
+Synthetic structured record for supplied facts: {"booking_reference": "LEGAL04", "receipt_amount_minor": 1800, "receipt_currency": "EUR", "expense_purpose": "Meal while waiting for delayed flight."}

@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-002
+Record: booking
+
+One confirmed adult passenger, international FRA–MAD carriage operated by Condor demo on 2026-10-01; checked bag TAG-MOCK-L02 linked to passenger and PIR-MOCK-L02; Montreal Convention applicability stipulated for this synthetic exercise.

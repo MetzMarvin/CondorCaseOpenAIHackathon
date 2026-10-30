@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-018
+Record: snapshot_facts
+
+Synthetic structured record for supplied facts: {"booking_reference": "LEGAL18", "baggage_reference": "TAG-MOCK-L18", "written_complaint_date": "2026-10-24"}

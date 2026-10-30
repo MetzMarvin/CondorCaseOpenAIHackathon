@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-003
+Record: operations
+
+2026-10-10 scheduled arrival 13:00Z; touchdown 15:55Z; first door opened and disembarkation permitted 16:08Z. Routine component wear caused delay; maintenance confirms no hidden manufacturing defect or external event. No extraordinary defense supported.

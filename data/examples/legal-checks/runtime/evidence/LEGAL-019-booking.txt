@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-019
+Record: booking
+
+Booking LEGAL19; flight DE-MOCK-L19; one confirmed adult passenger; FRA–MAD, Condor demo EU carrier; passenger with reduced mobility arrived at designated point on time. All identities and records are synthetic.

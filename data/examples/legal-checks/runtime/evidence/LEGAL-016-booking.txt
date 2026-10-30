@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-016
+Record: booking
+
+Booking LEGAL16; flight DE-MOCK-L16; one confirmed adult passenger; FRA–MAD international flight 2026-10-10; Condor demo; Montreal applicability stipulated; TAG-MOCK-L16. All identities and records are synthetic.

@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-020
+Record: snapshot_facts
+
+Synthetic structured record for supplied facts: {"booking_reference": "LEGAL20", "receipt_amount_minor": 24000, "receipt_currency": "EUR", "expense_purpose": "Reported treatment following onboard injury."}

@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-015
+Record: operations
+
+2026-10-10 scheduled departure 08:00Z; at 13:10Z aircraft still awaiting departure. Customer chose reimbursement at 13:10Z and did not travel. No preceding flown segment or return-to-origin requirement.

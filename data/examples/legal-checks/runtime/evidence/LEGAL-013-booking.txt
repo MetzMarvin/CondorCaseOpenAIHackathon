@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-013
+Record: booking
+
+Booking LEGAL13; flight DE-MOCK-L13; one confirmed adult passenger; JFK–FRA standalone nonstop; marketed by Condor demo but operated solely by Fictional US Air, a non-EU carrier; no EU-origin connecting itinerary. All identities and records are synthetic.

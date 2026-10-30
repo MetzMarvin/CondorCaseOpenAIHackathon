@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-012
+Record: operations
+
+Gate reason DOCUMENT_INVALID conflicts with customer authorization confirmation. Validation result, timestamp and applicable entry requirements are not yet available. No conclusion about justified refusal established.

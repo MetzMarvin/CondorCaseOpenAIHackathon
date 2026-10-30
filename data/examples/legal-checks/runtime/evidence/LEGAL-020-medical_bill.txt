@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-020
+Record: medical_bill
+
+Synthetic invoice total EUR 240; no real medical details or personal identifiers.

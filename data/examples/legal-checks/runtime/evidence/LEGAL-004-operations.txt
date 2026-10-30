@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-004
+Record: operations
+
+2026-10-10 scheduled departure 08:00Z, actual 10:20Z; scheduled arrival 10:45Z, doors opened 13:25Z. No care offered. Routine operational delay.

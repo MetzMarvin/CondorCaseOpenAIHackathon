@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-007
+Record: booking
+
+Booking LEGAL07; flight DE-MOCK-L07; one confirmed adult passenger; FRA–MAD, Condor demo EU carrier, 1420 km; unused ticket EUR 180. All identities and records are synthetic.

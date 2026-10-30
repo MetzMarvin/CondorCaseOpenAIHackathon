@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-012
+Record: customer_document
+
+Synthetic confirmation asserts valid authorization on 2026-10-10; not a passport or actual travel credential.

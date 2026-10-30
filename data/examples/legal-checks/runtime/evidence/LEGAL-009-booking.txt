@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-009
+Record: booking
+
+Booking LEGAL09; flight DE-MOCK-L09; one confirmed adult passenger; FRA–MAD, Condor demo EU carrier, 1420 km; unused fare EUR 220; checked in on time. All identities and records are synthetic.
