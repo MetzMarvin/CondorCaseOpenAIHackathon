@@ -16,3 +16,6 @@ data/processed/
 .env
 .env.*
 !.env.example
+
+# Local simulated customer email outbox
+email-outbox.sqlite3*

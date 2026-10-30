@@ -1,5 +1,45 @@
 # Working with complaint data
 
+## Legal framework examples and final-demo reminder
+
+Review on 2026-10-30: the existing 30 complaint cases and 13 baggage cases are
+useful workflow fixtures, but their labels are `synthetic_unreviewed`, with no
+verified legal entitlement. The generated complaint emails also include German;
+the current project instructions require English for the final demo.
+
+Two authored English legal-check examples now live in
+[`examples/legal-checks/runtime/complaints.jsonl`](examples/legal-checks/runtime/complaints.jsonl).
+Each includes a customer email, separate synthetic internal evidence and retrieval
+queries. These are standalone review inputs, not pipeline exports or `RunRequest`
+snapshots, and are not loaded by the app or evaluation runner automatically.
+
+- **LEGAL-001:** weather cancellation, overnight care expenses and a separate
+  compensation request; tests whether an unsupported weather label causes a blanket denial.
+- **LEGAL-002:** delayed baggage, missing delivery/receipt evidence and an incorrect
+  flat-SDR demand; tests targeted follow-up, complaint timing and actual-loss assessment.
+
+Reviewer-only checks, source references, failure signals and the second case's
+future reply are in
+[`examples/legal-checks/evaluation/expectations.jsonl`](examples/legal-checks/evaluation/expectations.jsonl).
+Give the assessor only the runtime input initially; introduce the follow-up after
+its evidence request. Compare its cited passages and issue-by-issue conclusions
+with the evaluation file. Record unsupported capability separately from incorrect
+legal reasoning. The current expense-policy workflow is not a verified EU261 or
+Montreal entitlement engine. These expectations are proposed review criteria,
+not approved legal labels or evidence that the system passes them.
+
+**When creating the final 6–10 demo examples:**
+
+- [ ] Incorporate LEGAL-001 and LEGAL-002, retaining their separate legal issues,
+  operational evidence and missing-information reply loop.
+- [ ] Keep a serious-issue handoff case alongside them to retain all three core flows.
+- [ ] Use English throughout; generate matching synthetic attachments and CRM records,
+  align IDs with shared contracts, and keep future replies and expected answers out of runtime retrieval.
+- [ ] Verify event-date applicability and source versions, including revised Montreal
+  limits; obtain legal review before changing `synthetic_unreviewed` labels.
+- [ ] Map supported checks to executable snapshots and stored demo outputs, run them,
+  and record actual results. Explicitly label any still-unsupported legal capability.
+
 Run from the repository root with **Python 3.10+**. No packages, model keys or application server are required.
 
 ```sh

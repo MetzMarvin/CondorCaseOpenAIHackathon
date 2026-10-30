@@ -77,6 +77,44 @@ Generated expectations describe a demo workflow and have not been legally review
 
 ## System 2 integration
 
+### Simulated email delivery
+
+`backend.email_delivery` sends generated drafts to a persistent SQLite outbox.
+Delivery is explicitly simulated; no SMTP connection or external email is sent.
+It consumes `questionDe` for follow-ups and `replyDe` for resolutions, preserving
+generated subjects and bodies. Plain offline messages get a case-reference subject.
+Internal handoff summaries cannot be sent. Repeating an action ID returns the
+original delivery, including its timestamp; changing its content or recipient is
+rejected, including after a process restart.
+
+System 1 calls this adapter **after** validating the action's current case version,
+ownership, state, permitted actions and financial authority. Supply the recipient
+from the trusted case contact. This adapter only records delivery; it does not
+apply case transitions, execute payments or publish process events. Those steps
+still belong to the case service, whose routes are not implemented in this checkout.
+
+```python
+from backend.email_delivery import SimulatedEmailSender
+
+sender = SimulatedEmailSender('email-outbox.sqlite3')
+# authorized_action is a validated RequestInformation or Resolve action.
+delivery = sender.send_authorized(authorized_action, 'customer@example.test')
+```
+
+For a local preview, save a successful `RunResult` as a single JSON object and run:
+
+```sh
+.venv/bin/python -m backend.email_delivery --result /tmp/generated-result.json --to customer@example.test
+```
+
+The command prints the simulated delivery and stores it in `email-outbox.sqlite3`
+(ignored by Git). Use `--database /tmp/demo-outbox.sqlite3` to choose another file.
+The preview command does not authorize or apply the proposal to a live case.
+Run delivery checks with
+`.venv/bin/python -m unittest discover -s tests -p 'test_email_delivery.py' -v`.
+
+### AI processor
+
 Install `requirements.txt` in a virtual environment, then run
 `python -m backend.ai_service` for the included contract flows (three API calls per
 successful case in live mode).
@@ -221,3 +259,29 @@ progress, proposals, an SVG PR preview and a JSON baseline:
 
 See [the workflow evaluation guide](docs/development/workflow-evaluation.md) for
 PR artifacts, failure checks, baseline comparison and adding scenarios.
+
+## Optional legal and policy RAG
+
+For the downloaded legal corpus, set your own `OPENAI_API_KEY` in `.env`, then run:
+
+```sh
+bash scripts/setup-legal-rag.sh
+QDRANT_COLLECTION=legal_research .venv/bin/python -m backend.ai_service.rag search 'flight delay compensation'
+```
+
+This loads the manifest-selected sources into a separate research collection.
+See the [team setup instructions](docs/development/knowledge-rag.md#team-quick-start-with-the-downloaded-legal-corpus)
+for prerequisites and the required shared data files.
+
+Start the persistent local Qdrant database and initialize its empty collection:
+
+```sh
+.venv/bin/python -m pip install -r requirements-rag.txt
+docker compose -f compose.rag.yaml up -d
+.venv/bin/python -m backend.ai_service.rag init
+```
+
+The [Qdrant dashboard](http://localhost:6335/dashboard) runs on port 6335.
+Retrieval combines BM25 and OpenAI `text-embedding-3-small` with RRF fusion.
+See [the RAG guide](docs/development/knowledge-rag.md) for later document imports,
+search commands, configuration, and System 2 integration boundaries.
