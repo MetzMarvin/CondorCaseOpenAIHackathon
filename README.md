@@ -1,14 +1,84 @@
-# Condor Care Hub
+# Condor Care Hub · Out of The Dark
 
-Local airline-complaint mocks for the Condor AI Week hackathon.
+Hackathon demo with an English React/Vite service console and process replay. The customer view belongs to System 1; System 3 provides Dashboard & Service and Process view only. System 1 owns FastAPI/SQLite state and simulated effects; System 2 supplies structured decisions; System 3 displays the outcome and recorded workflow. All demo labels and messages use English. All data, messages and financial actions are synthetic.
 
-- [Data pipeline and collaboration](data/README.md)
-- [Hackathon plan and documentation](docs/README.md)
+## Start locally
+
+Use **Python 3.11 or newer** and Node.js 22.12+. The project environment now uses **Python 3.13.16**; `.python-version` selects 3.13. Do not use macOS system Python 3.9. Run these commands from `CondorCaseOpenAIHackathon/`:
+
+```sh
+python3.13 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt -r demo_backend/requirements.txt
+.venv/bin/python --version
+cd frontend
+npm ci
+```
+
+The previous local environment is preserved in the ignored `.venv-python39-backup/`; all normal commands use `.venv/`.
+
+Terminal 1, from the project root:
+
+```sh
+AI_MODE=offline .venv/bin/uvicorn demo_backend.app:app --host 127.0.0.1 --port 8000
+```
+
+Terminal 2:
+
+```sh
+cd frontend
+npm run dev -- --port 5173 --strictPort
+```
+
+Open [the demo](http://127.0.0.1:5173/) and [the API documentation](http://127.0.0.1:8000/docs). Stop and restart an existing backend after upgrading Python; a running Python 3.9 process does not change interpreter when `.venv` is replaced.
+
+## Data and integration
+
+The [Customer Service Operator Policy](docs/policies/customer-service/README.md) provides an English, RAG-ready policy draft for calls and email. It includes legal source references, structured rules, decision tables and message templates. It requires legal and business review before production use. The demo does not load this package automatically.
+
+The backend creates `demo_backend/demo.sqlite` and six synthetic cases on a fresh database. `DEMO_DB=/absolute/path/demo.sqlite` selects an isolated database. Attachments are local under `demo_backend/attachments/`; no OCR is performed. Use the explicit demo reset control only when you want to replace demo case progress. Old uploaded files may remain locally after a reset.
+
+Older booking-confirmation mock records are preserved. They return `409 LEGACY_DEMO_DATA` with an explicit reset instruction instead of being silently overwritten. Use a new `DEMO_DB` path to keep those records and start an integrated rehearsal, or deliberately use **Reset demo** to replace them with the six expense scenarios.
+
+The common Pydantic contracts in `backend/contracts.py` are authoritative: JSON uses `caseId`, `version` and nested `snapshot` fields. `frontend/src/api.js` adapts display fields without making business decisions. The System 3 console calls only System 1 over `/api/*`. The standalone customer component remains available for System 1 and is not mounted in the System 3 console. System 1 invokes System 2 synchronously, records progress, validates ownership/version/authority, and persists accepted actions and simulated financial effects. Repeated command IDs with the same payload return the original response; conflicting payloads or stale versions return 409.
+
+The demo scenarios use a meal expense of **42.00 EUR**. The incomplete case asks for receipt amount and currency; the prepared reply `42.00 EUR` supplies those facts on the same case. This is deterministic demo evidence extraction, not general text understanding or receipt parsing. Internal eligibility and previous-payment checks are synthetic sourced records owned by System 1; customers cannot grant financial authority.
+
+For another compatible System 1 backend, set `API_PROXY_TARGET=http://127.0.0.1:8001` in `frontend/.env.local` and restart Vite. Set `VITE_DEMO_CONTROLS=false` to hide the local reset extension. API errors never silently switch to mock data.
+
+## Four-minute pitch
+
+1. **0:00–0:25:** show dashboard case counts and explain the shared case.
+2. **0:25–1:10:** select the evidence scenario, start assessment in the console, and use **Simulate customer reply** with `42.00 EUR`, then **Submit reply & assess** (optionally add a synthetic receipt).
+3. **1:10–2:20:** return to the same case in the service console. Show evidence, sources, accepted resolution and simulated reimbursement; replay a short part of the recorded workflow.
+4. **2:20–2:45:** show the service reply and resolved status in the console message history. Use System 1 for the customer-facing view.
+5. **2:45–3:35:** select the serious scenario, process it, show the specific handoff reason and context, then demonstrate human takeover.
+6. **3:35–4:00:** return to dashboard counts and explain the benefit.
+
+Also rehearse the complete clear-case → automatic reply path and handoff → takeover → human resolution path. Missing evidence and negative sentiment alone do not trigger handoff. Recorded-event animation is labelled replay; it is not live model streaming. Prepare/reset the demo before presenting, and keep both servers running.
+
+## Checks
+
+```sh
+.venv/bin/python -m pip check
+.venv/bin/python -m unittest discover -s tests -v
+.venv/bin/python -m unittest demo_backend.test_api -v
+cd frontend
+npm test
+npm run build
+```
+
+Backend tests use temporary databases. See [the verification record](docs/planning/demo-verification.md) for checks actually performed and limits. Real email, payments, Salesforce, authentication and OCR remain outside this mockup.
+
+## Shared backend and data work
+
+The shared backend, AI workflow and console use the same Python environment and contracts. The data explorer below remains an independent review tool.
 
 ## Start working
 
+Use the Python 3.11+ project `.venv` for the shared backend and pipeline; the installed local interpreter is Python 3.13.16.
+
 ```sh
-python3 -m venv .venv
+python3.13 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 cp .env.example .env
 # Set OPENAI_API_KEY in .env to enable live experts.
@@ -40,13 +110,7 @@ cp .env.example .env
 | Shared Python contracts | Pydantic action, AI, HTTP and event models; synchronous AI protocol | [Contract map and setup](docs/architecture/module-contracts.md) |
 | Earlier interface exploration | Detailed workflow contract and interactive ownership map | Design references; not implemented application code |
 
-Shared Pydantic contracts are defined; System 2 has an offline processor; System 1 route wiring remains to be implemented. Deterministic System 2 snapshots and recorded outputs are included. Remaining integration work:
-
-1. **Case service:** FastAPI routes, SQLite persistence, case state, validated actions and events.
-2. **AI service:** connect the implemented processor to System 1 snapshots and event persistence.
-3. **Demo console:** React/JavaScript case list, detail view, simulated replies and human actions.
-
-Integrate complete → resolve, missing evidence → clarify → resolve, and serious case → handover before expanding scope. Follow [the subsystem contracts](docs/architecture/subsystems-and-contracts.md) where older plans differ. The application itself is still to be built; the data explorer is a review tool.
+The demo integration connects the shared AI processor to the FastAPI case service and the React console. Continue to use the subsystem ownership and contracts when adding features. Broader dataset tooling and the complaint explorer are review utilities, not dependencies of the six-case pitch.
 
 ## Preview the existing work
 
@@ -58,7 +122,7 @@ Open http://localhost:8787/?variant=B for the baggage evidence walkthrough.
 
 ## Build the complaint fixtures
 
-Python 3.10+; no packages or API keys required. The pinned τ² source snapshot is included.
+Python 3.11+; no packages or API keys required. The pinned τ² source snapshot is included.
 
 ```sh
 python3 -m pipeline normalize
@@ -243,8 +307,7 @@ is implemented here.
 System 1 must create the run, supply an AI-owned IN_PROGRESS snapshot, persist
 progress/results, and validate/apply proposals atomically with ownership, version,
 idempotency and authority checks. The processor never sends messages, pays money,
-changes case state or reads arbitrary attachment paths. No FastAPI routes or
-React application exist in this checkout yet; these remain with their owners.
+changes case state or reads arbitrary attachment paths. The FastAPI routes in `demo_backend/` call this shared processor and expose the common Pydantic HTTP contracts to `frontend/`. Run with `AI_MODE=offline` for deterministic pitch rehearsals.
 
 ## Visual workflow review for development
 

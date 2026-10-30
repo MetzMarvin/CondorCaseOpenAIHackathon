@@ -1,0 +1,366 @@
+{
+  "schema_version": "1.0.0",
+  "language": "en",
+  "sources": [
+    {
+      "source_id": "EU261",
+      "title": "Regulation (EC) No 261/2004",
+      "url": "https://eur-lex.europa.eu/eli/reg/2004/261/oj/eng",
+      "kind": "binding_law",
+      "provisions": [
+        "Articles 2–16"
+      ],
+      "checked_on": "2026-10-30",
+      "verification": "official_search_extract",
+      "review_note": "Direct page access met an access challenge. Official indexed extracts were available. Read the full applicable text before production release."
+    },
+    {
+      "source_id": "EU261-GUIDE",
+      "title": "Commission Notice C/2024/5687",
+      "url": "https://eur-lex.europa.eu/eli/C/2024/5687/oj/eng",
+      "kind": "interpretative_guidance",
+      "provisions": [
+        "Sections 2–8"
+      ],
+      "checked_on": "2026-10-30",
+      "verification": "official_search_extract",
+      "review_note": "Guidance is not legislation. Check later judgments. Direct English page access met an access challenge."
+    },
+    {
+      "source_id": "EU261-2027",
+      "title": "Regulation (EU) 2026/2202",
+      "url": "https://eur-lex.europa.eu/eli/reg/2026/2202/oj/eng",
+      "kind": "binding_law_future_application",
+      "provisions": [
+        "Article 3"
+      ],
+      "checked_on": "2026-10-30",
+      "verification": "official_search_extract",
+      "review_note": "Article 3 states application from 23 October 2027. This release does not implement the future rules."
+    },
+    {
+      "source_id": "EU-RIGHTS",
+      "title": "Your Europe: Air passenger rights",
+      "url": "https://europa.eu/youreurope/citizens/travel/passenger-rights/air/index_en.htm",
+      "kind": "official_explanation",
+      "provisions": [
+        "Scope, cancellation, delay, assistance, complaints"
+      ],
+      "checked_on": "2026-10-30",
+      "verification": "official_page",
+      "review_note": null
+    },
+    {
+      "source_id": "MC99",
+      "title": "Montreal Convention 1999",
+      "url": "https://eur-lex.europa.eu/legal-content/EN/ALL/?uri=CELEX%3A22001A0718%2801%29",
+      "kind": "binding_treaty",
+      "provisions": [
+        "Articles 17, 19, 20, 22, 23, 29, 31, 35, 36, 39–45"
+      ],
+      "checked_on": "2026-10-30",
+      "verification": "official_search_extract",
+      "review_note": null
+    },
+    {
+      "source_id": "MC99-LIMITS",
+      "title": "ICAO: Revised liability limits effective 28 December 2024",
+      "url": "https://www.icao.int/news/international-air-travel-liability-limits-set-increase-enhancing-customer-compensation-0",
+      "kind": "official_limit_notice",
+      "provisions": [
+        "Baggage: 1519 SDR. Passenger delay: 6303 SDR."
+      ],
+      "checked_on": "2026-10-30",
+      "verification": "official_page",
+      "review_note": null
+    },
+    {
+      "source_id": "EU2027",
+      "title": "Regulation (EC) No 2027/97, as amended by Regulation (EC) No 889/2002",
+      "url": "https://eur-lex.europa.eu/eli/reg/1997/2027/oj/eng",
+      "kind": "binding_law",
+      "provisions": [
+        "Articles 1, 3, 5, 6"
+      ],
+      "checked_on": "2026-10-30",
+      "verification": "reference_for_release_review",
+      "review_note": "Read the consolidated text before production release."
+    },
+    {
+      "source_id": "PRM",
+      "title": "Regulation (EC) No 1107/2006",
+      "url": "https://eur-lex.europa.eu/eli/reg/2006/1107/oj/eng",
+      "kind": "binding_law",
+      "provisions": [
+        "Articles 3–8, 10–12, 14–15"
+      ],
+      "checked_on": "2026-10-30",
+      "verification": "official_search_extract",
+      "review_note": null
+    },
+    {
+      "source_id": "PRM-GUIDE",
+      "title": "Commission Notice C/2024/5992",
+      "url": "https://eur-lex.europa.eu/eli/C/2024/5992/oj/eng",
+      "kind": "interpretative_guidance",
+      "provisions": [
+        "Section 5.4"
+      ],
+      "checked_on": "2026-10-30",
+      "verification": "official_search_extract",
+      "review_note": null
+    },
+    {
+      "source_id": "GDPR",
+      "title": "Regulation (EU) 2016/679",
+      "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj/eng",
+      "kind": "binding_law",
+      "provisions": [
+        "Articles 5, 6, 9, 12–15, 22, 25, 28, 30, 32–35"
+      ],
+      "checked_on": "2026-10-30",
+      "verification": "official_search_extract",
+      "review_note": null
+    },
+    {
+      "source_id": "BGB195",
+      "title": "German Civil Code: section 195 — Standard limitation period",
+      "url": "https://www.gesetze-im-internet.de/bgb/__195.html",
+      "kind": "binding_law",
+      "provisions": [
+        "Section 195"
+      ],
+      "checked_on": "2026-10-30",
+      "verification": "official_page",
+      "review_note": "Read the German text for the applicable date. English titles in this register are descriptive labels."
+    },
+    {
+      "source_id": "BGB199",
+      "title": "German Civil Code: section 199 — Start of the standard limitation period",
+      "url": "https://www.gesetze-im-internet.de/bgb/__199.html",
+      "kind": "binding_law",
+      "provisions": [
+        "Section 199"
+      ],
+      "checked_on": "2026-10-30",
+      "verification": "official_page",
+      "review_note": "Read the German text for the applicable date. English titles in this register are descriptive labels."
+    },
+    {
+      "source_id": "BGB203",
+      "title": "German Civil Code: section 203 — Suspension during negotiations",
+      "url": "https://www.gesetze-im-internet.de/bgb/__203.html",
+      "kind": "binding_law",
+      "provisions": [
+        "Section 203"
+      ],
+      "checked_on": "2026-10-30",
+      "verification": "official_page",
+      "review_note": "Read the German text for the applicable date. English titles in this register are descriptive labels."
+    },
+    {
+      "source_id": "BGB204",
+      "title": "German Civil Code: section 204 — Suspension through legal proceedings",
+      "url": "https://www.gesetze-im-internet.de/bgb/__204.html",
+      "kind": "binding_law",
+      "provisions": [
+        "Section 204"
+      ],
+      "checked_on": "2026-10-30",
+      "verification": "reference_for_release_review",
+      "review_note": "Read the German text for the applicable date. English titles in this register are descriptive labels."
+    },
+    {
+      "source_id": "BGB286",
+      "title": "German Civil Code: section 286 — Default",
+      "url": "https://www.gesetze-im-internet.de/bgb/__286.html",
+      "kind": "binding_law",
+      "provisions": [
+        "Section 286"
+      ],
+      "checked_on": "2026-10-30",
+      "verification": "official_page",
+      "review_note": "Read the German text for the applicable date. English titles in this register are descriptive labels."
+    },
+    {
+      "source_id": "BGB288",
+      "title": "German Civil Code: section 288 — Default interest",
+      "url": "https://www.gesetze-im-internet.de/bgb/__288.html",
+      "kind": "binding_law",
+      "provisions": [
+        "Section 288"
+      ],
+      "checked_on": "2026-10-30",
+      "verification": "official_page",
+      "review_note": "Read the German text for the applicable date. English titles in this register are descriptive labels."
+    },
+    {
+      "source_id": "BGB307",
+      "title": "German Civil Code: section 307 — Review of standard terms",
+      "url": "https://www.gesetze-im-internet.de/bgb/__307.html",
+      "kind": "binding_law",
+      "provisions": [
+        "Section 307"
+      ],
+      "checked_on": "2026-10-30",
+      "verification": "official_page",
+      "review_note": "Read the German text for the applicable date. English titles in this register are descriptive labels."
+    },
+    {
+      "source_id": "BGB309",
+      "title": "German Civil Code: section 309 — Prohibited standard terms",
+      "url": "https://www.gesetze-im-internet.de/bgb/__309.html",
+      "kind": "binding_law",
+      "provisions": [
+        "Section 309"
+      ],
+      "checked_on": "2026-10-30",
+      "verification": "official_page",
+      "review_note": "Read the German text for the applicable date. English titles in this register are descriptive labels."
+    },
+    {
+      "source_id": "BGB312",
+      "title": "German Civil Code: section 312 — Consumer contract scope",
+      "url": "https://www.gesetze-im-internet.de/bgb/__312.html",
+      "kind": "binding_law",
+      "provisions": [
+        "Section 312"
+      ],
+      "checked_on": "2026-10-30",
+      "verification": "reference_for_release_review",
+      "review_note": "Read the German text for the applicable date. English titles in this register are descriptive labels."
+    },
+    {
+      "source_id": "BGB312A",
+      "title": "German Civil Code: section 312a — Consumer contract duties",
+      "url": "https://www.gesetze-im-internet.de/bgb/__312a.html",
+      "kind": "binding_law",
+      "provisions": [
+        "Section 312a"
+      ],
+      "checked_on": "2026-10-30",
+      "verification": "reference_for_release_review",
+      "review_note": "Read the German text for the applicable date. English titles in this register are descriptive labels."
+    },
+    {
+      "source_id": "BGB648",
+      "title": "German Civil Code: section 648 — Termination by the customer",
+      "url": "https://www.gesetze-im-internet.de/bgb/__648.html",
+      "kind": "binding_law",
+      "provisions": [
+        "Section 648"
+      ],
+      "checked_on": "2026-10-30",
+      "verification": "official_page",
+      "review_note": "Read the German text for the applicable date. English titles in this register are descriptive labels."
+    },
+    {
+      "source_id": "BGB651H",
+      "title": "German Civil Code: section 651h — Package travel cancellation",
+      "url": "https://www.gesetze-im-internet.de/bgb/__651h.html",
+      "kind": "binding_law",
+      "provisions": [
+        "Section 651h"
+      ],
+      "checked_on": "2026-10-30",
+      "verification": "official_page",
+      "review_note": "Read the German text for the applicable date. English titles in this register are descriptive labels."
+    },
+    {
+      "source_id": "BGB651J",
+      "title": "German Civil Code: section 651j — Package travel limitation",
+      "url": "https://www.gesetze-im-internet.de/bgb/__651j.html",
+      "kind": "binding_law",
+      "provisions": [
+        "Section 651j"
+      ],
+      "checked_on": "2026-10-30",
+      "verification": "reference_for_release_review",
+      "review_note": "Read the German text for the applicable date. English titles in this register are descriptive labels."
+    },
+    {
+      "source_id": "BGB651P",
+      "title": "German Civil Code: section 651p — Limits and credit of compensation",
+      "url": "https://www.gesetze-im-internet.de/bgb/__651p.html",
+      "kind": "binding_law",
+      "provisions": [
+        "Section 651p"
+      ],
+      "checked_on": "2026-10-30",
+      "verification": "reference_for_release_review",
+      "review_note": "Read the German text for the applicable date. English titles in this register are descriptive labels."
+    },
+    {
+      "source_id": "VSBG37",
+      "title": "Consumer Dispute Resolution Act: section 37",
+      "url": "https://www.gesetze-im-internet.de/vsbg/__37.html",
+      "kind": "binding_law",
+      "provisions": [
+        "Section 37"
+      ],
+      "checked_on": "2026-10-30",
+      "verification": "official_page",
+      "review_note": null
+    },
+    {
+      "source_id": "STGB201",
+      "title": "German Criminal Code: section 201",
+      "url": "https://www.gesetze-im-internet.de/stgb/__201.html",
+      "kind": "binding_law",
+      "provisions": [
+        "Section 201"
+      ],
+      "checked_on": "2026-10-30",
+      "verification": "reference_for_release_review",
+      "review_note": "Confirm the call-recording procedure with Legal and the privacy officer."
+    },
+    {
+      "source_id": "CONDOR-CANCEL",
+      "title": "Condor: Cancel a flight",
+      "url": "https://www.condor.com/en-gb/information-services/help-contact/faq-frequently-asked-questions/book/cancel-flight/",
+      "kind": "public_carrier_information",
+      "provisions": [
+        "Voluntary cancellation and fare terms"
+      ],
+      "checked_on": "2026-10-30",
+      "verification": "official_page",
+      "review_note": "This UK-market FAQ is context only. It is not the fare contract for a German booking."
+    },
+    {
+      "source_id": "CONDOR-ADR",
+      "title": "Condor: Conciliation body",
+      "url": "https://www.condor.com/de-de/informationen-services/hilfe-kontakt/schlichtungsstelle/",
+      "kind": "public_carrier_information",
+      "provisions": [
+        "Participation, address and application conditions"
+      ],
+      "checked_on": "2026-10-30",
+      "verification": "official_page",
+      "review_note": null
+    },
+    {
+      "source_id": "STE",
+      "title": "ASD-STE100 Issue 9, 15 January 2025",
+      "url": "https://www.asd-ste100.org/assets/files/ASD-STE100_ISSUE9.pdf",
+      "kind": "language_standard",
+      "provisions": [
+        "Part 1, procedural writing rules 5.1–5.5"
+      ],
+      "checked_on": "2026-10-30",
+      "verification": "official_search_extract",
+      "review_note": null
+    },
+    {
+      "source_id": "CJEU-C45-24",
+      "title": "Court of Justice: Case C-45/24, judgment of 15 January 2026",
+      "url": "https://curia.europa.eu/site/upload/docs/application/pdf/2026-01/cp260003en.pdf",
+      "kind": "official_court_press_summary",
+      "provisions": [
+        "Interpretation of Article 8(1)(a): intermediary commission."
+      ],
+      "checked_on": "2026-10-30",
+      "verification": "official_pdf",
+      "review_note": "The press summary is not binding. Read the judgment before release: https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A62024CJ0045"
+    }
+  ]
+}

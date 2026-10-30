@@ -1,21 +1,35 @@
 # Windows download metadata
 *:Zone.Identifier
 
-# Rebuildable pipeline outputs; pinned raw snapshot and small examples are tracked.
+# Local demo runtime
+.venv/
+.venv-python39-backup/
 __pycache__/
 *.pyc
-data/normalized/
-data/processed/
-
-# Local Python environments and tooling caches
-.venv/
-.pytest_cache/
-.ruff_cache/
-
-# Backend credentials (the example contains no secrets).
+demo_backend/*.sqlite*
+demo_backend/attachments/*
+!demo_backend/attachments/.gitkeep
+node_modules/
+dist/
 .env
 .env.*
 !.env.example
 
 # Local simulated customer email outbox
 email-outbox.sqlite3*
+# Generated caches, reports and local machine files
+.vite/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+coverage/
+.coverage
+htmlcov/
+playwright-report/
+test-results/
+*.log
+.DS_Store
+
+# Rebuildable pipeline outputs; pinned raw snapshot and small examples stay tracked.
+data/normalized/
+data/processed/

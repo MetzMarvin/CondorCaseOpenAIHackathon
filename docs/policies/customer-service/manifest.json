@@ -1,0 +1,27 @@
+{
+  "policy_id": "CONDOR-CS-EN",
+  "policy_version": "0.1.0",
+  "status": "draft_review_required",
+  "chunk_count": 49,
+  "files_sha256": {
+    "policy.json": "484eb1c3e1ee37885186b2df97150496891cdb78fcb8db4871680d33ebfffc33",
+    "policy.schema.json": "c2fb1081c356f7b138562499e9b45c22e24a2ca0fc93843fae507d2a50a14c13",
+    "decision.schema.json": "7684cf58d75bf7ce20ed8212a2920fc8b70eca07298464e1329c6f8430a3ffbf",
+    "decision-tables.json": "c086aedf28fc6d4254e7830ad3ff7548098f0e891c1f8c2694c0b9a6e51aca41",
+    "sources.json": "433204b7ff0ad8fd730faf4ed210b7c31638518e64174d6f531fc0f5e85a274b",
+    "glossary.json": "85331545cc1f4e15359766d8b75573108cd915eb93272b5db2e7a0d6271c495d",
+    "templates.json": "444ac8758325193936f48569c5e78b5abbc7659d01d13f4511498226fbf54416",
+    "acceptance-scenarios.json": "44da899d909101025b467be7a630f15ac912c7fd1781ef79f9d5b2b5dcf685d0",
+    "policy_tools.py": "ed22511c435374d679cf1c9bce9f67ef06e8bdfe7773fcf2b443a1af4d5f3848",
+    "README.md": "3699475d9b07f8f13db6521f39666ff27307443fb6bb42c60e9b3df4cf2d5d1b",
+    "rag.jsonl": "5c16652d82d7e8c4d106d7bcfba8ff4647970d50ae53fdbaf10fe285cb1b4dd3",
+    "OPERATOR-GUIDE.md": "679ddf625f596fec260ea1ef77c21f477f904326aceb3dd7dda23dd770c0b382"
+  },
+  "checks": {
+    "table_boundary_checks_passed": 24,
+    "workflow_and_legal_scenarios_executed": 0,
+    "schema_check": "Selected structural invariants only. No full JSON Schema validator was run.",
+    "language_check": "Conservative sentence length and selected contractions. No full STE dictionary validation.",
+    "legal_approval": false
+  }
+}

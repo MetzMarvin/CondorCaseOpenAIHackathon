@@ -3,14 +3,21 @@
 ## Current implementation
 
 - [System 2 routing stage handoff](planning/system-2-stage-handoff.md): delivered routing, outstanding integration work, subsystem owners and next-stage acceptance checks.
+- [Customer Service Operator Policy](policies/customer-service/README.md): English policy draft for calls and email, EU261 and German consumer-law rules, structured JSON, RAG JSONL, source references, decision tables and validation tools.
+
 - [Frontend design guidelines](architecture/frontend-design-guidelines.md): design language extracted from the demo, including colors, typography, layouts, component patterns, interaction rules and a developer checklist.
 - [Module contract visualization](architecture/module-contracts.html): HTML overview of module boundaries, payloads and endpoints.
 - [Executable contract guide](architecture/module-contracts.md): Pydantic models and integration responsibilities.
 - [Development setup and repository map](../README.md#start-working): installation, offline demo and tests.
 
+- [External contract review and integration task plan](planning/external-contract-review-task-plan.md): assessed coverage, concrete gaps, subsystem owners and prioritized test-first tasks.
+
+- [Lauffähiger System-3-Mock](../README.md): Startanleitung, Demo-Szenarien, Präsentationsansicht und Integration mit System 1.
+- [Demo-Prüfprotokoll](planning/demo-verification.md): tatsächlich ausgeführte Tests und bekannte Grenzen.
 ## Plans and reference material
 
 - [Subsystems and interface contracts](architecture/subsystems-and-contracts.md): drei Entwicklungsbereiche, synchrone KI-Verarbeitung, gemeinsame Datenmodelle, API-Verträge und Ereignisse für die 3-Stunden-Demo.
+- [System 3: TDD-Subtasks](planning/service-operations-tdd-tasks.md): priorisierte Checkliste für Service Operations & Live Demo Console; erstes lauffähiges Beispiel, drei Kernabläufe und abschließende Demo-Prüfung.
 
 - [Hackathon-Plan](planning/hackathon-plan.md): Problemstatement, Ziele, MVP, Architektur, Salesforce-Dummy, Datenkonzept, Kennzahlen und Demo-Ablauf.
 - [Workflow interfaces](planning/workflow-interfaces.md): earlier exploratory design (superseded for implementation); ownership for three developers, shared data contracts, AI execution, HTTP routes and integration checks.
