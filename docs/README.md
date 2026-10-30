@@ -2,6 +2,8 @@
 
 ## Current implementation
 
+- [Customer Service Operator Policy](policies/customer-service/README.md): English policy draft for calls and email, EU261 and German consumer-law rules, structured JSON, RAG JSONL, source references, decision tables and validation tools.
+
 - [Frontend design guidelines](architecture/frontend-design-guidelines.md): design language extracted from the demo, including colors, typography, layouts, component patterns, interaction rules and a developer checklist.
 - [Module contract visualization](architecture/module-contracts.html): HTML overview of module boundaries, payloads and endpoints.
 - [Executable contract guide](architecture/module-contracts.md): Pydantic models and integration responsibilities.

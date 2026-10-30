@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0.0",
+  "language": "en",
+  "status": "proposed_technical_terms_for_STE_specialist_review",
+  "terms": [
+    {
+      "term": "case",
+      "meaning": "A service record that links one request to its messages, issues and actions."
+    },
+    {
+      "term": "issue",
+      "meaning": "One distinct question or claimed right within a case."
+    },
+    {
+      "term": "operating carrier",
+      "meaning": "The airline that performs or intends to perform the flight."
+    },
+    {
+      "term": "compensation",
+      "meaning": "A statutory fixed payment for a qualifying disruption under EU261."
+    },
+    {
+      "term": "ticket refund",
+      "meaning": "A return of the ticket price under the applicable refund right."
+    },
+    {
+      "term": "expense reimbursement",
+      "meaning": "A payment for a necessary reasonable expense under an applicable duty."
+    },
+    {
+      "term": "goodwill",
+      "meaning": "A voluntary benefit separate from a legal right."
+    },
+    {
+      "term": "rerouting",
+      "meaning": "Alternative carriage to the final destination under comparable transport conditions."
+    },
+    {
+      "term": "care",
+      "meaning": "Meals, communication, necessary accommodation and related transport under Article 9."
+    },
+    {
+      "term": "extraordinary circumstances",
+      "meaning": "A legal defence that requires event, control, causation and reasonable-measures checks."
+    },
+    {
+      "term": "final destination",
+      "meaning": "The relevant destination under Article 2(h) for the covered booking."
+    },
+    {
+      "term": "minor unit",
+      "meaning": "The smallest stored currency unit. One EUR has 100 minor units."
+    },
+    {
+      "term": "SDR",
+      "meaning": "Special Drawing Right. This is a unit of account, not a fixed EUR amount."
+    },
+    {
+      "term": "Property Irregularity Report",
+      "meaning": "A report for baggage tracing or an incident. Check whether it also satisfies the legal complaint requirement."
+    },
+    {
+      "term": "handover",
+      "meaning": "A transfer of responsibility to a person with the required skill or authority."
+    },
+    {
+      "term": "resolved",
+      "meaning": "All issues have a result and accepted effects have confirmation. New material evidence can reopen the case."
+    },
+    {
+      "term": "closed",
+      "meaning": "An administrative record state. This state does not remove a legal right."
+    },
+    {
+      "term": "simulation",
+      "meaning": "A demo action that sends no real message and moves no real money."
+    },
+    {
+      "term": "RAG",
+      "meaning": "Retrieval-augmented generation. The system retrieves records before it prepares an answer."
+    },
+    {
+      "term": "source locator",
+      "meaning": "An article, section or paragraph that identifies the supporting source text."
+    }
+  ]
+}

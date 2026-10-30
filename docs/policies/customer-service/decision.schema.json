@@ -1,0 +1,266 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:condor:customer-service:decision:1.0.0",
+  "title": "Policy assessment exchange proposal",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "case_id",
+    "based_on_case_version",
+    "policy_id",
+    "policy_version",
+    "legal_profile_id",
+    "event_date",
+    "action_type",
+    "simulation",
+    "human_review_required",
+    "retrieved_rule_ids",
+    "issues"
+  ],
+  "properties": {
+    "case_id": {
+      "type": "string"
+    },
+    "based_on_case_version": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "policy_id": {
+      "const": "CONDOR-CS-EN"
+    },
+    "policy_version": {
+      "type": "string"
+    },
+    "legal_profile_id": {
+      "type": "string"
+    },
+    "event_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "action_type": {
+      "enum": [
+        "REQUEST_INFORMATION",
+        "RESOLVE",
+        "HANDOFF"
+      ]
+    },
+    "simulation": {
+      "type": "boolean"
+    },
+    "human_review_required": {
+      "type": "boolean"
+    },
+    "retrieved_rule_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    },
+    "handoff_reason": {
+      "enum": [
+        "SERIOUS_ISSUE",
+        "UNSUPPORTED_ACTION",
+        "UNRESOLVED_CONFLICT",
+        "UNCLEAR_RULE",
+        "AUTHORITY_LIMIT",
+        "TECHNICAL_FAILURE"
+      ]
+    },
+    "reply_template_id": {
+      "type": "string"
+    },
+    "issues": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "issue_id",
+          "claim_type",
+          "result",
+          "reason",
+          "rule_ids",
+          "source_refs",
+          "evidence_refs",
+          "missing_facts",
+          "financial_positions",
+          "deadlines"
+        ],
+        "properties": {
+          "issue_id": {
+            "type": "string"
+          },
+          "claim_type": {
+            "enum": [
+              "compensation",
+              "ticket_refund",
+              "expense_reimbursement",
+              "goodwill",
+              "baggage",
+              "booking_change",
+              "service",
+              "additional_loss"
+            ]
+          },
+          "result": {
+            "enum": [
+              "accepted",
+              "partially_accepted",
+              "not_accepted",
+              "awaiting_evidence",
+              "specialist_review"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          },
+          "rule_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          },
+          "source_refs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "source_id",
+                "locator"
+              ],
+              "properties": {
+                "source_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "locator": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "missing_facts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "financial_positions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "type",
+                "amount_minor",
+                "currency",
+                "payment_key",
+                "state"
+              ],
+              "properties": {
+                "type": {
+                  "enum": [
+                    "compensation",
+                    "ticket_refund",
+                    "expense_reimbursement",
+                    "goodwill",
+                    "baggage",
+                    "additional_loss"
+                  ]
+                },
+                "amount_minor": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "currency": {
+                  "type": "string",
+                  "pattern": "^[A-Z]{3}$"
+                },
+                "payment_key": {
+                  "type": "string"
+                },
+                "state": {
+                  "enum": [
+                    "proposed",
+                    "reserved",
+                    "approved",
+                    "submitted",
+                    "settled",
+                    "failed"
+                  ]
+                }
+              }
+            }
+          },
+          "deadlines": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "trigger_at",
+                "due_at",
+                "basis",
+                "owner"
+              ],
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "legal",
+                    "internal_target",
+                    "customer_commitment"
+                  ]
+                },
+                "trigger_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "due_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "basis": {
+                  "type": "string"
+                },
+                "owner": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "action_type": {
+            "const": "HANDOFF"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "handoff_reason"
+        ]
+      }
+    }
+  ]
+}

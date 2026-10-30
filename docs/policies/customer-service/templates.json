@@ -1,0 +1,340 @@
+{
+  "schema_version": "1.0.0",
+  "policy_id": "CONDOR-CS-EN",
+  "policy_version": "0.1.0",
+  "language": "en",
+  "status": "draft_review_required",
+  "template_rules": [
+    "Replace every placeholder with a verified value.",
+    "Do not send legal redress text without a current eligibility check.",
+    "Do not combine money with different currencies into one total.",
+    "Use call scripts as guidance. Adapt the answer to the caller's question."
+  ],
+  "redress_text_lines": [
+    "Condor participates in consumer dispute resolution through Schlichtungsstelle Reise & Verkehr e. V.",
+    "The address is Fasanenstraße 81, 10623 Berlin, Germany.",
+    "The website is https://www.schlichtung-reise-und-verkehr.de/.",
+    "You can ask this body to review an eligible unresolved dispute.",
+    "You can also use the applicable court process."
+  ],
+  "templates": [
+    {
+      "template_id": "ACK",
+      "title": "Receipt acknowledgement",
+      "use_when": "After case creation.",
+      "channels": [
+        "call_summary",
+        "email"
+      ],
+      "subject": "Your Condor case {case_id}",
+      "body_lines": [
+        "Dear {customer_name},",
+        "We received your request about {flight_reference}.",
+        "Your case number is {case_id}.",
+        "We will send an update by {update_date}.",
+        "This message confirms receipt. It does not decide your claim.",
+        "Kind regards,",
+        "Condor Customer Service"
+      ],
+      "required_variables": [
+        "customer_name",
+        "flight_reference",
+        "case_id",
+        "update_date"
+      ],
+      "related_rule_ids": [
+        "INT-001",
+        "OPS-002"
+      ],
+      "send_gate": "Verify facts, identity, authority, dates and recipient. Replace every placeholder. Label all demo messages as simulations."
+    },
+    {
+      "template_id": "EVIDENCE",
+      "title": "Targeted evidence request",
+      "use_when": "A necessary fact is missing.",
+      "channels": [
+        "call_summary",
+        "email"
+      ],
+      "subject": "Information for your Condor case {case_id}",
+      "body_lines": [
+        "Dear {customer_name},",
+        "We need the following information to assess {claim_item}:",
+        "{missing_items_with_reasons}",
+        "You can send an equivalent reliable record if the original document is unavailable.",
+        "Please use {secure_submission_route}.",
+        "We will review your reply under case {case_id}.",
+        "We will send an update by {update_date}.",
+        "Kind regards,",
+        "Condor Customer Service"
+      ],
+      "required_variables": [
+        "customer_name",
+        "case_id",
+        "claim_item",
+        "missing_items_with_reasons",
+        "secure_submission_route",
+        "update_date"
+      ],
+      "related_rule_ids": [
+        "EVID-001",
+        "PRIV-001"
+      ],
+      "send_gate": "Verify facts, identity, authority, dates and recipient. Replace every placeholder. Label all demo messages as simulations."
+    },
+    {
+      "template_id": "OPTIONS",
+      "title": "Cancellation choice",
+      "use_when": "A covered flight is cancelled and no informed choice exists.",
+      "channels": [
+        "call_summary",
+        "email"
+      ],
+      "subject": "Options for cancelled flight {flight_reference}",
+      "body_lines": [
+        "Dear {customer_name},",
+        "We are sorry that flight {flight_reference} was cancelled.",
+        "You can choose one of these options:",
+        "A refund of the covered ticket parts.",
+        "Alternative carriage at the earliest opportunity under comparable conditions.",
+        "Alternative carriage on a later date that suits you, subject to available seats.",
+        "{verified_options_and_refund_scope}",
+        "Please tell us which option you choose.",
+        "We will assess compensation separately.",
+        "{applicable_care_information}",
+        "Your case number is {case_id}.",
+        "Kind regards,",
+        "Condor Customer Service"
+      ],
+      "required_variables": [
+        "customer_name",
+        "flight_reference",
+        "verified_options_and_refund_scope",
+        "applicable_care_information",
+        "case_id"
+      ],
+      "related_rule_ids": [
+        "CAN-001",
+        "REF-001",
+        "REF-002"
+      ],
+      "send_gate": "Verify facts, identity, authority, dates and recipient. Replace every placeholder. Label all demo messages as simulations."
+    },
+    {
+      "template_id": "AWARD",
+      "title": "Accepted claim",
+      "use_when": "The claim items are verified and the action is authorised.",
+      "channels": [
+        "call_summary",
+        "email"
+      ],
+      "subject": "Decision for your Condor case {case_id}",
+      "body_lines": [
+        "Dear {customer_name},",
+        "We are sorry for the disruption to {flight_reference}.",
+        "We accept the following claim items:",
+        "{itemised_awards_and_bases}",
+        "The total approved amount is {total_amount} {currency}.",
+        "{verified_payment_state_and_date}",
+        "{remaining_issues_or_confirmation_of_completion}",
+        "If you disagree with this result, reply with the reason or new evidence.",
+        "You can request a review by a person.",
+        "Kind regards,",
+        "Condor Customer Service"
+      ],
+      "required_variables": [
+        "customer_name",
+        "case_id",
+        "flight_reference",
+        "itemised_awards_and_bases",
+        "total_amount",
+        "currency",
+        "verified_payment_state_and_date",
+        "remaining_issues_or_confirmation_of_completion"
+      ],
+      "related_rule_ids": [
+        "ANS-001",
+        "FIN-001",
+        "OPS-003"
+      ],
+      "send_gate": "Verify facts, identity, authority, dates and recipient. Replace every placeholder. Label all demo messages as simulations."
+    },
+    {
+      "template_id": "PARTIAL",
+      "title": "Partial decision or refusal",
+      "use_when": "A person approves a supported partial decision or refusal.",
+      "channels": [
+        "call_summary",
+        "email"
+      ],
+      "subject": "Review result for your Condor case {case_id}",
+      "body_lines": [
+        "Dear {customer_name},",
+        "We reviewed your request about {flight_reference}.",
+        "{verified_facts}",
+        "{accepted_items_and_payment_state}",
+        "We cannot accept these items for the reasons below:",
+        "{disputed_items_evidence_and_legal_reasons}",
+        "You can send contrary evidence or request a review by a person.",
+        "{applicable_redress_notice}",
+        "We will review any new information under case {case_id}.",
+        "Kind regards,",
+        "Condor Customer Service"
+      ],
+      "required_variables": [
+        "customer_name",
+        "case_id",
+        "flight_reference",
+        "verified_facts",
+        "accepted_items_and_payment_state",
+        "disputed_items_evidence_and_legal_reasons",
+        "applicable_redress_notice"
+      ],
+      "related_rule_ids": [
+        "ANS-002",
+        "ADR-001",
+        "AI-001"
+      ],
+      "send_gate": "Verify facts, identity, authority, dates and recipient. Replace every placeholder. Label all demo messages as simulations."
+    },
+    {
+      "template_id": "HANDOVER",
+      "title": "Specialist handover update",
+      "use_when": "A specialist must assess a specific issue.",
+      "channels": [
+        "call_summary",
+        "email"
+      ],
+      "subject": "Specialist review for your Condor case {case_id}",
+      "body_lines": [
+        "Dear {customer_name},",
+        "A specialist will review {specific_issue}.",
+        "The reason for this review is {plain_language_reason}.",
+        "We will keep the information that you already supplied.",
+        "{immediate_assistance_and_undisputed_items}",
+        "We will send an update by {update_date}.",
+        "Your case number remains {case_id}.",
+        "Kind regards,",
+        "Condor Customer Service"
+      ],
+      "required_variables": [
+        "customer_name",
+        "case_id",
+        "specific_issue",
+        "plain_language_reason",
+        "immediate_assistance_and_undisputed_items",
+        "update_date"
+      ],
+      "related_rule_ids": [
+        "ESC-001",
+        "OPS-002"
+      ],
+      "send_gate": "Verify facts, identity, authority, dates and recipient. Replace every placeholder. Label all demo messages as simulations."
+    },
+    {
+      "template_id": "CALL_SUMMARY",
+      "title": "Written call summary",
+      "use_when": "After an agreed or required written call confirmation.",
+      "channels": [
+        "call_summary",
+        "email"
+      ],
+      "subject": "Summary of your call: {case_id}",
+      "body_lines": [
+        "Dear {customer_name},",
+        "This message confirms our call on {call_date}.",
+        "{verified_options_explained}",
+        "You selected {customer_choice}.",
+        "{authorised_actions_and_payment_state}",
+        "{remaining_questions}",
+        "The next update date is {update_date}.",
+        "Please reply if this summary does not match your instruction.",
+        "Kind regards,",
+        "Condor Customer Service"
+      ],
+      "required_variables": [
+        "customer_name",
+        "case_id",
+        "call_date",
+        "verified_options_explained",
+        "customer_choice",
+        "authorised_actions_and_payment_state",
+        "remaining_questions",
+        "update_date"
+      ],
+      "related_rule_ids": [
+        "CALL-001",
+        "ANS-001"
+      ],
+      "send_gate": "Verify facts, identity, authority, dates and recipient. Replace every placeholder. Label all demo messages as simulations."
+    },
+    {
+      "template_id": "BAGGAGE",
+      "title": "Baggage information request",
+      "use_when": "A baggage claim needs facts or written confirmation.",
+      "channels": [
+        "call_summary",
+        "email"
+      ],
+      "subject": "Baggage case {case_id}",
+      "body_lines": [
+        "Dear {customer_name},",
+        "We are sorry about the problem with your baggage.",
+        "Please provide {necessary_baggage_information}.",
+        "{applicable_notice_deadline_and_trigger}",
+        "Please send the written claim through {submission_route}.",
+        "A tracing report may not contain all information needed for your claim.",
+        "We will assess your documented loss separately from baggage tracing.",
+        "{urgent_assistance_information}",
+        "Kind regards,",
+        "Condor Customer Service"
+      ],
+      "required_variables": [
+        "customer_name",
+        "case_id",
+        "necessary_baggage_information",
+        "applicable_notice_deadline_and_trigger",
+        "submission_route",
+        "urgent_assistance_information"
+      ],
+      "related_rule_ids": [
+        "BAG-001",
+        "BAG-002"
+      ],
+      "send_gate": "Verify facts, identity, authority, dates and recipient. Replace every placeholder. Label all demo messages as simulations."
+    },
+    {
+      "template_id": "DELAY_UPDATE",
+      "title": "Open-case update",
+      "use_when": "The promised update date arrives before completion.",
+      "channels": [
+        "call_summary",
+        "email"
+      ],
+      "subject": "Update for your Condor case {case_id}",
+      "body_lines": [
+        "Dear {customer_name},",
+        "Your case remains open.",
+        "We still need to complete {remaining_check}.",
+        "{action_owner_and_next_step}",
+        "We will send the next update by {update_date}.",
+        "{undisputed_payment_or_assistance_status}",
+        "Kind regards,",
+        "Condor Customer Service"
+      ],
+      "required_variables": [
+        "customer_name",
+        "case_id",
+        "remaining_check",
+        "action_owner_and_next_step",
+        "update_date",
+        "undisputed_payment_or_assistance_status"
+      ],
+      "related_rule_ids": [
+        "OPS-002",
+        "ANS-001"
+      ],
+      "send_gate": "Verify facts, identity, authority, dates and recipient. Replace every placeholder. Label all demo messages as simulations."
+    }
+  ]
+}

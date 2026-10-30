@@ -1,0 +1,324 @@
+{
+  "schema_version": "1.0.0",
+  "policy_id": "CONDOR-CS-EN",
+  "policy_version": "0.1.0",
+  "status": "draft_review_required",
+  "evaluation_contract": {
+    "mode": "declarative_specification_not_executable_engine",
+    "number_units": {
+      "distance_km": "great-circle kilometres without rounding before comparison",
+      "duration_seconds": "integer elapsed seconds",
+      "notice_lead_seconds": "scheduled departure minus proven passenger notice receipt",
+      "reroute_early_seconds": "original departure minus alternative departure",
+      "reroute_late_seconds": "alternative arrival minus original arrival",
+      "amount_minor": "integer currency minor units"
+    },
+    "missing_value": "unknown_never_false",
+    "intervals": "Use explicit inclusive and exclusive bounds. Keep sub-minute precision.",
+    "table_order": "Evaluate scope and eligibility before an amount table. Never award from distance alone."
+  },
+  "tables": {
+    "compensation_amount": {
+      "rule_id": "COMP-001",
+      "source_refs": [
+        {
+          "source_id": "EU261",
+          "locator": "Article 7(1)"
+        }
+      ],
+      "hit_policy": "first_match",
+      "preconditions": [
+        "EU261 applies.",
+        "A fixed compensation right exists.",
+        "No proved applicable exception excludes that right."
+      ],
+      "rows": [
+        {
+          "row_id": "A",
+          "when": {
+            "distance_km_lte": 1500
+          },
+          "amount_minor": 25000,
+          "currency": "EUR"
+        },
+        {
+          "row_id": "B",
+          "when": {
+            "distance_km_gt": 1500,
+            "any_of": [
+              {
+                "intra_eu": true
+              },
+              {
+                "distance_km_lte": 3500
+              }
+            ]
+          },
+          "amount_minor": 40000,
+          "currency": "EUR"
+        },
+        {
+          "row_id": "C",
+          "when": {
+            "distance_km_gt": 3500,
+            "intra_eu": false
+          },
+          "amount_minor": 60000,
+          "currency": "EUR"
+        }
+      ],
+      "reduction_policy": "Pay the full base amount in this draft. A specialist must approve any lawful reduction.",
+      "reduction_reference": {
+        "source": "Article 7(2)",
+        "maximum_reduction_percent": 50,
+        "rerouted_arrival_delay_lte_seconds_by_row": {
+          "A": 7200,
+          "B": 10800,
+          "C": 14400
+        },
+        "note": "These are permission limits, not an automatic reduction rule. Check event type and case law."
+      }
+    },
+    "cancellation_notice": {
+      "rule_id": "CAN-002",
+      "source_refs": [
+        {
+          "source_id": "EU261",
+          "locator": "Article 5(1)(c) and 5(4)"
+        }
+      ],
+      "hit_policy": "first_match",
+      "unknown_result": "request_proof_do_not_assume_exception",
+      "rows": [
+        {
+          "row_id": "N14",
+          "when": {
+            "notice_lead_seconds_gte": 1209600
+          },
+          "notice_exception": true
+        },
+        {
+          "row_id": "N7",
+          "when": {
+            "notice_lead_seconds_gte": 604800,
+            "notice_lead_seconds_lt": 1209600,
+            "reroute_offered": true,
+            "reroute_early_seconds_lte": 7200,
+            "reroute_late_seconds_lt": 14400
+          },
+          "notice_exception": true
+        },
+        {
+          "row_id": "N0",
+          "when": {
+            "notice_lead_seconds_lt": 604800,
+            "reroute_offered": true,
+            "reroute_early_seconds_lte": 3600,
+            "reroute_late_seconds_lt": 7200
+          },
+          "notice_exception": true
+        }
+      ],
+      "default": {
+        "notice_exception": false
+      },
+      "continuing_rights": [
+        "Article 8 choices",
+        "Applicable Article 9 care"
+      ]
+    },
+    "departure_care": {
+      "rule_id": "DEL-001",
+      "source_refs": [
+        {
+          "source_id": "EU261",
+          "locator": "Article 6(1)"
+        }
+      ],
+      "hit_policy": "first_match",
+      "rows": [
+        {
+          "row_id": "D2",
+          "when": {
+            "distance_km_lte": 1500
+          },
+          "departure_delay_gte_seconds": 7200
+        },
+        {
+          "row_id": "D3",
+          "when": {
+            "distance_km_gt": 1500,
+            "any_of": [
+              {
+                "intra_eu": true
+              },
+              {
+                "distance_km_lte": 3500
+              }
+            ]
+          },
+          "departure_delay_gte_seconds": 10800
+        },
+        {
+          "row_id": "D4",
+          "when": {
+            "distance_km_gt": 3500,
+            "intra_eu": false
+          },
+          "departure_delay_gte_seconds": 14400
+        }
+      ],
+      "refund_offer_delay_gte_seconds": 18000,
+      "arrival_compensation_assessment_gte_seconds": 10800,
+      "notice_of_rights_departure_delay_gte_seconds": 7200
+    },
+    "downgrade": {
+      "rule_id": "DOWN-001",
+      "source_refs": [
+        {
+          "source_id": "EU261",
+          "locator": "Article 10(2)"
+        }
+      ],
+      "hit_policy": "first_match",
+      "basis": "Price of the downgraded flight under the applicable price allocation rules.",
+      "rows": [
+        {
+          "row_id": "DG30",
+          "when": {
+            "distance_km_lte": 1500
+          },
+          "percent": 30
+        },
+        {
+          "row_id": "DG75F",
+          "when": {
+            "distance_km_gt": 1500,
+            "eu_european_territory_french_overseas_department_route": true
+          },
+          "percent": 75
+        },
+        {
+          "row_id": "DG50",
+          "when": {
+            "distance_km_gt": 1500,
+            "any_of": [
+              {
+                "intra_eu": true
+              },
+              {
+                "distance_km_lte": 3500
+              }
+            ]
+          },
+          "percent": 50
+        },
+        {
+          "row_id": "DG75",
+          "when": {
+            "distance_km_gt": 3500,
+            "intra_eu": false
+          },
+          "percent": 75
+        }
+      ],
+      "deadline_calendar_days": 7
+    },
+    "redress": {
+      "rule_id": "ADR-001",
+      "source_refs": [
+        {
+          "source_id": "VSBG37",
+          "locator": "Section 37"
+        },
+        {
+          "source_id": "CONDOR-ADR",
+          "locator": "Participation and address"
+        }
+      ],
+      "body": "Schlichtungsstelle Reise & Verkehr e. V.",
+      "address": {
+        "street": "Fasanenstraße 81",
+        "postal_code": "10623",
+        "city": "Berlin",
+        "country": "Germany"
+      },
+      "website": "https://www.schlichtung-reise-und-verkehr.de/",
+      "participation": "Condor states that it participates.",
+      "eligibility_checks": [
+        "Private travel.",
+        "Claim amount within the current scheme limits.",
+        "Prior contact with Condor.",
+        "Unsatisfactory handling or no reply within two months.",
+        "Check court and settlement exclusions."
+      ],
+      "release_note": "Recheck scheme scope and contact details before release. Do not state eligibility from this table alone."
+    },
+    "handoff_reasons": {
+      "rule_id": "ESC-001",
+      "rows": [
+        {
+          "code": "SERIOUS_ISSUE",
+          "queue": "duty_manager_and_specialist",
+          "trigger": "Injury, safety, discrimination or safeguarding allegation."
+        },
+        {
+          "code": "UNSUPPORTED_ACTION",
+          "queue": "service_specialist",
+          "trigger": "No supported action or applicable jurisdiction profile."
+        },
+        {
+          "code": "UNRESOLVED_CONFLICT",
+          "queue": "claims_specialist",
+          "trigger": "A material evidence conflict remains after reasonable checks."
+        },
+        {
+          "code": "UNCLEAR_RULE",
+          "queue": "legal",
+          "trigger": "Applicable law, transitional date or contract meaning is unclear."
+        },
+        {
+          "code": "AUTHORITY_LIMIT",
+          "queue": "authorised_financial_reviewer",
+          "trigger": "The proposed action exceeds the approved authority."
+        },
+        {
+          "code": "TECHNICAL_FAILURE",
+          "queue": "manual_operations",
+          "trigger": "A system fault prevents safe supported processing."
+        }
+      ]
+    },
+    "service_targets": {
+      "rule_id": "OPS-001",
+      "classification": "proposed_internal_targets_not_legal_deadlines",
+      "calendar": "Elapsed time, including weekends.",
+      "rows": [
+        {
+          "priority": "P0",
+          "trigger": "Immediate danger or urgent assistance failure.",
+          "first_action": "Immediate duty-manager alert.",
+          "target_seconds": 0
+        },
+        {
+          "priority": "P1",
+          "trigger": "Stranded passenger or imminent travel disruption.",
+          "first_action": "A substantive triage by the duty team.",
+          "target_seconds": 1800
+        },
+        {
+          "priority": "P2",
+          "trigger": "Standard post-travel complaint.",
+          "first_action": "A substantive answer or targeted evidence request.",
+          "target_seconds": 172800
+        }
+      ],
+      "email_acknowledgement_seconds": 3600,
+      "open_case_update_seconds": 604800,
+      "evidence_reminder_seconds": 604800,
+      "administrative_closure_review_seconds": 2592000,
+      "legal_deadline_override": "Act earlier whenever a legal deadline or passenger need requires it.",
+      "note": "No target here creates a new statutory payment period."
+    }
+  }
+}

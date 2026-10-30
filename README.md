@@ -33,6 +33,8 @@ Open [the demo](http://127.0.0.1:5173/) and [the API documentation](http://127.0
 
 ## Data and integration
 
+The [Customer Service Operator Policy](docs/policies/customer-service/README.md) provides an English, RAG-ready policy draft for calls and email. It includes legal source references, structured rules, decision tables and message templates. It requires legal and business review before production use. The demo does not load this package automatically.
+
 The backend creates `demo_backend/demo.sqlite` and six synthetic cases on a fresh database. `DEMO_DB=/absolute/path/demo.sqlite` selects an isolated database. Attachments are local under `demo_backend/attachments/`; no OCR is performed. Use the explicit demo reset control only when you want to replace demo case progress. Old uploaded files may remain locally after a reset.
 
 Older booking-confirmation mock records are preserved. They return `409 LEGACY_DEMO_DATA` with an explicit reset instruction instead of being silently overwritten. Use a new `DEMO_DB` path to keep those records and start an integrated rehearsal, or deliberately use **Reset demo** to replace them with the six expense scenarios.
