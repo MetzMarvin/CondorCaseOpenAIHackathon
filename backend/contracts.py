@@ -72,7 +72,24 @@ class FinancialLimit(Contract):
     requires_approval: bool = False
 
 
+class PreparationDiagnostic(Contract):
+    stage: str
+    code: str
+    source_id: str | None = None
+
+
+class ExtractedDocument(Contract):
+    attachment_id: str
+    filename: str
+    page: int
+    text: str
+    method: str
+    error: str | None = None
+
+
 class CaseSnapshot(Contract):
+    extracted_documents: tuple[ExtractedDocument, ...] = ()
+    preparation_diagnostics: tuple[PreparationDiagnostic, ...] = ()
     status: CaseStatus
     owner: Owner
     language: Text

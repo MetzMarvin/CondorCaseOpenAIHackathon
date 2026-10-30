@@ -1,8 +1,6 @@
 # Subsystems and interface contracts
 
-Status: implementation agreement for the 3-hour Condor Care Hub mockup. Shared
-contracts and the integrated demo endpoints are implemented in `backend/contracts.py`
-and `demo_backend/app.py`; see README and the verification record for actual checks.
+Status: shared contracts and operations demo endpoints are implemented in `backend/contracts.py` and `demo_backend/app.py`. The separate intake/preparation implementation is in `backend/main.py`. Both are preserved, but they are not yet connected to a single authoritative case store. See README for their distinct startup paths.
 
 This document translates the subsystem proposal into the scope in [AGENTS.md](../../AGENTS.md). Use the [hackathon plan](../planning/hackathon-plan.md) as business context. Where the broader plan or architecture diagrams imply workers, mandatory approvals, extra channels or large datasets, the current demo scope below takes precedence.
 
@@ -18,7 +16,7 @@ Start with 6–10 synthetic cases. Simulate AI, email, payments and integrations
 | **2. Orchestrated AI Service** | Extract evidence; identify issues; assess completeness, severity and sentiment; retrieve approved knowledge; formulate questions, resolutions and handoffs | Synchronous workflow, stored AI outputs, source references, structured assessments and run diagnostics; no direct case writes |
 | **3. Service Operations & Live Demo Console** | Show queues and case details; simulate incoming claims/replies; enable human takeover and handling; display activity and, after core flows work, a process graph | React UI and presentation state; all business changes go through System 1 |
 
-System 1 supplies intake capabilities; System 3 owns the minimal demo controls that exercise them. The four-minute pitch now includes a small customer perspective in the same React application, using the same System 1 case and messages. Full accounts and authentication remain deferred. System 2's knowledge fixtures are distinct from System 1's Salesforce-style customer and case records.
+System 1 supplies intake capabilities; the customer portal exposes only submission, case-specific correspondence and evidence updates. Email simulation, operational case lists and staff response controls belong to the separate operations service. The portal includes submission, a case link, customer-visible correspondence and follow-up uploads. Login and a full account experience remain deferred. System 2's knowledge fixtures are distinct from System 1's Salesforce-style customer and case records.
 
 The central rule: **System 1 owns the case, System 2 proposes the next action, and System 3 lets people inspect and act.** Valid AI actions execute automatically through System 1. This does not introduce mandatory human approval.
 
@@ -86,15 +84,16 @@ Use JSON over HTTP. Pydantic models are the schema source of truth. React consum
 |---|---|
 | `GET /api/cases?status=…&queue=…&owner=…` | Returns case summaries: ID, subject, status, category, owner, queue, priority, next action and version |
 | `GET /api/cases/{caseId}` | Returns full case detail, messages, attachments, facts, source references, run results and history |
-| `POST /api/inbound/messages` | Accepts `messageId`, channel, sender, body, attachment IDs and optional existing case/thread reference; returns the created or updated case |
-| `POST /api/cases/{caseId}/attachments` | Accepts a multipart synthetic file upload; returns `AttachmentRef` |
+| `POST /api/inbound/messages` | Implemented: `messageId`, `channel` (`PORTAL`/`EMAIL`), `sender`, `subject`, `body`, optional `caseId` and `inReplyTo`; JSON or multipart with JSON `metadata` and repeated `files`. Returns `messageId`, `caseId`, `caseVersion`, `customerCaseUrl` |
+| `GET /api/portal/cases/{caseId}` | Implemented: customer-facing case projection; excludes internal notes, assessments, ownership and operational events |
+| `POST /api/cases/{caseId}/attachments` | Deferred: intake currently accepts attachments atomically with their message through `/api/inbound/messages`; no standalone upload endpoint |
 | `GET /api/cases/{caseId}/attachments/{attachmentId}` | Serves an attachment associated with that case |
 | `POST /api/cases/{caseId}/process` | Accepts `requestId` and `expectedCaseVersion`; runs System 2 synchronously and returns the run result, applied action and updated case |
 | `POST /api/cases/{caseId}/takeover` | Accepts `actionId`, `expectedCaseVersion` and a configured demo operator ID; atomically assigns the human owner |
 | `POST /api/cases/{caseId}/actions` | Accepts a human action using the shared action envelope; returns the updated case and execution result |
 | `GET /api/events?caseId=…&after=…` | Returns ordered events and a cursor for the next poll; an omitted cursor starts from the beginning |
 
-For the demo, the console explicitly submits a message and then calls `/process`; it must not also trigger an implicit second run. A received reply reopens reassessment on the existing case. Human-owned cases require an explicit reassignment before automated processing resumes.
+For the future integrated demo, the console explicitly submits a message and then calls `/process`; it must not also trigger an implicit second run. The implemented intake-only slice never calls `/process` and generates no customer reply. A received reply reopens reassessment on the existing case. Human-owned cases require an explicit reassignment before automated processing resumes.
 
 Demo identities are fixed fixtures, not real authentication. Ordinary clients cannot grant themselves authority or choose arbitrary financial limits. Enforce the supported demo roles/actions in System 1. Authentication and production access control remain deferred.
 
@@ -152,6 +151,65 @@ Do not hand off merely because information is missing, the customer is angry or 
 
 Integrate the three flows before adding graph polish or metrics. Check duplicate submission, stale AI result after takeover, simulated reply on the same case and operation without model access. Reserve the final 30 minutes for demo checks and fixes; record only checks actually performed.
 
+
+## Implemented intake slice
+
+- Intake request/receipt and portal projections: `backend/intake_contracts.py`, inheriting the shared `Contract` conventions. CaseSummary, CaseStatus and EventPage/ProcessEvent reuse `backend/contracts.py` directly. SQLite persistence,
+  local uploads and event writes belong to System 1. No model access or external integration is required.
+- Case lists use the shared `CaseSummary` wire shape: `owner` is an object and `version` is the case version. Intake receipts and portal details use `caseVersion`.
+- Implemented routes: `/api/health`, `POST /api/inbound/messages`, `GET /api/cases`,
+  `GET /api/portal/cases/{caseId}`, case-scoped attachment downloads and `GET /api/events`.
+  Other routes in the broader tables remain future contracts.
+- New messages create `NEW` cases. Replies require an existing `caseId`; EMAIL replies
+  additionally require `inReplyTo` identifying a customer-visible message in that case.
+  A portal reply can omit `inReplyTo`. No correlation by subject, name or sender.
+- Each nonempty reply is treated as relevant for this slice: waiting-for-customer,
+  resolved and closed cases become `IN_PROGRESS`. Human ownership and queues are preserved;
+  a waiting-for-specialist case keeps that status. No intake-driven handoff or AI processing.
+- The receipt's `caseVersion` is the version at acceptance. Repeating the message ID
+  with identical metadata and attachment names/types/content returns the original receipt.
+  Changed content returns `409`; invalid input/files `422`; missing cases/files `404`;
+  inconsistent reply references `409`; storage failure `503`; unsupported request media `415`.
+- Upload limit: five files, each 10 MiB, validated PDF/JPEG/PNG content. The original
+  display name is separated from the generated storage name. Message, attachment references
+  and events commit together; files written during a failed transaction are removed.
+- The customer projection exposes case ID/subject/status/version/timestamps and visible
+  messages with their attachments. Internal notes, assessments and events are excluded.
+  Download routes also check case membership and message visibility. Demo links are not authentication.
+- Accepted messages emit `step.completed` (`intake`) and `case.updated`, both with null
+  `runId`, monotonic sequence and `simulation: true`. Replays create no new events.
+  Event polling returns at most 200 ordered records; `cursor` is the last returned sequence.
+- Six stable seed cases: `case-clear`, `case-evidence`, `case-serious`, `case-incomplete`,
+  `case-human`, `case-resolved`. Existing seed data is never reset on restart.
+  Seeded outbound messages carry `storedExample: true`; they were not generated by intake.
+- Customer routes: `/portal`, `/portal/cases/{caseId}`. The former `/email` and `/demo/cases` screens are removed from this frontend. Email intake APIs remain available for the separate service; the customer portal always submits `PORTAL` messages.
+  The message-style form requires only email, subject and body; evidence is optional.
+  Failed submissions retain input and the retry ID while mounted. Login, draft persistence
+  across navigation, mailbox connectivity and automatic responses are deferred.
+
+See [README](../../README.md) for setup, the sample receipt and acceptance checks.
+
 ## Relationship to the broader architecture
 
 The [editable architecture](condor-claims-architecture.drawio) and [workflow preview](condor-claims-workflow.png) remain the broad framing. Large synthetic datasets, background jobs, full budget administration, extra channels, real integrations and production authentication are deferred. They are not dependencies of these three subsystem deliveries.
+
+
+## Implemented preparation extension
+
+System 1 now atomically queues accepted versions and synchronously prepares them after intake
+commit. Read/retry endpoints are `/api/preparation/queue`, `/api/cases/{caseId}/preparation`
+and `POST /api/cases/{caseId}/prepare` (shared ProcessRequest). Retry keys are independent
+of decision runs. Pending seed cases require explicit preparation. No decision run is implicit.
+Preparation extracts identifiers and facts only; System 2 retains topic classification,
+completeness and action decisions. Missing matches are lookup outcomes. Technical extraction
+failures yield a degraded prepared claim, never an automatic specialist handoff.
+
+Shared CaseSnapshot adds default-empty extractedDocuments and preparationDiagnostics.
+Documents contain attachment ID, filename, page, text, method and optional extraction error.
+PreparedClaim retains original messages, sourced facts, mock context and diagnostics.
+PDF bytes and original access tokens are excluded from System 2 snapshots. Partial extraction
+is explicit. Sources are message IDs, attachment/page IDs or versioned Salesforce record IDs.
+Preparation states are independent of business status and case.queue. Completion checks
+case version; replies supersede earlier entries. Human ownership is never overwritten.
+The run adapter requires a current AI-owned IN_PROGRESS case and server-owned authority.
+No action execution or automatic invocation of System 2 is implemented by this extension.
