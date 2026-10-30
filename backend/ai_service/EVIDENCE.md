@@ -3,7 +3,8 @@
 `evidence.py` is the public System 2 adapter seam; `requirements.py` is the
 collection matrix. Existing shared Pydantic contracts and the two-argument
 `process_case(request, emit_progress)` remain unchanged. No shared changes are
-proposed. These contracts alone do not wire enrichment into the workflow.
+proposed. `service.create_processor(adapters=...)` now wires these contracts into
+the synchronous workflow; see the [implementation status ledger](../../docs/development/workflow-implementation-status.md).
 
 `create_evidence_adapters(crm=..., operational=..., attachments=...)` builds an
 immutable dependency bundle for a configured processor. Omitted readers return
@@ -62,8 +63,8 @@ The matrix describes collection, not added legal automation. Only the existing
 synthetic expense policy supports resolution. Other supported intake categories
 still require a concrete unsupported-adjudication handoff once intake is ready.
 Actual CRM matching, operational freshness checks and attachment byte/media limits
-remain System 1 dependencies (KA02–KA04); extraction and workflow consumption are
-subsequent System 2 tickets.
+remain System 1 dependencies (KA02–KA04). System 2 extraction and workflow
+consumption are implemented and tested with synthetic scoped readers.
 
 ## Evidence preparation (KA08)
 
@@ -90,4 +91,5 @@ required records, scope mismatches and unavailable readers produce technical
 errors. Supplied snapshot facts are trusted as System 1's version-consistent
 snapshot; the shared Fact model does not carry independent freshness metadata.
 Reader exception text is never exposed. System 1 still owns actual adapters,
-matching, freshness verification, and all business effects; KA09 owns wiring.
+matching, freshness verification, and all business effects. KA09 wires preparation
+through `service.create_processor`; supplied snapshot facts remain the default.
