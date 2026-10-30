@@ -6,6 +6,7 @@
 
 - [Hackathon-Briefing (PDF)](reference/Customer_Care_Hackaton_AF_30OCT26.pdf): bereitgestellte Aufgabenstellung.
 - [Recherche zu Beschwerdedatensätzen](research/airline-complaint-datasets.md): Datenquellen und fachliche Grundlagen.
+- [Datenauswahl für schnelle Mocks und Tests](research/mock-dataset-selection.md): empfohlene Kombination aus Airline-Testdaten und deutsch-/englischen Tickets, Anpassung durch einen Agenten und Start mit 30 Prüffällen.
 
 ## Öffnen
 
