@@ -58,7 +58,9 @@ def run_workflow(request, emit_progress, *, bundle, adapters=None, extractor=Non
                 code='INVALID_AI_CONTEXT', message='Processing requires an active AI-owned case.', retryable=False))
         emit_progress(ProgressUpdate(step_id=step, type='step.started', summary='Checking supplied evidence.'))
         customer_facts = []
-        unreadable_without_source = False
+        unreadable_evidence = False
+        readable_sources = []
+        unreadable_sources = set()
         scope = EvidenceScope(case_id=request.case_id, case_version=request.case_version)
         for message in snapshot.messages:
             if message.sender in {snapshot.owner.id, 'AI', 'SYSTEM', 'condor-service@example.com'}:
@@ -89,11 +91,11 @@ def run_workflow(request, emit_progress, *, bundle, adapters=None, extractor=Non
                 bundle.extractions.append(extracted)
                 if extracted.status == 'parser_failure':
                     return RunResult(**identity, status='FAILED', technical_error=extracted.error)
-                if extracted.status == 'unreadable':
-                    if attachment.source:
-                        customer_facts.append(Fact(name='receipt_readable', value=False, sources=(attachment.source,)))
-                    else:
-                        unreadable_without_source = True
+                unreadable_evidence |= extracted.status == 'unreadable'
+                if extracted.status == 'unreadable' and attachment.source:
+                    unreadable_sources.add(attachment.source)
+                if extracted.status in {'readable', 'partial'} and extracted.candidates and attachment.source:
+                    readable_sources.append(attachment.source)
                 for candidate in extracted.candidates:
                     provenance = candidate.provenance
                     if provenance.page < 1 or provenance.span_start < 0 or provenance.span_end <= provenance.span_start or provenance.span_end - provenance.span_start != len(provenance.original_value):
@@ -101,6 +103,19 @@ def run_workflow(request, emit_progress, *, bundle, adapters=None, extractor=Non
                     if candidate.provenance.source != attachment.source or candidate.provenance.content_hash != attachment.content_hash:
                         raise ValueError('Extraction provenance mismatch')
                     customer_facts.append(Fact(name=candidate.name, value=candidate.value, sources=(candidate.provenance.source,)))
+        if readable_sources:
+            customer_facts.append(Fact(name='receipt_readable', value=True, sources=tuple(readable_sources)))
+            # A flag about a retained unreadable original is historical evidence,
+            # not a veto on a newly readable replacement. Preserve the input in
+            # bundle.request; only this assessment projection supersedes it.
+            def retained(fact):
+                return not (fact.name == 'receipt_readable' and fact.value is False
+                    and fact.sources and set(fact.sources) <= unreadable_sources)
+            snapshot = snapshot.model_copy(update={
+                'known_facts': tuple(f for f in snapshot.known_facts if retained(f)),
+                'customer_context': tuple(f for f in snapshot.customer_context if retained(f)),
+            })
+            request = request.model_copy(update={'snapshot': snapshot})
         prepared = prepare_evidence(request, adapters, customer_facts=tuple(customer_facts))
         if prepared.error:
             return RunResult(**identity, status='FAILED', technical_error=prepared.error)
@@ -108,7 +123,8 @@ def run_workflow(request, emit_progress, *, bundle, adapters=None, extractor=Non
         bundle.effective_request = request
         snapshot = request.snapshot
         facts = snapshot.known_facts + snapshot.customer_context + snapshot.booking_context + snapshot.flight_context
-        sources = tuple(dict.fromkeys(source for fact in facts for source in fact.sources))
+        sources = tuple(dict.fromkeys([source for fact in facts for source in fact.sources]
+            + [attachment.source for attachment in bundle.attachments if attachment.source]))
         emit_progress(ProgressUpdate(step_id=step, type='step.completed', summary='Supplied evidence references collected.',
                                      source_ids=tuple(dict.fromkeys(source.source_id for source in sources))))
         step = 'assess'
@@ -117,7 +133,9 @@ def run_workflow(request, emit_progress, *, bundle, adapters=None, extractor=Non
         if decision.error:
             emit_progress(ProgressUpdate(step_id=step, type='step.failed', summary=decision.error.message))
             return RunResult(**identity, status='FAILED', technical_error=decision.error)
-        if unreadable_without_source and not decision.reason:
+        # Retained unreadable originals do not invalidate a readable replacement.
+        # Explicit snapshot flags and conflicting extracted values still go through assess.
+        if unreadable_evidence and not readable_sources and not decision.reason:
             missing = {m.name: m for m in decision.missing}
             missing['receipt_readable'] = missing_fact('receipt_readable')
             decision = Decision(missing=tuple(missing.values()), explanation='Readable expense evidence is needed to continue the review.')

@@ -34,13 +34,15 @@ def missing_fact(name: str, *, conflicting: bool = False) -> MissingFact:
 def information_message(missing: tuple[MissingFact, ...], *, is_reply: bool) -> str:
     greeting = ('Thank you for getting back to us. We have kept the information you already shared.'
                 if is_reply else 'Thank you for contacting us. We are sorry for the inconvenience with your journey.')
-    questions = []
-    for item in missing:
-        question = QUESTIONS[item.name][1]
-        if item.reason.startswith('The supplied evidence contains different values.'):
-            question = 'We found differing details in the information provided. ' + question
-        questions.append('- ' + question)
+    questions = ['- ' + question_text(item) for item in missing]
     return (greeting + '\n\nTo continue reviewing your request, we need a little more information:\n'
             + '\n'.join(questions)
             + '\n\nPlease reply to this message with the missing details. You do not need to resend anything already provided. '
             'You may hide unrelated personal details on documents.\n\nThank you for your help,\nYour Customer Care team')
+
+
+def question_text(item: MissingFact) -> str:
+    question = QUESTIONS[item.name][1]
+    if item.reason.startswith('The supplied evidence contains different values.'):
+        question = 'We found differing details in the information provided. ' + question
+    return question

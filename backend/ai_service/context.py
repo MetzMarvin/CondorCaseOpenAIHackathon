@@ -22,7 +22,7 @@ def expert_context(bundle, baseline, *, max_bytes=32000):
     """Allowlisted factual projections and whole approved support; no raw case prose."""
     import json
     from backend.ai_service.assessment import INTAKE_REQUIREMENTS, INTERNAL_FACTS, CONTROL_FACTS, SERIOUS_ISSUES
-    from backend.ai_service.questions import QUESTIONS
+    from backend.ai_service.questions import QUESTIONS, question_text
     request = bundle.effective_request or bundle.request
     snapshot = request.snapshot
     facts = []
@@ -55,7 +55,7 @@ def expert_context(bundle, baseline, *, max_bytes=32000):
     draft = dict(action_type=action.type, explanation='The deterministic proposal remains unchanged.', sentiment='not_assessed')
     if action.type == 'REQUEST_INFORMATION':
         draft.update(opening='Thank you for getting back to us.' if request.trigger == 'customer_reply' else 'Thank you for contacting us.',
-            questions=[dict(fact_name=m.name, question=('We found differing details in the information provided. ' if m.reason.startswith('The supplied evidence contains different values.') else '') + QUESTIONS[m.name][1]) for m in action.payload.missing_facts])
+            questions=[dict(fact_name=m.name, question=question_text(m)) for m in action.payload.missing_facts])
     else:
         draft['customer_message'] = action.payload.reply_de if action.type == 'RESOLVE' else 'A specialist review is proposed. No settlement or execution is claimed.'
     context = dict(facts=facts, issues=[i if i in INTAKE_REQUIREMENTS or i in SERIOUS_ISSUES else 'unsupported_request' for i in snapshot.issues],
