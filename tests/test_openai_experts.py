@@ -14,7 +14,7 @@ from backend.ai_service.workflow import process_case as offline, run_workflow
 
 class OpenAIExpertTests(unittest.TestCase):
     def setUp(self):
-        self.env = patch.dict(os.environ, {'AI_MODE': 'openai', 'OPENAI_API_KEY': 'test-secret'}, clear=True)
+        self.env = patch.dict(os.environ, {'AI_MODE': 'openai', 'OPENAI_API_KEY': 'test-secret', 'AI_POLICY_STRATEGY': 'experts'}, clear=True)
         self.env.start()
         self.addCleanup(self.env.stop)
 

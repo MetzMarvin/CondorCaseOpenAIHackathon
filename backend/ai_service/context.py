@@ -15,6 +15,7 @@ class ProcessingBundle:
     mode: str = 'unknown'
     model: str | None = None
     model_started: bool = False
+    policy_report: object | None = None
     retrieval_configuration_version: str = 'lexical-approved-v1'
 
 
@@ -52,6 +53,16 @@ def expert_context(bundle, baseline, *, max_bytes=32000):
     passages = bundle.retrieval.passages if bundle.retrieval else ()
     citations = [dict(source_id=p.source_id, version=p.version, passage_id=p.passage_id) for p in passages]
     action = baseline.proposed_action
+    # Project decision-critical fields without copying handoff facts/raw prose back
+    # into the model context. The proposal itself is a candidate, not evidence.
+    proposal = dict(type=action.type)
+    if action.type == 'RESOLVE':
+        proposal['financial_positions'] = [dict(type=p.type, amount_minor=p.amount_minor,
+            currency=p.currency) for p in action.payload.financial_positions]
+    elif action.type == 'HANDOFF':
+        proposal['reason_code'] = action.payload.reason_code
+    else:
+        proposal['missing_fields'] = [m.name for m in action.payload.missing_facts]
     draft = dict(action_type=action.type, explanation='The deterministic proposal remains unchanged.', sentiment='not_assessed')
     if action.type == 'REQUEST_INFORMATION':
         draft.update(opening='Thank you for getting back to us.' if request.trigger == 'customer_reply' else 'Thank you for contacting us.',
@@ -61,6 +72,8 @@ def expert_context(bundle, baseline, *, max_bytes=32000):
     context = dict(facts=facts, issues=[i if i in INTAKE_REQUIREMENTS or i in SERIOUS_ISSUES else 'unsupported_request' for i in snapshot.issues],
         missing_fields=[m.name for m in baseline.assessment.missing_facts if m.name in QUESTIONS],
         permitted_actions=list(snapshot.permitted_actions), financial_limits=[x.model_dump() for x in snapshot.financial_limits],
+        proposed_action=proposal,
+        retrieval_status=bundle.retrieval.status if bundle.retrieval else 'UNAVAILABLE',
         approved_passages=[p.model_dump() for p in passages], required_citations=citations,
         required_source_ids=sorted({s['source_id'] for f in facts for s in f['sources']} | {p.source_id for p in passages}),
         reviewed_draft=draft)

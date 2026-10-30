@@ -77,6 +77,13 @@ def run_experts(request, baseline, emit_progress, settings, *, bundle):
         for step in ('extract_evidence', 'retrieve_policy'):
             emit_progress(ProgressUpdate(step_id=step, type='step.started',
                                          summary='OpenAI expert review started.', simulation=False))
+            if step == 'retrieve_policy' and settings.policy_strategy == 'decisions':
+                from backend.ai_service.policy_decisions import check_policies
+                report = check_policies(client, context, bundle)
+                emit_progress(ProgressUpdate(step_id=step, type='step.completed',
+                    summary=f'Decisions reviewed {len(report.verdicts)} policy checks; draft restrictions preserved.',
+                    source_ids=tuple(context['required_source_ids']), simulation=False))
+                continue
             review = call('Review the deterministic next action. Cite every required source and every exact selected passage, including prerequisites and exceptions.', ExpertReview)
             if (not review.supported or set(review.source_ids) != set(context['required_source_ids'])
                     or set(review.citations) != expected_citations or len(review.citations) != len(expected_citations)):

@@ -5,6 +5,7 @@ from typing import Annotated, Literal, Protocol
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from backend.ai_service.questions import QUESTIONS
+from backend.ai_service.policy_decisions import PolicyReport
 
 from backend.contracts import ActionType, HandoffReason, Id, SourceRef, Version
 
@@ -79,6 +80,7 @@ class RunManifest(ManifestRecord):
     mode: Literal['offline', 'openai', 'unknown']
     model: ConfigurationId | None
     simulation: bool
+    policy_report: PolicyReport | None = None
 
     @field_validator('missing_keys')
     @classmethod
@@ -153,4 +155,4 @@ def build_manifest(bundle, result) -> RunManifest:
             source_hash=p.content_hash, passage_hash=sha256(p.text.encode('utf-8')).hexdigest())
             for p in (bundle.retrieval.passages if bundle.retrieval else ())),
         attachments=tuple(attachments), retrieval_configuration_version=bundle.retrieval_configuration_version,
-        mode=bundle.mode, model=bundle.model, simulation=result.simulation)
+        mode=bundle.mode, model=bundle.model, simulation=result.simulation, policy_report=bundle.policy_report)

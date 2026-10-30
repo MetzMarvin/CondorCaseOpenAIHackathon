@@ -14,6 +14,7 @@ class Settings:
     api_key: str = field(repr=False)
     model: str = 'gpt-4o-mini'
     timeout: float = 60
+    policy_strategy: str = 'decisions'
 
     @classmethod
     def from_env(cls):
@@ -28,4 +29,7 @@ class Settings:
         timeout = float(values.get('OPENAI_TIMEOUT_SECONDS') or '60')
         if not 0 < timeout <= 300:
             raise ValueError('Invalid OpenAI timeout')
-        return cls(mode, key, (values.get('OPENAI_MODEL') or 'gpt-4o-mini').strip(), timeout)
+        strategy = (values.get('AI_POLICY_STRATEGY') or 'decisions').strip().lower()
+        if strategy not in {'experts', 'decisions'}:
+            raise ValueError('AI_POLICY_STRATEGY must be experts or decisions')
+        return cls(mode, key, (values.get('OPENAI_MODEL') or 'gpt-4o-mini').strip(), timeout, strategy)
