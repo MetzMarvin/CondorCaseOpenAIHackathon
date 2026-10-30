@@ -33,12 +33,10 @@ creation and Node.js 22.12+. Existing case progress is preserved. Press **Ctrl+C
 to stop both servers. To avoid occupied ports, use
 `BACKEND_PORT=8002 FRONTEND_PORT=5174 ./start.sh`.
 
-The launcher sets `AI_MODE=openai` and `AI_FALLBACK_OFFLINE=1`. Put your
-`OPENAI_API_KEY` in `CondorCaseOpenAIHackathon/.env` or the shell environment.
-Each assessment tries live AI first. If credentials are missing or live processing
-fails, that run uses deterministic offline demo decisions, with an explicit activity
-event and backend warning. A later assessment tries live AI again. Offline results
-are marked as simulations; case validation and persistence errors still fail.
+The launcher defaults to `AI_MODE=openai`; use `AI_MODE=offline ./start.sh` for
+an explicit deterministic demo. Put `OPENAI_API_KEY` in the project `.env` or shell
+environment. Missing credentials, invalid output and provider failures remain failed
+runs without business proposals. The legacy `AI_FALLBACK_OFFLINE` flag is ignored.
 The existing `OPENAI_TIMEOUT_SECONDS` setting applies to each live expert call.
 The launcher makes no paid startup probe and does not reset demo data.
 
@@ -183,6 +181,44 @@ Generated expectations describe a demo workflow and have not been legally review
 
 ## System 2 integration
 
+### Simulated email delivery
+
+`backend.email_delivery` sends generated drafts to a persistent SQLite outbox.
+Delivery is explicitly simulated; no SMTP connection or external email is sent.
+It consumes `questionDe` for follow-ups and `replyDe` for resolutions, preserving
+generated subjects and bodies. Plain offline messages get a case-reference subject.
+Internal handoff summaries cannot be sent. Repeating an action ID returns the
+original delivery, including its timestamp; changing its content or recipient is
+rejected, including after a process restart.
+
+System 1 calls this adapter **after** validating the action's current case version,
+ownership, state, permitted actions and financial authority. Supply the recipient
+from the trusted case contact. This adapter only records delivery; it does not
+apply case transitions, execute payments or publish process events. Those steps
+still belong to the case service, whose routes are not implemented in this checkout.
+
+```python
+from backend.email_delivery import SimulatedEmailSender
+
+sender = SimulatedEmailSender('email-outbox.sqlite3')
+# authorized_action is a validated RequestInformation or Resolve action.
+delivery = sender.send_authorized(authorized_action, 'customer@example.test')
+```
+
+For a local preview, save a successful `RunResult` as a single JSON object and run:
+
+```sh
+.venv/bin/python -m backend.email_delivery --result /tmp/generated-result.json --to customer@example.test
+```
+
+The command prints the simulated delivery and stores it in `email-outbox.sqlite3`
+(ignored by Git). Use `--database /tmp/demo-outbox.sqlite3` to choose another file.
+The preview command does not authorize or apply the proposal to a live case.
+Run delivery checks with
+`.venv/bin/python -m unittest discover -s tests -p 'test_email_delivery.py' -v`.
+
+### AI processor
+
 Install `requirements.txt` in a virtual environment, then run
 `python -m backend.ai_service` for the included contract flows (three API calls per
 successful case in live mode).
@@ -197,9 +233,8 @@ Live processing calls OpenAI for evidence review, policy review, and assessment/
 customer wording through the Responses API with typed structured outputs. Code
 retains the approved synthetic policy, permitted action, IDs, source references
 and financial positions. Expert disagreement, refusal, invalid output or API
-failure returns a failed run by default. The root launcher explicitly enables
-labelled offline fallback with `AI_FALLBACK_OFFLINE=1`; other startup commands
-retain the default failure behavior.
+failure returns a failed run. Select `AI_MODE=offline` explicitly when a deterministic
+simulation is wanted; live failures are never converted into business outcomes.
 Live results/events have `simulation=false`; downstream sending and payments
 remain simulated and owned by System 1. Legacy `questionDe`/`replyDe` contract
 field names remain compatible, while live wording is English per project guidance.
@@ -328,6 +363,32 @@ progress, proposals, an SVG PR preview and a JSON baseline:
 
 See [the workflow evaluation guide](docs/development/workflow-evaluation.md) for
 PR artifacts, failure checks, baseline comparison and adding scenarios.
+
+## Optional legal and policy RAG
+
+For the downloaded legal corpus, set your own `OPENAI_API_KEY` in `.env`, then run:
+
+```sh
+bash scripts/setup-legal-rag.sh
+QDRANT_COLLECTION=legal_research .venv/bin/python -m backend.ai_service.rag search 'flight delay compensation'
+```
+
+This loads the manifest-selected sources into a separate research collection.
+See the [team setup instructions](docs/development/knowledge-rag.md#team-quick-start-with-the-downloaded-legal-corpus)
+for prerequisites and the required shared data files.
+
+Start the persistent local Qdrant database and initialize its empty collection:
+
+```sh
+.venv/bin/python -m pip install -r requirements-rag.txt
+docker compose -f compose.rag.yaml up -d
+.venv/bin/python -m backend.ai_service.rag init
+```
+
+The [Qdrant dashboard](http://localhost:6335/dashboard) runs on port 6335.
+Retrieval combines BM25 and OpenAI `text-embedding-3-small` with RRF fusion.
+See [the RAG guide](docs/development/knowledge-rag.md) for later document imports,
+search commands, configuration, and System 2 integration boundaries.
 
 ## Local intake application
 

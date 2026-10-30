@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-001
+Record: snapshot_facts
+
+Synthetic structured record for supplied facts: {"booking_reference": "LEGAL01", "remedy_choice": "Accepted rerouting and travelled", "receipt_amount_minor": 15200, "receipt_currency": "EUR", "expense_purpose": "Hotel, dinner and shuttle while awaiting rerouting."}

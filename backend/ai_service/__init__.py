@@ -2,9 +2,9 @@
 from typing import Protocol
 
 from backend.contracts import RunRequest, RunResult
-from backend.ai_service.service import ProgressCallback, process_case
+from backend.ai_service.service import ProgressCallback, create_processor, process_case
 
-__all__ = ["CaseProcessor", "ProgressCallback", "process_case"]
+__all__ = ["CaseProcessor", "ProgressCallback", "process_case", "create_processor"]
 
 
 class CaseProcessor(Protocol):

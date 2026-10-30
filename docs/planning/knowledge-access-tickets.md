@@ -65,6 +65,8 @@ KA05 joins KA08 and KA09 after the initial supplied-fact path works. KA13 expand
 
 ## KA02 Match customer booking and flight records
 
+Detailed implementation ticket: [CRM01 CRM mock and case enrichment](crm-mock-ticket.md). It covers KA02 and the CRM portion of KA03; use it to track implementation without duplicating work.
+
 **Problem:** Supplied identifiers do not prove that the passenger, booking and flight belong together.
 
 **Work:** Implement System 1 read-only matching over synthetic CRM records. Prefer stable customer/booking IDs and correlate passenger membership and itinerary segments. A flight number requires its date and relevant route context; email alone is not sufficient to merge identities. Keep candidate records inside System 1 until a match is authorized for the case.

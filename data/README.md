@@ -1,5 +1,91 @@
 # Working with complaint data
 
+## Legal framework examples and final-demo reminder
+
+Review on 2026-10-30: the existing 30 complaint cases and 13 baggage cases are
+useful workflow fixtures, but their labels are `synthetic_unreviewed`, with no
+verified legal entitlement. The generated complaint emails also include German;
+the current project instructions require English for the final demo.
+
+Twenty authored English legal-check examples (LEGAL-001 through LEGAL-020) live in
+[`examples/legal-checks/runtime/complaints.jsonl`](examples/legal-checks/runtime/complaints.jsonl).
+Each includes a customer email, separate synthetic internal evidence and retrieval
+queries. These are standalone review inputs, not pipeline exports or `RunRequest`
+snapshots, and are not loaded by the app or evaluation runner automatically.
+
+The scenarios also have runnable shared-contract snapshots in
+[`examples/legal-checks/runtime/run_requests.jsonl`](examples/legal-checks/runtime/run_requests.jsonl),
+individual `LEGAL-001-email.txt` through `LEGAL-020-email.txt` files, and synthetic
+booking, flight/operations and evidence records under `runtime/evidence/`.
+`runtime/evidence_index.jsonl` maps case-scoped tokens to these local records.
+These text records are demo evidence, not original receipts or real airline records.
+Edit `runtime/complaints.jsonl` for authored inputs and `evaluation/expectations.jsonl`
+for independent reviewer expectations. Rebuild derived files, then run all cases
+with explicitly scoped fake adapters and no model calls:
+
+```sh
+.venv/bin/python scripts/build-legal-examples.py
+.venv/bin/python scripts/check-legal-examples.py
+```
+
+All 20 snapshots passed structural checks and executed without technical failure.
+The checked run returned `REQUEST_INFORMATION` for LEGAL-002 and `HANDOFF` for
+the other 19: 17 unsupported legal adjudications and two serious issues.
+LEGAL-001 now includes its already-supplied facts, so it reaches the unsupported
+adjudication boundary instead of asking again for known information. These are
+current engine observations, not the desired legal outcomes;
+outputs are saved to `examples/legal-checks/evaluation/offline_results.jsonl`.
+This verifies execution, not agreement with the legal acceptance criteria below.
+The script uses the current synthetic expense policy and does not load legal RAG.
+The fixtures are not automatically imported into a running CRM or case-list UI.
+
+| Case | Legal review focus |
+|---|---|
+| LEGAL-001 | Weather cancellation: care expenses versus compensation |
+| LEGAL-002 | Delayed baggage: missing evidence, timing and flat-SDR misconception |
+| LEGAL-003 | Arrival delay: touchdown versus door opening |
+| LEGAL-004 | Below compensation threshold, but care expenses still relevant |
+| LEGAL-005 | Long-haul delay and potential 50% compensation reduction |
+| LEGAL-006 | Protected connection and final-destination delay |
+| LEGAL-007 | Early cancellation notice versus unpaid ticket refund |
+| LEGAL-008 | Short-notice cancellation with qualifying rerouting |
+| LEGAL-009 | Unaccepted voucher versus money refund |
+| LEGAL-010 | Involuntary overbooking and rapid rerouting |
+| LEGAL-011 | Voluntary surrender and unpaid agreed benefit |
+| LEGAL-012 | Disputed travel-document refusal |
+| LEGAL-013 | Non-EU operating carrier on a standalone inbound flight |
+| LEGAL-014 | Downgrade on one itinerary segment |
+| LEGAL-015 | Five-hour departure delay and abandoned trip |
+| LEGAL-016 | Prompt written damaged-baggage complaint |
+| LEGAL-017 | Apparently late damaged-baggage complaint |
+| LEGAL-018 | Bag missing beyond 21 days |
+| LEGAL-019 | Late assistance notification and accessibility failure |
+| LEGAL-020 | Onboard injury requiring specialist handling |
+
+Reviewer-only checks, source references, failure signals and the second case's
+future reply are in
+[`examples/legal-checks/evaluation/expectations.jsonl`](examples/legal-checks/evaluation/expectations.jsonl).
+Give the assessor only the runtime input initially; introduce the follow-up after
+its evidence request. Compare its cited passages and issue-by-issue conclusions
+with the evaluation file. Record unsupported capability separately from incorrect
+legal reasoning. The current expense-policy workflow is not a verified EU261 or
+Montreal entitlement engine. These expectations are proposed review criteria,
+not approved legal labels or evidence that the system passes them.
+
+**When creating the final 6–10 demo examples:**
+
+- [ ] Incorporate LEGAL-001 and LEGAL-002, retaining their separate legal issues,
+  operational evidence and missing-information reply loop.
+- [ ] Select contrasting legal cases from this 20-case review catalogue for the final
+  6–10-case demo; keep all 20 for broader review. Include LEGAL-019 or LEGAL-020
+  for serious-issue handoff and a supported clear-expense fixture for resolution.
+- [ ] Use English throughout; generate matching synthetic attachments and CRM records,
+  align IDs with shared contracts, and keep future replies and expected answers out of runtime retrieval.
+- [ ] Verify event-date applicability and source versions, including revised Montreal
+  limits; obtain legal review before changing `synthetic_unreviewed` labels.
+- [ ] Map supported checks to executable snapshots and stored demo outputs, run them,
+  and record actual results. Explicitly label any still-unsupported legal capability.
+
 Run from the repository root with **Python 3.10+**. No packages, model keys or application server are required.
 
 ```sh

@@ -1,0 +1,504 @@
+{
+  "schema_version": 1,
+  "purpose": "Research acquisition manifest; not approved runtime knowledge",
+  "research_date": "2026-10-30",
+  "sources": [
+    {
+      "source_id": "eu261",
+      "celex": "32004R0261",
+      "title": "Air passenger compensation and assistance",
+      "source_kind": "legislation",
+      "issues": [
+        "flight_delay",
+        "flight_cancellation",
+        "denied_boarding",
+        "expense_reimbursement"
+      ],
+      "language": "en",
+      "canonical_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32004R0261",
+      "download_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32004R0261",
+      "approval_status": "unreviewed",
+      "runtime_enabled": false,
+      "applicable_from": null,
+      "applicable_until": null,
+      "applicability_status": "requires_legal_review",
+      "attempts": [
+        {
+          "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32004R0261",
+          "status": 202,
+          "content_type": "text/html; charset=UTF-8",
+          "bytes": 0,
+          "result": "not_pdf"
+        },
+        {
+          "url": "https://publications.europa.eu/resource/celex/32004R0261?language=EN&format=PDF",
+          "result": "unavailable",
+          "error": "HTTP Error 300: "
+        },
+        {
+          "url": "https://publications.europa.eu/resource/cellar/439cd3a7-fd3c-4da7-8bf4-b0f60600c1d6.0004.02/DOC_1",
+          "status": 200,
+          "result": "downloaded"
+        }
+      ],
+      "acquisition_status": "downloaded_pdf_text_extracted",
+      "checked_at": "2026-10-30T13:29:37.262895+00:00",
+      "local_path": "raw/eu261.pdf",
+      "sha256": "0bc674dcda058dfb3bf43bd8374e4e4472b89b2c91fc17a5041e7c00610b20ef",
+      "bytes": 131445,
+      "resolved_url": "https://publications.europa.eu/resource/cellar/439cd3a7-fd3c-4da7-8bf4-b0f60600c1d6.0004.02/DOC_1",
+      "associated_documents": [
+        {
+          "download_url": "https://publications.europa.eu/resource/cellar/439cd3a7-fd3c-4da7-8bf4-b0f60600c1d6.0004.02/DOC_2",
+          "acquisition_status": "downloaded_pdf_unparsed",
+          "local_path": "raw/eu261-associated-document.pdf",
+          "sha256": "7180896b6975ffeb075ad2ca17832dfc134b1d9dd47863fc19a2a54846fecbf7",
+          "bytes": 64023,
+          "resolved_url": "https://publications.europa.eu/resource/cellar/439cd3a7-fd3c-4da7-8bf4-b0f60600c1d6.0004.02/DOC_2",
+          "title": "Commission statement on passenger protection in other modes of transport",
+          "ingestion_status": "excluded_unrelated_statement"
+        }
+      ],
+      "extracted_path": "extracted/eu261.pages.jsonl",
+      "page_count": 7,
+      "extraction_tool": "PyMuPDF 1.27.2.3",
+      "extraction_status": "page_text_not_legally_reviewed"
+    },
+    {
+      "source_id": "eu261-guidelines-2024",
+      "celex": "52024XC05687",
+      "title": "Commission interpretative guidelines 2024",
+      "source_kind": "interpretative_guidance",
+      "issues": [
+        "flight_delay",
+        "flight_cancellation",
+        "denied_boarding",
+        "expense_reimbursement"
+      ],
+      "language": "en",
+      "canonical_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:52024XC05687",
+      "download_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:52024XC05687",
+      "approval_status": "unreviewed",
+      "runtime_enabled": false,
+      "applicable_from": null,
+      "applicable_until": null,
+      "applicability_status": "requires_legal_review",
+      "attempts": [
+        {
+          "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:52024XC05687",
+          "status": 202,
+          "content_type": "text/html; charset=UTF-8",
+          "bytes": 0,
+          "result": "not_pdf"
+        },
+        {
+          "url": "https://publications.europa.eu/resource/celex/52024XC05687?language=EN&format=PDF",
+          "status": 200,
+          "content_type": "application/pdf;charset=UTF-8",
+          "bytes": 1195264,
+          "result": "downloaded"
+        }
+      ],
+      "acquisition_status": "downloaded_pdf_text_extracted",
+      "local_path": "raw/eu261-guidelines-2024.pdf",
+      "sha256": "1cc359331d537d196ccd490d7172209c7a11b94f3f3c7d86ae803c45abbccec9",
+      "bytes": 1195264,
+      "resolved_url": "http://publications.europa.eu/resource/cellar/fce91149-7ad5-11ef-bbbe-01aa75ed71a1.0006.01/DOC_1",
+      "checked_at": "2026-10-30T13:28:30.100600+00:00",
+      "extracted_path": "extracted/eu261-guidelines-2024.pages.jsonl",
+      "page_count": 36,
+      "extraction_tool": "PyMuPDF 1.27.2.3",
+      "extraction_status": "page_text_not_legally_reviewed"
+    },
+    {
+      "source_id": "montreal-convention",
+      "celex": "22001A0718(01)",
+      "title": "Montreal Convention 1999",
+      "source_kind": "treaty",
+      "issues": [
+        "baggage_delay",
+        "baggage_damage",
+        "baggage_loss"
+      ],
+      "language": "en",
+      "canonical_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:22001A0718%2801%29",
+      "download_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:22001A0718%2801%29",
+      "approval_status": "unreviewed",
+      "runtime_enabled": false,
+      "applicable_from": null,
+      "applicable_until": null,
+      "applicability_status": "requires_legal_review",
+      "attempts": [
+        {
+          "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:22001A0718%2801%29",
+          "status": 202,
+          "content_type": "text/html; charset=UTF-8",
+          "bytes": 0,
+          "result": "not_pdf"
+        },
+        {
+          "url": "https://publications.europa.eu/resource/celex/22001A0718%2801%29?language=EN&format=PDF",
+          "status": 200,
+          "content_type": "application/pdf;charset=UTF-8",
+          "bytes": 149600,
+          "result": "downloaded"
+        }
+      ],
+      "acquisition_status": "downloaded_pdf_text_extracted",
+      "local_path": "raw/montreal-convention.pdf",
+      "sha256": "e3138885138196fe280c47c1e4c36c6174ed2ed127e0217408c860226f6ed351",
+      "bytes": 149600,
+      "resolved_url": "http://publications.europa.eu/resource/cellar/f0a20831-51ff-477c-bc49-41f7b05e072e.0004.02/DOC_1",
+      "checked_at": "2026-10-30T13:28:30.105447+00:00",
+      "extracted_path": "extracted/montreal-convention.pages.jsonl",
+      "page_count": 11,
+      "extraction_tool": "PyMuPDF 1.27.2.3",
+      "extraction_status": "page_text_not_legally_reviewed"
+    },
+    {
+      "source_id": "air-carrier-liability",
+      "celex": "31997R2027",
+      "title": "Air carrier liability Regulation 2027/97 original act",
+      "source_kind": "legislation",
+      "issues": [
+        "baggage_delay",
+        "baggage_damage",
+        "baggage_loss"
+      ],
+      "language": "en",
+      "canonical_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:31997R2027",
+      "download_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:31997R2027",
+      "approval_status": "unreviewed",
+      "runtime_enabled": false,
+      "applicable_from": null,
+      "applicable_until": null,
+      "applicability_status": "requires_legal_review",
+      "attempts": [
+        {
+          "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:31997R2027",
+          "status": 202,
+          "content_type": "text/html; charset=UTF-8",
+          "bytes": 0,
+          "result": "not_pdf"
+        },
+        {
+          "url": "https://publications.europa.eu/resource/celex/31997R2027?language=EN&format=PDF",
+          "result": "unavailable",
+          "error": "HTTP Error 404: "
+        }
+      ],
+      "acquisition_status": "not_acquired",
+      "checked_at": "2026-10-30T13:28:29.813939+00:00"
+    },
+    {
+      "source_id": "air-carrier-liability-amendment",
+      "celex": "32002R0889",
+      "title": "Regulation 889/2002 amending 2027/97",
+      "source_kind": "amending_legislation",
+      "issues": [
+        "baggage_delay",
+        "baggage_damage",
+        "baggage_loss"
+      ],
+      "language": "en",
+      "canonical_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32002R0889",
+      "download_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32002R0889",
+      "approval_status": "unreviewed",
+      "runtime_enabled": false,
+      "applicable_from": null,
+      "applicable_until": null,
+      "applicability_status": "requires_legal_review",
+      "attempts": [
+        {
+          "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32002R0889",
+          "status": 202,
+          "content_type": "text/html; charset=UTF-8",
+          "bytes": 0,
+          "result": "not_pdf"
+        },
+        {
+          "url": "https://publications.europa.eu/resource/celex/32002R0889?language=EN&format=PDF",
+          "status": 200,
+          "content_type": "application/pdf;charset=UTF-8",
+          "bytes": 111646,
+          "result": "downloaded"
+        }
+      ],
+      "acquisition_status": "downloaded_pdf_text_extracted",
+      "local_path": "raw/air-carrier-liability-amendment.pdf",
+      "sha256": "65155d49084ce26ca903ad8b5abf099c984d08d4ba191072db161cf0a12013c2",
+      "bytes": 111646,
+      "resolved_url": "http://publications.europa.eu/resource/cellar/e59187a4-6622-40c4-bde8-208883d2597f.0004.02/DOC_1",
+      "checked_at": "2026-10-30T13:28:30.310200+00:00",
+      "extracted_path": "extracted/air-carrier-liability-amendment.pages.jsonl",
+      "page_count": 4,
+      "extraction_tool": "PyMuPDF 1.27.2.3",
+      "extraction_status": "page_text_not_legally_reviewed"
+    },
+    {
+      "source_id": "accessibility",
+      "celex": "32006R1107",
+      "title": "Rights of disabled persons and persons with reduced mobility",
+      "source_kind": "legislation",
+      "issues": [
+        "accessibility_failure"
+      ],
+      "language": "en",
+      "canonical_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32006R1107",
+      "download_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32006R1107",
+      "approval_status": "unreviewed",
+      "runtime_enabled": false,
+      "applicable_from": null,
+      "applicable_until": null,
+      "applicability_status": "requires_legal_review",
+      "attempts": [
+        {
+          "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32006R1107",
+          "status": 202,
+          "content_type": "text/html; charset=UTF-8",
+          "bytes": 0,
+          "result": "not_pdf"
+        },
+        {
+          "url": "https://publications.europa.eu/resource/celex/32006R1107?language=EN&format=PDF",
+          "status": 200,
+          "content_type": "application/pdf;charset=UTF-8",
+          "bytes": 98827,
+          "result": "downloaded"
+        }
+      ],
+      "acquisition_status": "downloaded_pdf_text_extracted",
+      "local_path": "raw/accessibility.pdf",
+      "sha256": "3263e3dd300fc0770bed6f3be426636596488c7b080088856b6efc09e4a0306c",
+      "bytes": 98827,
+      "resolved_url": "http://publications.europa.eu/resource/cellar/398c5d9c-5c74-44e0-8419-9cb1b326a47b.0005.02/DOC_1",
+      "checked_at": "2026-10-30T13:28:30.367569+00:00",
+      "extracted_path": "extracted/accessibility.pages.jsonl",
+      "page_count": 9,
+      "extraction_tool": "PyMuPDF 1.27.2.3",
+      "extraction_status": "page_text_not_legally_reviewed"
+    },
+    {
+      "source_id": "gdpr",
+      "celex": "32016R0679",
+      "title": "General Data Protection Regulation",
+      "source_kind": "legislation",
+      "issues": [
+        "privacy",
+        "automated_decisions"
+      ],
+      "language": "en",
+      "canonical_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32016R0679",
+      "download_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32016R0679",
+      "approval_status": "unreviewed",
+      "runtime_enabled": false,
+      "applicable_from": null,
+      "applicable_until": null,
+      "applicability_status": "requires_legal_review",
+      "attempts": [
+        {
+          "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32016R0679",
+          "status": 202,
+          "content_type": "text/html; charset=UTF-8",
+          "bytes": 0,
+          "result": "not_pdf"
+        },
+        {
+          "url": "https://publications.europa.eu/resource/celex/32016R0679?language=EN&format=PDF",
+          "result": "unavailable",
+          "error": "HTTP Error 404: "
+        }
+      ],
+      "acquisition_status": "not_acquired",
+      "checked_at": "2026-10-30T13:28:30.249997+00:00"
+    },
+    {
+      "source_id": "future-passenger-rights-amendment",
+      "celex": "32026R2202",
+      "title": "Regulation 2026/2202 future applicable amendment",
+      "source_kind": "amending_legislation",
+      "issues": [
+        "flight_delay",
+        "flight_cancellation",
+        "baggage"
+      ],
+      "language": "en",
+      "canonical_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32026R2202",
+      "download_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32026R2202",
+      "approval_status": "unreviewed",
+      "runtime_enabled": false,
+      "applicable_from": "2027-10-23",
+      "applicable_until": null,
+      "applicability_status": "future_application_article_3",
+      "attempts": [
+        {
+          "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32026R2202",
+          "status": 202,
+          "content_type": "text/html; charset=UTF-8",
+          "bytes": 0,
+          "result": "not_pdf"
+        },
+        {
+          "url": "https://publications.europa.eu/resource/celex/32026R2202?language=EN&format=PDF",
+          "result": "unavailable",
+          "error": "HTTP Error 404: "
+        }
+      ],
+      "acquisition_status": "not_acquired",
+      "checked_at": "2026-10-30T13:28:30.257923+00:00"
+    },
+    {
+      "source_id": "sturgeon",
+      "celex": "62007CJ0402",
+      "title": "Sturgeon joined cases C-402/07 and C-432/07",
+      "source_kind": "judgment",
+      "issues": [
+        "flight_delay"
+      ],
+      "language": "en",
+      "canonical_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:62007CJ0402",
+      "download_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:62007CJ0402",
+      "approval_status": "unreviewed",
+      "runtime_enabled": false,
+      "applicable_from": null,
+      "applicable_until": null,
+      "applicability_status": "requires_legal_review",
+      "attempts": [
+        {
+          "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:62007CJ0402",
+          "status": 202,
+          "content_type": "text/html; charset=UTF-8",
+          "bytes": 0,
+          "result": "not_pdf"
+        },
+        {
+          "url": "https://publications.europa.eu/resource/celex/62007CJ0402?language=EN&format=PDF",
+          "status": 200,
+          "content_type": "application/pdf;charset=UTF-8",
+          "bytes": 418190,
+          "result": "downloaded"
+        }
+      ],
+      "acquisition_status": "downloaded_pdf_text_extracted",
+      "local_path": "raw/sturgeon.pdf",
+      "sha256": "403626e6dbadd2e494ae2c7790abbe4976a1f97b1ccf37a791ec2cb79be67231",
+      "bytes": 418190,
+      "resolved_url": "http://publications.europa.eu/resource/cellar/15b45be3-f094-4ac3-a6c1-1430a699cf50.0002.05/DOC_1",
+      "checked_at": "2026-10-30T13:28:30.626550+00:00",
+      "extracted_path": "extracted/sturgeon.pages.jsonl",
+      "page_count": 29,
+      "extraction_tool": "PyMuPDF 1.27.2.3",
+      "extraction_status": "page_text_not_legally_reviewed"
+    },
+    {
+      "source_id": "wallentin-hermann",
+      "celex": "62007CJ0549",
+      "title": "Wallentin-Hermann C-549/07",
+      "source_kind": "judgment",
+      "issues": [
+        "extraordinary_circumstances"
+      ],
+      "language": "en",
+      "canonical_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:62007CJ0549",
+      "download_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:62007CJ0549",
+      "approval_status": "unreviewed",
+      "runtime_enabled": false,
+      "applicable_from": null,
+      "applicable_until": null,
+      "applicability_status": "requires_legal_review",
+      "attempts": [
+        {
+          "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:62007CJ0549",
+          "status": 202,
+          "content_type": "text/html; charset=UTF-8",
+          "bytes": 0,
+          "result": "not_pdf"
+        },
+        {
+          "url": "https://publications.europa.eu/resource/celex/62007CJ0549?language=EN&format=PDF",
+          "status": 200,
+          "content_type": "application/pdf;charset=UTF-8",
+          "bytes": 572802,
+          "result": "downloaded"
+        }
+      ],
+      "acquisition_status": "downloaded_pdf_text_extracted",
+      "local_path": "raw/wallentin-hermann.pdf",
+      "sha256": "5bb945ce89be7165ebf73ed807084e411811b823bda16771701854c9dbd458cb",
+      "bytes": 572802,
+      "resolved_url": "http://publications.europa.eu/resource/cellar/7a83e2d5-5b86-4cd4-972d-eb8b7e20037e.0002.05/DOC_1",
+      "checked_at": "2026-10-30T13:28:30.749579+00:00",
+      "extracted_path": "extracted/wallentin-hermann.pages.jsonl",
+      "page_count": 22,
+      "extraction_tool": "PyMuPDF 1.27.2.3",
+      "extraction_status": "page_text_not_legally_reviewed"
+    },
+    {
+      "source_id": "mcdonagh",
+      "celex": "62011CJ0012",
+      "title": "McDonagh C-12/11",
+      "source_kind": "judgment",
+      "issues": [
+        "expense_reimbursement",
+        "extraordinary_circumstances"
+      ],
+      "language": "en",
+      "canonical_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:62011CJ0012",
+      "download_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:62011CJ0012",
+      "approval_status": "unreviewed",
+      "runtime_enabled": false,
+      "applicable_from": null,
+      "applicable_until": null,
+      "applicability_status": "requires_legal_review",
+      "attempts": [
+        {
+          "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:62011CJ0012",
+          "status": 202,
+          "content_type": "text/html; charset=UTF-8",
+          "bytes": 0,
+          "result": "not_pdf"
+        },
+        {
+          "url": "https://publications.europa.eu/resource/celex/62011CJ0012?language=EN&format=PDF",
+          "result": "unavailable",
+          "error": "HTTP Error 404: "
+        }
+      ],
+      "acquisition_status": "not_acquired",
+      "checked_at": "2026-10-30T13:28:30.475265+00:00"
+    },
+    {
+      "source_id": "germanwings-arrival",
+      "celex": "62013CJ0452",
+      "title": "Germanwings C-452/13",
+      "source_kind": "judgment",
+      "issues": [
+        "flight_delay"
+      ],
+      "language": "en",
+      "canonical_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:62013CJ0452",
+      "download_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:62013CJ0452",
+      "approval_status": "unreviewed",
+      "runtime_enabled": false,
+      "applicable_from": null,
+      "applicable_until": null,
+      "applicability_status": "requires_legal_review",
+      "attempts": [
+        {
+          "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:62013CJ0452",
+          "status": 202,
+          "content_type": "text/html; charset=UTF-8",
+          "bytes": 0,
+          "result": "not_pdf"
+        },
+        {
+          "url": "https://publications.europa.eu/resource/celex/62013CJ0452?language=EN&format=PDF",
+          "result": "unavailable",
+          "error": "HTTP Error 404: "
+        }
+      ],
+      "acquisition_status": "not_acquired",
+      "checked_at": "2026-10-30T13:28:30.522098+00:00"
+    }
+  ]
+}

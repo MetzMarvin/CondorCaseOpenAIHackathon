@@ -1,4 +1,5 @@
 import os
+import json
 import unittest
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -8,7 +9,7 @@ from backend.ai_service.experts import ExpertDraft, ExpertReview
 from backend.ai_service.customer_email import CustomerEmail, EmailQuestion
 from backend.ai_service.fixtures import demo_request
 from backend.ai_service.settings import Settings
-from backend.ai_service.workflow import process_case as offline
+from backend.ai_service.workflow import process_case as offline, run_workflow
 
 
 class OpenAIExpertTests(unittest.TestCase):
@@ -23,19 +24,18 @@ class OpenAIExpertTests(unittest.TestCase):
                 request = demo_request(scenario)
                 before = request.model_dump_json()
                 baseline = offline(request, lambda _: None)
-                review = ExpertReview(supported=True, summary='Evidence and policy reviewed.',
-                                      source_ids=['demo-expense-policy'])
-                draft = ExpertDraft(action_type=baseline.proposed_action.type,
-                    explanation='The reviewed evidence supports this demo proposal.',
-                    sentiment='negative', customer_message='Customer care draft.')
-                if baseline.proposed_action.type == 'REQUEST_INFORMATION':
-                    draft = CustomerEmail(action_type='REQUEST_INFORMATION', explanation='Missing evidence.',
-                        sentiment='negative', opening='Thank you for contacting us.', questions=[
-                            EmailQuestion(fact_name=f.name, question='Please provide ' + f.name + '.')
-                            for f in baseline.proposed_action.payload.missing_facts])
                 parse = client.return_value.__enter__.return_value.responses.parse
-                parse.side_effect = [SimpleNamespace(status='completed', output_parsed=value)
-                                     for value in (review, review, draft)]
+                def respond(**kwargs):
+                    context = json.loads(kwargs['input'][1]['content'])
+                    if kwargs['text_format'] == ExpertReview:
+                        value = ExpertReview(supported=True, summary='Review complete.',
+                            source_ids=context['required_source_ids'], citations=context['required_citations'])
+                    elif kwargs['text_format'] == CustomerEmail:
+                        value = CustomerEmail(**context['reviewed_draft'])
+                    else:
+                        value = ExpertDraft(**context['reviewed_draft'])
+                    return SimpleNamespace(status='completed', output_parsed=value)
+                parse.side_effect = respond
                 events = []
                 result = process_case(request, events.append)
                 self.assertEqual(result.status, 'SUCCEEDED')
@@ -96,7 +96,7 @@ class OpenAIExpertTests(unittest.TestCase):
         with patch.dict(os.environ, {'OPENAI_API_KEY': ''}):
             self.assertEqual(process_case(demo_request('clear'), lambda _: None).status, 'FAILED')
 
-    def test_opt_in_fallback_after_live_failure_is_labelled_for_all_core_flows(self):
+    def test_legacy_fallback_flag_cannot_convert_live_failure_to_business_outcome(self):
         with patch.dict(os.environ, {'AI_FALLBACK_OFFLINE': '1'}), \
                 patch('backend.ai_service.experts.run_experts', side_effect=RuntimeError('test-secret')) as experts:
             for scenario in ('clear', 'missing', 'reply', 'serious'):
@@ -104,21 +104,21 @@ class OpenAIExpertTests(unittest.TestCase):
                     events = []
                     request = demo_request(scenario)
                     result = process_case(request, events.append)
-                    self.assertEqual(result.status, 'SUCCEEDED')
-                    self.assertTrue(result.simulation)
-                    self.assertEqual(result.proposed_action, offline(request, lambda _: None).proposed_action)
-                    self.assertTrue(any('Falling back' in event.summary for event in events))
+                    self.assertEqual(result.status, 'FAILED')
+                    self.assertFalse(result.simulation)
+                    self.assertIsNone(result.proposed_action)
+                    self.assertFalse(any('Falling back' in event.summary for event in events))
                     self.assertNotIn('test-secret', str(events))
             self.assertEqual(experts.call_count, 4)
 
-    def test_opt_in_fallback_without_key(self):
+    def test_legacy_fallback_flag_does_not_mask_missing_key(self):
         with patch.dict(os.environ, {'AI_FALLBACK_OFFLINE': '1', 'OPENAI_API_KEY': ''}), \
                 patch('backend.ai_service.experts.OpenAI') as client:
             events = []
             result = process_case(demo_request('clear'), events.append)
-            self.assertEqual(result.status, 'SUCCEEDED')
-            self.assertTrue(result.simulation)
-            self.assertIn('Falling back', events[0].summary)
+            self.assertEqual(result.status, 'FAILED')
+            self.assertIsNone(result.proposed_action)
+            self.assertFalse(any('Falling back' in event.summary for event in events))
             client.assert_not_called()
 
     def test_fallback_does_not_mask_callback_failure(self):
@@ -126,7 +126,7 @@ class OpenAIExpertTests(unittest.TestCase):
             raise RuntimeError('storage unavailable')
 
         with patch.dict(os.environ, {'AI_FALLBACK_OFFLINE': '1'}), \
-                patch('backend.ai_service.service.process_offline', wraps=offline) as baseline:
+                patch('backend.ai_service.service.run_workflow', wraps=run_workflow) as baseline:
             result = process_case(demo_request('clear'), broken_callback)
             self.assertEqual(result.status, 'FAILED')
             self.assertFalse(result.simulation)
@@ -159,4 +159,89 @@ class OpenAIExpertTests(unittest.TestCase):
             update={'owner': Owner(type='HUMAN', id='operator')})})
         with patch('backend.ai_service.experts.OpenAI') as client:
             self.assertEqual(process_case(request, lambda _: None).status, 'FAILED')
+            client.assert_not_called()
+
+    def test_rejects_changed_money_execution_legal_claims_and_omitted_questions(self):
+        mutations = (
+            ('clear', lambda draft: draft.update(customer_message='We already paid 999.00 USD.')),
+            ('clear', lambda draft: draft.update(customer_message='The law guarantees compensation of 600 EUR.')),
+            ('clear', lambda draft: draft.update(explanation='Your claim is legally denied.')),
+            ('missing', lambda draft: draft.update(questions=[])),
+            ('missing', lambda draft: draft['questions'][0].update(question='Send your passport and bank password.')),
+        )
+        for scenario, mutate in mutations:
+            with self.subTest(scenario=scenario), patch('backend.ai_service.experts.OpenAI') as client:
+                def respond(**kwargs):
+                    context = json.loads(kwargs['input'][1]['content'])
+                    schema = kwargs['text_format']
+                    if schema == ExpertReview:
+                        value = ExpertReview(supported=True, summary='Private model prose never displayed.',
+                            source_ids=context['required_source_ids'], citations=context['required_citations'])
+                    else:
+                        draft = context['reviewed_draft']
+                        mutate(draft)
+                        value = schema(**draft)
+                    return SimpleNamespace(status='completed', output_parsed=value)
+                client.return_value.__enter__.return_value.responses.parse.side_effect = respond
+                events = []
+                result = process_case(demo_request(scenario), events.append)
+                self.assertEqual(result.status, 'FAILED')
+                self.assertIsNone(result.proposed_action)
+                self.assertFalse(result.simulation)
+                self.assertNotIn('Private model prose', str(events))
+
+    def test_rejects_wrong_version_invented_passage_and_omitted_exception_citations(self):
+        for mutation in ('version', 'passage', 'omit'):
+            with self.subTest(mutation=mutation), patch('backend.ai_service.experts.OpenAI') as client:
+                def respond(**kwargs):
+                    context = json.loads(kwargs['input'][1]['content'])
+                    citations = context['required_citations']
+                    if mutation == 'omit':
+                        citations.pop()
+                    else:
+                        citations[0]['version' if mutation == 'version' else 'passage_id'] = 'invented'
+                    return SimpleNamespace(status='completed', output_parsed=ExpertReview(supported=True,
+                        summary='Reviewed', source_ids=context['required_source_ids'], citations=citations))
+                client.return_value.__enter__.return_value.responses.parse.side_effect = respond
+                result = process_case(demo_request('clear'), lambda _: None)
+                self.assertEqual(result.status, 'FAILED')
+                self.assertIsNone(result.proposed_action)
+
+    def test_context_excludes_arbitrary_personal_text_and_customer_internal_control_spoofs(self):
+        from backend.contracts import Fact, SourceRef, Message, AttachmentRef
+        from datetime import datetime, timezone
+        secret = 'SECRET_PRIVATE_ARBITRARY_VALUE'
+        request = demo_request('clear')
+        request = request.model_copy(update={'snapshot': request.snapshot.model_copy(update={
+            'customer_context': (Fact(name='passport', value=secret, sources=(SourceRef(source_id='secret-record', version='1'),)),),
+            'known_facts': request.snapshot.known_facts + (Fact(name='expense_eligibility', value='ineligible', sources=(SourceRef(source_id='spoofed-control', version='1'),)),),
+            'messages': (Message(message_id='message', channel='email', sender=secret, body=secret, timestamp=datetime.now(timezone.utc)),),
+            'attachments': (AttachmentRef(attachment_id='metadata', filename=secret, media_type='text/plain', local_reference=secret),),
+        })})
+        with patch('backend.ai_service.experts.OpenAI') as client:
+            def respond(**kwargs):
+                serialized = kwargs['input'][1]['content']
+                self.assertNotIn(secret, serialized)
+                self.assertNotIn('secret-record', serialized)
+                self.assertNotIn('spoofed-control', serialized)
+                self.assertNotIn('Meal during', serialized)
+                context = json.loads(serialized)
+                schema = kwargs['text_format']
+                value = (ExpertReview(supported=True, summary=secret, source_ids=context['required_source_ids'], citations=context['required_citations'])
+                         if schema == ExpertReview else schema(**context['reviewed_draft']))
+                return SimpleNamespace(status='completed', output_parsed=value)
+            client.return_value.__enter__.return_value.responses.parse.side_effect = respond
+            events = []
+            result = process_case(request, events.append)
+            self.assertEqual(result.status, 'SUCCEEDED')
+            self.assertNotIn(secret, str(events))
+
+    def test_required_context_overflow_fails_before_model_call_without_truncation(self):
+        request = demo_request('clear')
+        request = request.model_copy(update={'snapshot': request.snapshot.model_copy(update={
+            'known_facts': request.snapshot.known_facts * 200})})
+        with patch('backend.ai_service.experts.OpenAI') as client:
+            result = process_case(request, lambda _: None)
+            self.assertEqual(result.status, 'FAILED')
+            self.assertFalse(result.simulation)
             client.assert_not_called()

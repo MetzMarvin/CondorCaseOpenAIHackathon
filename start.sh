@@ -8,7 +8,7 @@ BACKEND_PORT="${BACKEND_PORT:-8000}"
 FRONTEND_PORT="${FRONTEND_PORT:-5173}"
 if [[ "${1:-}" == "--help" ]]; then
   echo 'Usage: ./start.sh'
-  echo 'Starts live AI with explicit offline fallback, backend and frontend.'
+  echo 'Starts the backend and frontend; AI_MODE=offline selects stored demo behavior.'
   echo 'Optional: BACKEND_PORT=8002 FRONTEND_PORT=5174 ./start.sh'
   echo 'Put OPENAI_API_KEY in the project .env or your environment.'
   exit 0
@@ -59,9 +59,9 @@ trap cleanup EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
 
-echo 'Starting live AI; configuration/provider failures will use labelled offline demo decisions.'
+echo 'Starting AI; live configuration/provider failures remain failed runs. Use AI_MODE=offline for the deterministic demo.'
 echo 'Credentials: project .env or OPENAI_API_KEY. Existing case progress is preserved.'
-AI_MODE=openai AI_FALLBACK_OFFLINE=1 \
+AI_MODE="${AI_MODE:-openai}" \
   .venv/bin/uvicorn demo_backend.app:app --host 127.0.0.1 --port "$BACKEND_PORT" &
 backend_pid=$!
 (

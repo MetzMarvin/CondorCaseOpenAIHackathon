@@ -17,6 +17,8 @@ dist/
 .env.*
 !.env.example
 
+# Local simulated customer email outbox
+email-outbox.sqlite3*
 # Generated caches, reports and local machine files
 .vite/
 .pytest_cache/

@@ -102,6 +102,12 @@ def assess(snapshot: CaseSnapshot, sources: tuple[SourceRef, ...]) -> Decision:
     # Invalid supplied optional evidence must not be silently accepted.
     requested.update(dict.fromkeys(name for name in facts if name in QUESTIONS))
     for name in requested:
+        if name in {'customer_match', 'booking_match', 'flight_match'}:
+            if name in internal_conflicts:
+                return Decision(reason='UNRESOLVED_CONFLICT', explanation='Matched internal records disagree. A specialist must reconcile the booking and passenger relationship.')
+            if value(name) != 'matched':
+                missing['booking_reference'] = missing_fact('booking_reference')
+            continue
         if name in INTERNAL_FACTS:
             if name not in internal or internal[name].value in (None, ''):
                 return Decision(error=TechnicalError(code='INTERNAL_EVIDENCE_REQUIRED',

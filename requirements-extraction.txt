@@ -1,0 +1,2 @@
+# Optional text-PDF extraction. Without this extra, PDF_ADAPTER_UNCONFIGURED is explicit.
+pypdf>=5,<7

@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-006
+Record: payments
+
+No prior compensation or reimbursement unless explicitly stated in another record.
