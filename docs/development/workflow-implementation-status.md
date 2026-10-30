@@ -19,7 +19,7 @@ contract fields are unchanged.
 | KA08 | System 2 complete | Read-only preparation, source authority, partial replies, focused questions, internal failures and concrete handoffs. |
 | KA09 | System 2 complete | Configured synchronous processing, bounded model context, exact supported policy/template validation and no live-to-offline fallback. Fake-model tests cover invalid citations/drafts/provider errors. |
 | KA10 | System 2 fixtures complete; execution pending | System 1 owns actual reply intake, current-version/owner validation, idempotency, action execution and case mutation. No execution-level takeover race or duplicate-effects result is claimed. |
-| KA11 | Diagnostics integration in progress | Safe manifest generation is being integrated separately. System 1 remains responsible for durable storage, case-scoped access and retention. |
+| KA11 | System 2 complete; persistence pending | Safe versioned RunManifest generation and a single-manifest diagnostic_sink are integrated. System 1 owns actual durable storage, case-scoped access, retention and idempotent writes. See [DIAGNOSTICS.md](../../backend/ai_service/DIAGNOSTICS.md). |
 | KA12 | Owner integration pending | System 3 owns evidence/source display through System 1; this work does not change the console. |
 | KA13 | System 2 offline coverage complete; E2E pending | Public-entry acceptance covers three flows and evidence/retrieval failures without network or model access. System 1 execution and System 3 display checks remain owner dependencies. |
 
@@ -45,6 +45,7 @@ from backend.ai_service.settings import Settings
 
 processor = create_processor(
     settings=Settings(mode='offline', api_key=''),
+    diagnostic_sink=system1_store_manifest,  # Callable[[RunManifest], None]
     adapters=create_evidence_adapters(
         crm=crm_reader, operational=operational_reader,
         attachments=attachment_reader,
@@ -52,6 +53,13 @@ processor = create_processor(
 )
 result = processor(request, emit_progress)
 ```
+
+The `system1_store_manifest` callback accepts one safe `RunManifest` and returns
+`None` after successful storage, or raises on failure. It receives no request,
+snapshot or private processing bundle. System 1 must provide durable storage;
+omitting the sink does not persist diagnostics. See
+[`DIAGNOSTICS.md`](../../backend/ai_service/DIAGNOSTICS.md) for serialization and
+failure semantics.
 
 The reader variables above are System 1 implementations of the contracts in
 [`evidence.py`](../../backend/ai_service/evidence.py), or explicit synthetic fake
@@ -77,11 +85,16 @@ AI_MODE=offline OPENAI_API_KEY= python -m unittest discover -s tests -p 'test_of
 AI_MODE=offline OPENAI_API_KEY= python -m unittest discover -s tests -v
 ```
 
-At integration base `25ee3d9` plus KA13 changes, the focused command passed all
-8 tests. The full suite ran 107 tests successfully, with one skip because the
-optional `pypdf` package was not installed. This does not claim actual PDF parsing
-was exercised in that environment. No dependency installation or live provider
-call was performed for these checks.
+The review baseline at `d66f11c` passed all 116 tests without skips using the
+existing root virtual environment and optional `pypdf` from
+`PYTHONPATH=/tmp/condor-ka05-pdf:.`. After the review fixes, the full suite passed all **121 tests with no skips**
+in that same environment, including actual optional text-PDF parsing. The new
+public-boundary regressions first reproduced malformed record results and the
+unreadable-original/readable-replacement reply loop, then passed after the fixes.
+Partial replacements retain missing-value questions, prior readability requests
+clear when replaced, and actual amount conflicts remain visible. Existing stored
+output parity tests passed; no stored-output regeneration was needed. No live
+provider call was performed.
 
 The focused suite forbids socket connections and OpenAI client construction and
 asserts no attempts occurred, including attempts caught as workflow failures.

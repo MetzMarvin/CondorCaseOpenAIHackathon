@@ -76,3 +76,55 @@ class ConfiguredProcessorTests(unittest.TestCase):
         outcome = processor(demo_request('clear'), lambda _: None)
         self.assertEqual(outcome.proposed_action.type, 'HANDOFF')
         self.assertEqual(outcome.proposed_action.payload.reason_code, 'UNSUPPORTED_ACTION')
+
+    def replacement_case(self, replacement_content):
+        request = demo_request('missing')
+        reads = []
+        for identifier, content in (('original', b''), ('replacement', replacement_content)):
+            reference = AttachmentRef(attachment_id=identifier, filename=identifier + '.txt', media_type='text/plain', local_reference=identifier + '-token')
+            reads.append(AttachmentResult(scope=EvidenceScope(case_id=request.case_id, case_version=request.case_version), reference=reference,
+                status='found', content=content, source=SourceRef(source_id=identifier, version='1'), content_hash=sha256(content).hexdigest(), observed_at=datetime.now(timezone.utc)))
+        request = request.model_copy(update={'trigger': 'customer_reply', 'snapshot': request.snapshot.model_copy(update={
+            'known_facts': (), 'attachments': tuple(read.reference for read in reads)})})
+        processor = create_processor(settings=Settings('offline', ''), adapters=create_evidence_adapters(attachments=FakeAttachmentReader(tuple(reads))))
+        return request, processor
+
+    def test_readable_replacement_resolves_with_retained_unreadable_attachment(self):
+        request, processor = self.replacement_case(b'Total: 42.00\nCurrency: EUR\nPurpose: meals\nDate: 2026-10-30')
+        before = request.model_dump_json()
+        result = processor(request, lambda _: None)
+        self.assertEqual(result.status, 'SUCCEEDED')
+        self.assertEqual(result.proposed_action.type, 'RESOLVE')
+        self.assertEqual(result.proposed_action.payload.financial_positions[0].amount_minor, 4200)
+        self.assertTrue({SourceRef(source_id=name, version='1') for name in ('original', 'replacement')} <= set(result.proposed_action.sources))
+        self.assertEqual(request.model_dump_json(), before)
+
+    def test_partial_replacement_requests_only_missing_values(self):
+        request, processor = self.replacement_case(b'Currency: EUR\nPurpose: meals\nDate: 2026-10-30')
+        result = processor(request, lambda _: None)
+        self.assertEqual(result.proposed_action.type, 'REQUEST_INFORMATION')
+        self.assertEqual([m.name for m in result.assessment.missing_facts], ['receipt_amount_minor'])
+
+    def test_replacement_preserves_explicit_flags_and_amount_conflicts(self):
+        from backend.contracts import Fact
+        for fact, missing in ((Fact(name='receipt_readable', value=False, sources=(SourceRef(source_id='snapshot-check', version='1'),)), 'receipt_readable'),
+                              (Fact(name='receipt_amount_minor', value=8400, sources=(SourceRef(source_id='earlier-receipt', version='1'),)), 'receipt_amount_minor')):
+            with self.subTest(missing=missing):
+                request, processor = self.replacement_case(b'Total: 42.00\nCurrency: EUR\nPurpose: meals\nDate: 2026-10-30')
+                request = request.model_copy(update={'snapshot': request.snapshot.model_copy(update={'known_facts': (fact,)})})
+                result = processor(request, lambda _: None)
+                self.assertEqual(result.proposed_action.type, 'REQUEST_INFORMATION')
+                self.assertEqual([m.name for m in result.assessment.missing_facts], [missing])
+                self.assertIn(fact.sources[0], result.proposed_action.sources)
+
+    def test_reply_replaces_old_attachment_readability_request_and_flag(self):
+        from backend.contracts import Fact, MissingFact
+        request, processor = self.replacement_case(b'Total: 42.00\nCurrency: EUR\nPurpose: meals\nDate: 2026-10-30')
+        request = request.model_copy(update={'snapshot': request.snapshot.model_copy(update={
+            'known_facts': (Fact(name='receipt_readable', value=False, sources=(SourceRef(source_id='original', version='1'),)),),
+            'missing_information': (MissingFact(name='receipt_readable', reason='Please send a readable receipt.'),)})})
+        before = request.model_dump_json()
+        result = processor(request, lambda _: None)
+        self.assertEqual(result.proposed_action.type, 'RESOLVE')
+        self.assertIn(SourceRef(source_id='original', version='1'), result.proposed_action.sources)
+        self.assertEqual(request.model_dump_json(), before)
