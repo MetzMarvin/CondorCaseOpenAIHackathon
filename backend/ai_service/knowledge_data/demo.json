@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "cards": [
+    {
+      "source_id": "demo-expense-policy",
+      "version": "2",
+      "title": "Synthetic demo expense policy \u2014 not legal guidance",
+      "source_location": "synthetic://demo-expense-policy/2",
+      "source_kind": "demo_assumption",
+      "issue_tags": [
+        "expense_reimbursement"
+      ],
+      "applicability": [],
+      "effective_from": null,
+      "effective_until": null,
+      "retrieved_on": "2026-10-30",
+      "universal": true,
+      "approval_state": "DEMO_APPROVED",
+      "content_hash": "3bf29bc02f767a9772c7aac3ec6a5f214a217ba7d9de0fcbb0b3f1dd716022ed",
+      "text": "Synthetic demo assumption only. No production legal approval or legal entitlement is established.",
+      "passages": [
+        {
+          "passage_id": "expense-rule",
+          "text": "Propose reimbursement of the documented expense amount and currency only when every prerequisite and exception check below is satisfied.",
+          "role": "RULE",
+          "rule_key": "expense_reimbursement",
+          "decision": "supported"
+        },
+        {
+          "passage_id": "expense-prerequisites",
+          "text": "Require a sourced internal expense eligibility check of eligible, a sourced payment history of no_prior_reimbursement, and complete readable expense evidence with valid amount and currency.",
+          "role": "PREREQUISITE",
+          "rule_key": null,
+          "decision": null
+        },
+        {
+          "passage_id": "expense-exceptions",
+          "text": "Never infer entitlement from a receipt alone. Unclear eligibility, prior reimbursement, unresolved material conflicts, serious issues, unsupported actions, or insufficient financial authority prevent automatic resolution. Missing customer evidence requests clarification; technical failures remain failed runs. System 1 alone validates and executes any proposal.",
+          "role": "EXCEPTION",
+          "rule_key": null,
+          "decision": null
+        }
+      ],
+      "dependencies": [
+        {
+          "source_id": "demo-expense-policy",
+          "version": "2",
+          "passage_id": "expense-prerequisites"
+        },
+        {
+          "source_id": "demo-expense-policy",
+          "version": "2",
+          "passage_id": "expense-exceptions"
+        }
+      ]
+    }
+  ]
+}
