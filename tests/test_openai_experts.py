@@ -96,6 +96,52 @@ class OpenAIExpertTests(unittest.TestCase):
         with patch.dict(os.environ, {'OPENAI_API_KEY': ''}):
             self.assertEqual(process_case(demo_request('clear'), lambda _: None).status, 'FAILED')
 
+    def test_legacy_fallback_flag_cannot_convert_live_failure_to_business_outcome(self):
+        with patch.dict(os.environ, {'AI_FALLBACK_OFFLINE': '1'}), \
+                patch('backend.ai_service.experts.run_experts', side_effect=RuntimeError('test-secret')) as experts:
+            for scenario in ('clear', 'missing', 'reply', 'serious'):
+                with self.subTest(scenario=scenario):
+                    events = []
+                    request = demo_request(scenario)
+                    result = process_case(request, events.append)
+                    self.assertEqual(result.status, 'FAILED')
+                    self.assertFalse(result.simulation)
+                    self.assertIsNone(result.proposed_action)
+                    self.assertFalse(any('Falling back' in event.summary for event in events))
+                    self.assertNotIn('test-secret', str(events))
+            self.assertEqual(experts.call_count, 4)
+
+    def test_legacy_fallback_flag_does_not_mask_missing_key(self):
+        with patch.dict(os.environ, {'AI_FALLBACK_OFFLINE': '1', 'OPENAI_API_KEY': ''}), \
+                patch('backend.ai_service.experts.OpenAI') as client:
+            events = []
+            result = process_case(demo_request('clear'), events.append)
+            self.assertEqual(result.status, 'FAILED')
+            self.assertIsNone(result.proposed_action)
+            self.assertFalse(any('Falling back' in event.summary for event in events))
+            client.assert_not_called()
+
+    def test_fallback_does_not_mask_callback_failure(self):
+        def broken_callback(_):
+            raise RuntimeError('storage unavailable')
+
+        with patch.dict(os.environ, {'AI_FALLBACK_OFFLINE': '1'}), \
+                patch('backend.ai_service.service.run_workflow', wraps=__import__('backend.ai_service.workflow', fromlist=['run_workflow']).run_workflow) as baseline:
+            result = process_case(demo_request('clear'), broken_callback)
+            self.assertEqual(result.status, 'FAILED')
+            self.assertFalse(result.simulation)
+            self.assertEqual(baseline.call_count, 1)
+
+    def test_fallback_does_not_mask_invalid_case_context(self):
+        from backend.contracts import Owner
+        request = demo_request('clear')
+        request = request.model_copy(update={'snapshot': request.snapshot.model_copy(
+            update={'owner': Owner(type='HUMAN', id='operator')})})
+        with patch.dict(os.environ, {'AI_FALLBACK_OFFLINE': '1'}), \
+                patch('backend.ai_service.experts.OpenAI') as client:
+            self.assertEqual(process_case(request, lambda _: None).status, 'FAILED')
+            client.assert_not_called()
+
     def test_configuration_loads_dotenv_and_shell_takes_precedence(self):
         with patch.dict(os.environ, {}, clear=True), patch('backend.ai_service.settings.dotenv_values',
                 return_value={'OPENAI_API_KEY': 'file-secret', 'AI_MODE': 'auto', 'OPENAI_MODEL': 'file-model'}):
