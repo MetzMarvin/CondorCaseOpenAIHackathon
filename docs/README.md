@@ -1,5 +1,13 @@
 # Hackathon-Dokumentation
 
+## Current implementation
+
+- [Module contract visualization](architecture/module-contracts.html): HTML overview of module boundaries, payloads and endpoints.
+- [Executable contract guide](architecture/module-contracts.md): Pydantic models and integration responsibilities.
+- [Development setup and repository map](../README.md#start-working): installation, offline demo and tests.
+
+## Plans and reference material
+
 - [Subsystems and interface contracts](architecture/subsystems-and-contracts.md): drei Entwicklungsbereiche, synchrone KI-Verarbeitung, gemeinsame Datenmodelle, API-Verträge und Ereignisse für die 3-Stunden-Demo.
 
 - [Hackathon-Plan](planning/hackathon-plan.md): Problemstatement, Ziele, MVP, Architektur, Salesforce-Dummy, Datenkonzept, Kennzahlen und Demo-Ablauf.
