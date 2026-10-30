@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-011
+Record: booking
+
+Booking LEGAL11; flight DE-MOCK-L11; one confirmed adult passenger; FRA–MAD, Condor demo EU carrier; voluntary surrender agreement. All identities and records are synthetic.

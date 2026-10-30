@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-002
+Record: snapshot_facts
+
+Synthetic structured record for supplied facts: {"booking_reference": "LEGAL02", "baggage_reference": "PIR-MOCK-L02", "expense_purpose": "Essential clothing and toiletries during baggage delay."}

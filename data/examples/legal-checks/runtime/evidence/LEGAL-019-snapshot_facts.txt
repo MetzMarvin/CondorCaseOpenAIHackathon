@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-019
+Record: snapshot_facts
+
+Synthetic structured record for supplied facts: {"booking_reference": "LEGAL19"}

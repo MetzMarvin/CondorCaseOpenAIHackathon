@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-001
+Record: payments
+
+No prior reimbursement or compensation; simulated reimbursement authority EUR 200.

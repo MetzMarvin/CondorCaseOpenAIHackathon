@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-007
+Record: operations
+
+Original departure 2026-10-20T10:00Z. Delivery and acknowledgement logs prove notice received 2026-10-01T09:00Z. Refund requested 2026-10-02; not yet paid. No rerouting used.

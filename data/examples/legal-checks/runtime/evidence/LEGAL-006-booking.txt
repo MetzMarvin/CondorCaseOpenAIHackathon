@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-006
+Record: booking
+
+Booking LEGAL06; flight DE-MOCK-L06; one confirmed adult passenger; HAM–FRA–JFK on one protected booking with one check-in; all legs Condor demo EU carrier; HAM–JFK great-circle distance 6100 km. All identities and records are synthetic.
