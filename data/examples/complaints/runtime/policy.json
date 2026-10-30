@@ -1,0 +1,11 @@
+{
+  "version": "demo-workflow-2",
+  "supported_categories": [
+    "delay",
+    "cancellation",
+    "baggage",
+    "refund",
+    "service"
+  ],
+  "description": "Synthetic workflow expectations only. Resolution means prepare a simulated answer under demo authority; no legal entitlement or payment amount is asserted."
+}

@@ -26,3 +26,7 @@ playwright-report/
 test-results/
 *.log
 .DS_Store
+
+# Rebuildable pipeline outputs; pinned raw snapshot and small examples stay tracked.
+data/normalized/
+data/processed/

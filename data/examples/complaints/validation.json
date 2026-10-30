@@ -1,0 +1,17 @@
+{
+  "valid": true,
+  "case_count": 30,
+  "split_counts": {
+    "development": 21,
+    "validation": 5,
+    "test": 4
+  },
+  "attachment_counts": {
+    "application/pdf": 21,
+    "image/png": 8
+  },
+  "future_uploads": 11,
+  "clarification_cases": 11,
+  "errors": [],
+  "reference_status": "synthetic_unreviewed"
+}

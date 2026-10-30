@@ -1,0 +1,2 @@
+# Shared application contracts (the existing data pipeline remains dependency-free).
+pydantic>=2.7,<3

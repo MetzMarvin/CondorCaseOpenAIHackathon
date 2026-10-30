@@ -1,0 +1,36 @@
+<!doctype html>
+<!-- THROWAWAY. Question: Which view best exposes the complaint data: overview, inbox, or action board? -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Condor · Complaint data explorer</title>
+  <link rel="stylesheet" href="/style.css">
+  <script defer src="/app.js"></script>
+</head>
+<body>
+  <header>
+    <a class="brand" href="/?variant=A"><span class="logo">c.</span> CONDOR <span class="brand-sub">/ DATA LAB</span></a>
+    <span class="prototype-tag">THROWAWAY PROTOTYPE · READ ONLY</span>
+    <button id="reload" class="quiet">↻ Reload data</button>
+  </header>
+  <main>
+    <div class="heading"><div><p class="eyebrow">MOCK DATA / COMPLAINT EXPLORER</p><h1>Every complaint, in context.</h1><p class="muted">Explore the generated messages, linked flight facts and synthetic workflow expectations.</p></div><div id="source-badge" class="source-badge">Loading local data…</div></div>
+    <div class="notice">All records are synthetic. Expected actions are test fixtures, not agent results or verified legal decisions.</div>
+    <section class="filters" aria-label="Filter complaints">
+      <label class="search">Search<input id="search" placeholder="Case, booking, flight, text or traveler…" type="search"></label>
+      <label>Category<select id="category"><option value="">All categories</option></select></label>
+      <label>Language<select id="language"><option value="">DE + EN</option><option value="de">German</option><option value="en">English</option></select></label>
+      <label>Scenario<select id="scenario"><option value="">All scenarios</option></select></label>
+      <label>Expected action<select id="action"><option value="">All actions</option></select></label>
+      <label>Split<select id="split"><option value="">All splits</option><option>development</option><option>validation</option><option>test</option></select></label>
+      <button id="reset" class="quiet">Reset</button>
+    </section>
+    <div id="status" role="status" class="muted">Reading the full dataset…</div>
+    <div id="view"></div>
+    <details class="state-panel"><summary>Current explorer state</summary><pre id="state"></pre></details>
+  </main>
+  <div id="overlay" hidden></div>
+  <nav class="switcher" aria-label="Prototype variants"><button id="previous" aria-label="Previous variant">←</button><span><small>COMPARE VIEWS</small><strong id="variant-label">A · Overview</strong></span><button id="next" aria-label="Next variant">→</button></nav>
+</body>
+</html>

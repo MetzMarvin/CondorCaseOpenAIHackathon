@@ -1,0 +1,84 @@
+{
+  "de": {
+    "greeting": "Guten Tag,",
+    "closing": "Bitte prüfen Sie mein Anliegen. Vielen Dank.",
+    "booking": "Meine Buchungsnummer lautet {booking_reference}. Der Flug {flight_number} von {origin} nach {destination} war am {flight_date}.",
+    "categories": {
+      "delay": "Wir sind mit {delay_minutes} Minuten Verspätung angekommen. Ich möchte den Vorfall prüfen lassen.",
+      "cancellation": "Unser Flug wurde annulliert. Bitte prüfen Sie die Möglichkeiten zur Erstattung.",
+      "denied_boarding": "Trotz bestätigter Buchung konnten wir nicht mitfliegen. Bitte prüfen Sie die Nichtbeförderung.",
+      "baggage": "Mein aufgegebenes Gepäck ist noch nicht angekommen. Für notwendige Einkäufe habe ich {expense_eur} EUR ausgegeben. Bitte prüfen Sie den Verbleib und meine Ausgaben.",
+      "refund": "Ich warte auf die Erstattung meines annullierten Fluges. Bitte prüfen Sie den Stand.",
+      "service": "Die gebuchte Zusatzleistung wurde nicht erbracht. Meine Ausgaben dafür betragen {expense_eur} EUR.",
+      "unknown": "Bei meiner Reise ist etwas schiefgegangen. Ich kann das Problem noch nicht genauer beschreiben."
+    },
+    "scenarios": {
+      "complete": "Die vorhandenen Unterlagen habe ich beigefügt.",
+      "angry_complete": "Ich bin wirklich verärgert! Alle Unterlagen sind beigefügt. Ich erwarte eine Antwort.",
+      "missing_receipt": "Den Beleg für meine Ausgaben habe ich noch nicht beigefügt. Wie kann ich ihn nachreichen?",
+      "serious": "Während der Reise wurde ich schwer verletzt. Bitte lassen Sie diesen Vorfall untersuchen.",
+      "conflicting_evidence": "Ich habe einen Beleg beigefügt, bin aber unsicher, ob er zu dieser Buchung gehört.",
+      "missing_pir": "Die Gepäckverlustmeldung vom Flughafen habe ich noch nicht beigefügt.",
+      "missing_bag_tag": "Meine Gepäckabschnittsnummer habe ich noch nicht angegeben. Sie steht auch nicht auf der beigefügten Meldung.",
+      "attachment_only": "Mein Anliegen und die Details finden Sie in den angehängten Unterlagen. Bitte prüfen Sie diese.",
+      "unreadable_document": "Ich habe ein Bild der Unterlagen hochgeladen. Es wurde beim Scannen leider teilweise verdeckt."
+    },
+    "questions": {
+      "missing_receipt": "Bitte reichen Sie den Beleg für die angegebenen Ausgaben nach.",
+      "missing_pir": "Bitte senden Sie uns die Gepäckverlustmeldung (PIR) vom Flughafen. Falls Sie keine Meldung haben, teilen Sie uns dies bitte mit.",
+      "missing_bag_tag": "Bitte nennen Sie die Gepäckabschnittsnummer oder senden Sie ein lesbares Foto des Gepäckabschnitts.",
+      "unreadable_document": "Das hochgeladene Bild ist nicht lesbar. Bitte senden Sie eine vollständige, scharfe Aufnahme oder eine lesbare PDF der Gepäckunterlagen.",
+      "conflicting_evidence": "Der Beleg gehört zu einer anderen Buchung. Bitte senden Sie den passenden Beleg oder erklären Sie die Abweichung."
+    },
+    "followups": {
+      "missing_receipt": "Hier ist der fehlende Beleg für {expense_eur} EUR zur Buchung {booking_reference}.",
+      "missing_pir": "Anbei die Gepäckverlustmeldung. Die PIR-Referenz lautet {pir_reference}.",
+      "missing_bag_tag": "Meine Gepäckabschnittsnummer lautet {bag_tag}. Ein Foto des Abschnitts ist beigefügt.",
+      "unreadable_document": "Hier ist die vollständige lesbare PDF meiner Gepäckverlustmeldung zur Buchung {booking_reference}.",
+      "conflicting_evidence": "Ich hatte den falschen Beleg angehängt. Hier ist der passende Beleg zur Buchung {booking_reference}."
+    },
+    "followup": "Hier ist der fehlende Beleg für {expense_eur} EUR zur Buchung {booking_reference}.",
+    "question": "Bitte reichen Sie den Beleg für die angegebenen Ausgaben nach."
+  },
+  "en": {
+    "greeting": "Hello,",
+    "closing": "Please review my complaint. Thank you.",
+    "booking": "My booking reference is {booking_reference}. Flight {flight_number} from {origin} to {destination} was on {flight_date}.",
+    "categories": {
+      "delay": "We arrived {delay_minutes} minutes late. I would like this disruption reviewed.",
+      "cancellation": "Our flight was cancelled. Please check the available refund options.",
+      "denied_boarding": "We could not board despite having a confirmed reservation. Please review the denied boarding.",
+      "baggage": "My checked bag has not arrived yet. I spent EUR {expense_eur} on essential purchases. Please check the bag's whereabouts and my expenses.",
+      "refund": "I am waiting for the refund of my cancelled flight. Please check its status.",
+      "service": "The additional service I booked was not provided. I paid EUR {expense_eur} for it.",
+      "unknown": "Something went wrong with my trip. I cannot describe the problem more precisely yet."
+    },
+    "scenarios": {
+      "complete": "I have attached the available documents.",
+      "angry_complete": "I am really angry! All documents are attached. I expect a response.",
+      "missing_receipt": "I have not attached the receipt for my expenses yet. How can I send it?",
+      "serious": "I suffered a serious injury during the trip. Please investigate this incident.",
+      "conflicting_evidence": "I attached a receipt but I am unsure whether it belongs to this booking.",
+      "missing_pir": "I have not attached the baggage irregularity report from the airport yet.",
+      "missing_bag_tag": "I have not provided my bag tag number. It is also absent from the attached report.",
+      "attachment_only": "My complaint and its details are in the attached documents. Please review them.",
+      "unreadable_document": "I uploaded an image of my documents. Unfortunately part of it was covered during scanning."
+    },
+    "questions": {
+      "missing_receipt": "Please provide the receipt for the expenses you reported.",
+      "missing_pir": "Please send the baggage irregularity report (PIR) from the airport. If you do not have a report, please let us know.",
+      "missing_bag_tag": "Please provide your bag tag number or a readable image of the baggage tag.",
+      "unreadable_document": "The uploaded image is unreadable. Please send a complete, sharp image or a readable PDF of the baggage documents.",
+      "conflicting_evidence": "The receipt refers to another booking. Please provide the matching receipt or explain the discrepancy."
+    },
+    "followups": {
+      "missing_receipt": "Here is the missing receipt for EUR {expense_eur} for booking {booking_reference}.",
+      "missing_pir": "The baggage report is attached. Its PIR reference is {pir_reference}.",
+      "missing_bag_tag": "My bag tag number is {bag_tag}. An image of the tag is attached.",
+      "unreadable_document": "Here is the complete readable PDF of my baggage report for booking {booking_reference}.",
+      "conflicting_evidence": "I attached the wrong receipt. Here is the matching receipt for booking {booking_reference}."
+    },
+    "followup": "Here is the missing receipt for EUR {expense_eur} for booking {booking_reference}.",
+    "question": "Please provide the receipt for the expenses you reported."
+  }
+}
