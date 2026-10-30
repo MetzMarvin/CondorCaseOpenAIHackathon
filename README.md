@@ -4,6 +4,31 @@ Hackathon demo with an English React/Vite service console and process replay. Th
 
 ## Start locally
 
+From the **repository root** (`CondorCaseOpenAIHackathon/`), run:
+
+```sh
+./start.sh
+```
+
+The parent workspace also provides a `start.sh` wrapper for the same command.
+
+This starts both servers, installs missing dependencies, initializes the database
+on first use, and prints the demo URL. Requires Python 3.13 for initial environment
+creation and Node.js 22.12+. Existing case progress is preserved. Press **Ctrl+C**
+to stop both servers. To avoid occupied ports, use
+`BACKEND_PORT=8002 FRONTEND_PORT=5174 ./start.sh`.
+
+The launcher sets `AI_MODE=openai` and `AI_FALLBACK_OFFLINE=1`. Put your
+`OPENAI_API_KEY` in `CondorCaseOpenAIHackathon/.env` or the shell environment.
+Each assessment tries live AI first. If credentials are missing or live processing
+fails, that run uses deterministic offline demo decisions, with an explicit activity
+event and backend warning. A later assessment tries live AI again. Offline results
+are marked as simulations; case validation and persistence errors still fail.
+The existing `OPENAI_TIMEOUT_SECONDS` setting applies to each live expert call.
+The launcher makes no paid startup probe and does not reset demo data.
+
+### Manual startup
+
 Use **Python 3.11 or newer** and Node.js 22.12+. The project environment now uses **Python 3.13.16**; `.python-version` selects 3.13. Do not use macOS system Python 3.9. Run these commands from `CondorCaseOpenAIHackathon/`:
 
 ```sh
@@ -155,7 +180,9 @@ Live processing calls OpenAI for evidence review, policy review, and assessment/
 customer wording through the Responses API with typed structured outputs. Code
 retains the approved synthetic policy, permitted action, IDs, source references
 and financial positions. Expert disagreement, refusal, invalid output or API
-failure returns a failed run; it never silently falls back to a simulated decision.
+failure returns a failed run by default. The root launcher explicitly enables
+labelled offline fallback with `AI_FALLBACK_OFFLINE=1`; other startup commands
+retain the default failure behavior.
 Live results/events have `simulation=false`; downstream sending and payments
 remain simulated and owned by System 1. Legacy `questionDe`/`replyDe` contract
 field names remain compatible, while live wording is English per project guidance.
