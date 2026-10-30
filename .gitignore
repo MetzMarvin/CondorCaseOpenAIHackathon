@@ -11,3 +11,8 @@ data/processed/
 .venv/
 .pytest_cache/
 .ruff_cache/
+
+# Backend credentials (the example contains no secrets).
+.env
+.env.*
+!.env.example

@@ -1,5 +1,5 @@
 import unittest
-from backend.ai_service import process_case
+from backend.ai_service.workflow import process_case
 from backend.ai_service.fixtures import demo_request
 from backend.contracts import Owner, RunRequest, RunResult
 
