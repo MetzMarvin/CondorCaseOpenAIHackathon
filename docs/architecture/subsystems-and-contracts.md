@@ -8,7 +8,7 @@ This document translates the subsystem proposal into the scope in [AGENTS.md](..
 
 Build three logical subsystems in one application: Python/FastAPI/Pydantic, React with JavaScript and Vite, and SQLite/SQLAlchemy. Use local synthetic attachments. Processing is synchronous; no worker, broker or separate service deployment is required.
 
-Start with 6–10 synthetic cases. Simulate AI, email, payments and integrations, label them clearly, and use German UI text. Stored example outputs must support the complete demo without model access. Authentication, extra channels and large datasets are deferred.
+Start with 6–10 synthetic cases. Simulate AI, email, payments and integrations, label them clearly, and use English UI text. Stored example outputs must support the complete demo without model access. Authentication, extra channels and large datasets are deferred.
 
 | Subsystem | Responsibilities | Owned data and code |
 |---|---|---|
@@ -55,8 +55,8 @@ System 1 supplies customer context and evidence access through the snapshot. Add
 
 | Type | Payload | Accepted effect in System 1 |
 |---|---|---|
-| `REQUEST_INFORMATION` | Missing facts, reasons and German customer-facing question | Record a simulated outbound question; set `WAITING_FOR_CUSTOMER`; retain the current owner (AI for an AI request) |
-| `RESOLVE` | Outcome, explanation, source IDs/versions, German reply and separate financial positions | Record simulated reply and any permitted financial action; set `RESOLVED` |
+| `REQUEST_INFORMATION` | Missing facts, reasons and English customer-facing question | Record a simulated outbound question; set `WAITING_FOR_CUSTOMER`; retain the current owner (AI for an AI request) |
+| `RESOLVE` | Outcome, explanation, source IDs/versions, English reply and separate financial positions | Record simulated reply and any permitted financial action; set `RESOLVED` |
 | `HANDOFF` | Reason code, suggested queue, summary, facts, evidence, unresolved questions and prior attempts | Set `WAITING_FOR_SPECIALIST` and route to the appropriate human queue |
 
 Financial positions distinguish compensation, ticket/expense reimbursement and voluntary goodwill. Amounts use integer minor units and an explicit currency. Unsupported authority or approval requirements cause a prepared handoff; a full budget administration screen is outside the core demo.
@@ -120,7 +120,7 @@ System 1 records both its own business events and System 2's progress. System 3 
   "type": "step.completed",
   "stepId": "retrieve_policy",
   "timestamp": "2026-10-30T12:00:00Z",
-  "summary": "Zwei passende Demo-Richtlinien gefunden",
+  "summary": "Two relevant demo policies found",
   "data": {
     "sourceIds": ["policy-01", "policy-04"],
     "simulation": true
@@ -144,7 +144,7 @@ Agree on the shared Pydantic contracts and three deterministic fixture cases fir
 |---|---|---|
 | 1: Intake & Case Service | A fake `process_case` function returning the three action types | Creates one case per message/thread, applies actions once, retains evidence/history and rejects stale actions |
 | 2: Orchestrated AI Service | Fixed snapshots, local attachments and approved knowledge fixtures | Complete case resolves; missing evidence requests information then resolves after a reply; serious/unsupported case produces a reasoned handoff |
-| 3: Operations Console | Recorded JSON responses and event fixtures matching the contracts | German case list/detail, simulated reply, human takeover and visible action history; loading and error states are clear |
+| 3: Operations Console | Recorded JSON responses and event fixtures matching the contracts | English case list/detail, simulated reply, human takeover and visible action history; loading and error states are clear |
 
 Do not hand off merely because information is missing, the customer is angry or multiple supported issues are present. Serious issues, unsupported actions, unresolved contradictions or authority limits require a specific handoff reason. A clear supported case has no mandatory human approval step.
 
