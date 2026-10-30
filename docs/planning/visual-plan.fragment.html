@@ -1,0 +1,89 @@
+<div id="care-hub-flow">
+  <style>
+    #care-hub-flow{color:var(--foreground)}
+    #care-hub-flow .channels{display:flex;gap:18px;flex-wrap:wrap;align-items:center;margin:14px 0}
+    #care-hub-flow .channel{display:flex;gap:6px;align-items:center}
+    #care-hub-flow .map{width:100%;display:block}
+    #care-hub-flow .map text{fill:var(--foreground);font-family:inherit;font-size:14px;font-weight:400}
+    #care-hub-flow .map .sub{fill:var(--muted-foreground);font-size:12px}
+    #care-hub-flow .map rect{fill:var(--muted);stroke:none}
+    #care-hub-flow .map .chosen rect{fill:color-mix(in srgb,var(--viz-series-1) 17%,var(--background))}
+    #care-hub-flow .map .chosen .stripe{fill:var(--viz-series-1)}
+    #care-hub-flow .map .stripe{fill:var(--border)}
+    #care-hub-flow .map path{stroke:var(--border);stroke-width:1.5;fill:none}
+    #care-hub-flow .map path.active-path{stroke:var(--viz-series-1);stroke-width:2}
+    #care-hub-flow .foundation{display:flex;gap:18px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+    #care-hub-flow .foundation span{display:flex;gap:6px;align-items:center}
+    #care-hub-flow .outcome{margin:12px 0;min-height:2em}
+    #care-hub-flow .caption{margin-top:12px}
+  </style>
+  <h2>Ein Case, alle Kanäle, klare Verantwortung</h2>
+  <div class="channels" aria-label="Kundenkanäle">
+    <span class="channel"><i data-lucide="mail" aria-hidden="true"></i>E-Mail · primär</span>
+    <span class="channel"><i data-lucide="messages-square" aria-hidden="true"></i>Webformular & Chat</span>
+    <span class="channel"><i data-lucide="smartphone" aria-hidden="true"></i>App-Konto</span>
+    <span class="channel text-small text-muted">Optional: WhatsApp & Voice</span>
+  </div>
+  <div class="viz-controls" aria-label="Beispiel auswählen">
+    <button type="button" class="btn" data-case="simple" aria-pressed="true">Einfacher Fall</button>
+    <button type="button" class="btn" data-case="missing" aria-pressed="false">Beleg fehlt</button>
+    <button type="button" class="btn" data-case="complex" aria-pressed="false">Schwerwiegender Fall</button>
+    <button type="button" class="btn" data-case="angry" aria-pressed="false">Verärgert, aber klar</button>
+  </div>
+  <svg class="map" role="img" aria-label="Ticketfluss mit Sentimentanalyse: KI bearbeitet Fälle und stellt klare Rückfragen automatisch; Menschen übernehmen bei Fähigkeitsgrenzen oder schwerwiegenden Sachverhalten"></svg>
+  <div class="outcome" aria-live="polite"></div>
+  <div class="foundation text-small">
+    <span><i data-lucide="database" aria-hidden="true"></i>Salesforce-Dummy · 3.000 synthetische Cases</span>
+    <span><i data-lucide="book-open" aria-hidden="true"></i>EU-Regeln + Demo-Wissen · klare Rückfragen</span>
+    <span><i data-lucide="wallet" aria-hidden="true"></i>Kulanzbudget + Freigabe</span>
+  </div>
+  <div class="caption text-small text-muted">Illustrative Szenarien · Sentiment mit Unsicherheit, unabhängig vom Schweregrad · Messbar: Antwortzeit, Aufwand, Qualität, Kosten</div>
+</div>
+<script>
+(()=>{
+const root=document.getElementById('care-hub-flow');
+const svg=root.querySelector('svg.map');
+const choices={
+ simple:{branch:1,head:'KI bearbeitet automatisch',sub:'Klarer unterstützter Fall',review:'Automatische Prüfung',reviewSub:'Regeln, Qualität und Befugnisse',end:'KI antwortet automatisch',endSub:'Demo-Versand · Case erledigt',sentiment:'Stimmung: neutral · Routine',detail:'Klarer Fall → KI entscheidet und antwortet automatisch. Keine menschliche Einzelfreigabe.'},
+ missing:{branch:0,head:'KI fragt selbst nach',sub:'Nötige Angaben gezielt erfragen',review:'Warten auf Kundenantwort',reviewSub:'Owner bleibt der KI-Agent',end:'Antwort → erneut prüfen',endSub:'Fakten ergänzen · KI setzt fort',sentiment:'Stimmung: negativ · Routine',detail:'Beleg fehlt → KI fragt automatisch → Kunde lädt hoch → KI prüft erneut und erledigt den Fall, soweit lösbar.'},
+ complex:{branch:2,head:'KI bereitet Übergabe vor',sub:'Kontext + Quellen + Entwurf',review:'Mensch entscheidet',reviewSub:'Schwerwiegend oder KI-Grenze',end:'Mensch antwortet per Mail',endSub:'Entscheidung und Verlauf gespeichert',sentiment:'Stimmung: neutral · schwerwiegend',detail:'Erhebliche Verletzung im Kundentext → unabhängig vom Ton vorbereitet an Menschen. Ebenso bei nicht lösbaren Fällen.'},
+ angry:{branch:1,head:'KI bearbeitet automatisch',sub:'Verärgert, sachlich aber klar',review:'Automatische Prüfung',reviewSub:'Regeln, Qualität und Befugnisse',end:'KI antwortet empathisch',endSub:'Gleiche Ansprüche und Befugnisse',sentiment:'Stark negativ · Sicherheit: mittel',detail:'Starke Enttäuschung → empathisch formulieren, Priorität prüfen. Stimmung allein löst keine Menschenübergabe aus.'}
+};
+let current='simple';
+const initial=window.openai?.widgetState?.modelContent?.scenario;
+if(choices[initial])current=initial;
+const ns='http://www.w3.org/2000/svg';
+function el(tag,attrs={},text){const n=document.createElementNS(ns,tag);for(const [k,v] of Object.entries(attrs))n.setAttribute(k,v);if(text!==undefined)n.textContent=text;return n;}
+function draw(){
+ const w=Math.max(280,root.clientWidth),narrow=w<720,c=choices[current];svg.replaceChildren();
+ const title=el('title',{},'Case-Ablauf: '+root.querySelector('[data-case="'+current+'"]').textContent);svg.append(title);
+ const gap=narrow?12:16,nodeW=narrow?w-8:(w-2*gap)/3,h=64;
+ const coords=narrow?[[4,12],[4,96],[4,180],[4,264],[4,348],[4,432]]:[[0,16],[nodeW+gap,16],[2*(nodeW+gap),16],[0,132],[nodeW+gap,132],[2*(nodeW+gap),132],[(w-nodeW)/2,248],[(w-nodeW)/2,348]];
+ const height=narrow?510:430;svg.setAttribute('viewBox','0 0 '+w+' '+height);svg.style.height=height+'px';
+ function path(d,active){svg.append(el('path',{d,class:active?'active-path':''}));}
+ function node(p,a,b,active){const [x,y]=p,g=el('g',{class:active?'chosen':''});g.append(el('rect',{x,y,width:nodeW,height:h,rx:9}));g.append(el('rect',{x:x+10,y:y+13,width:3,height:38,rx:1,class:'stripe'}));g.append(el('text',{x:x+23,y:y+26},a));g.append(el('text',{x:x+23,y:y+47,class:'sub'},b));svg.append(g);}
+ function down(p,q,active){path(`M ${p[0]+nodeW/2} ${p[1]+h} V ${(p[1]+h+q[1])/2} H ${q[0]+nodeW/2} V ${q[1]}`,active);}
+ if(narrow){
+  const labels=[['Case anlegen','E-Mail, Chat, Anhänge, Buchung'],['Fakten & Sentiment',c.sentiment],['Router & fachliche Queue','Kategorie, Komplexität, Sprache'],[c.head,c.sub],[c.review,c.reviewSub],[c.end,c.endSub]];
+  coords.forEach((p,i)=>{if(i<5)down(p,coords[i+1],true);});
+  coords.forEach((p,i)=>node(p,...labels[i],true));
+ }else{
+  path(`M ${nodeW} 48 H ${nodeW+gap}`,true);path(`M ${2*nodeW+gap} 48 H ${2*(nodeW+gap)}`,true);
+  const branchFrom=coords[2];
+  [0,1,2].forEach(i=>{down(branchFrom,coords[i+3],i===c.branch);down(coords[i+3],coords[6],i===c.branch);});
+  down(coords[6],coords[7],true);
+  node(coords[0],'1 · Case anlegen','Nachricht + Anhänge + Account',true);
+  node(coords[1],'2 · Fakten & Sentiment',c.sentiment,true);
+  node(coords[2],'3 · Router & Queue','Thema, Komplexität, Kapazität',true);
+  const names=[['KI fragt selbst nach','Klare Frage · fehlende Daten'],['KI bearbeitet automatisch','Unterstützt · entscheidbar'],['Übergabe an Menschen','KI-Grenze oder schwerwiegend']];
+  names[c.branch]=[c.head,c.sub];names.forEach((a,i)=>node(coords[i+3],...a,i===c.branch));
+  node(coords[6],c.review,c.reviewSub,true);node(coords[7],c.end,c.endSub,true);
+ }
+ root.querySelector('.outcome').textContent=c.detail;
+ root.querySelectorAll('[data-case]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.case===current)));
+}
+root.querySelectorAll('[data-case]').forEach(b=>b.addEventListener('click',()=>{current=b.dataset.case;draw();window.openai?.setWidgetState?.({modelContent:{scenario:current},privateContent:null})?.catch(()=>{});}));
+window.addEventListener('openai:set_globals',e=>{const s=e.detail?.globals?.widgetState?.modelContent?.scenario;if(choices[s]){current=s;draw();}});
+new ResizeObserver(draw).observe(root);draw();
+})();
+</script>
