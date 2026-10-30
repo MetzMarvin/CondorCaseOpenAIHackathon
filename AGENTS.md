@@ -24,6 +24,30 @@ Show a case list and case details with three flows:
 
 Missing information or negative sentiment alone must not trigger handover.
 
+## Subsystems and contracts
+- Follow `docs/architecture/subsystems-and-contracts.md` for subsystem ownership,
+  shared data contracts, demo endpoints and event formats.
+- System 1: Claim Intake & Case Service owns FastAPI routes, persistence,
+  the Salesforce-style mock, case state, action execution and process events.
+- System 2: Orchestrated AI Service consumes case snapshots and returns typed
+  proposed actions through a synchronous in-process call. It does not write case
+  records or send customer messages directly. Use stored outputs for the demo.
+- System 3: Service Operations & Live Demo Console owns the React case list,
+  detail view, intake/reply demo controls, human actions and activity display.
+  It accesses business data only through System 1.
+- Keep these as logical modules in one application; do not add workers, brokers
+  or separate service deployments for the demo.
+- Define shared Pydantic contracts and three deterministic fixture cases first.
+  Keep IDs, action types, status values and event step IDs aligned across modules.
+- System 1 validates ownership, case version, transitions and authority before
+  applying actions. Use idempotency keys to prevent duplicate simulated sends
+  or financial actions. Human takeover invalidates pending AI actions.
+- Supported cases resolve automatically after checks. Request missing evidence
+  automatically when the question is clear; hand off only with a concrete reason.
+- Complete the three core flows before graph polish or metrics. Use the common
+  event feed for the graph; label animation of stored events as replay.
+- The broader diagrams and plan do not expand the 6–10-case demo scope.
+
 ## Implementation
 - Start with 6–10 synthetic cases.
 - Simulate AI, email, payments and integrations; clearly label simulations.
