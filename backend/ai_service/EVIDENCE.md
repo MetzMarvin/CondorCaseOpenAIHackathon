@@ -90,4 +90,37 @@ required records, scope mismatches and unavailable readers produce technical
 errors. Supplied snapshot facts are trusted as System 1's version-consistent
 snapshot; the shared Fact model does not carry independent freshness metadata.
 Reader exception text is never exposed. System 1 still owns actual adapters,
-matching, freshness verification, and all business effects; KA09 owns wiring.
+matching, freshness verification, and all business effects.
+
+The active workflow now extracts supplied attachments, prepares evidence, retrieves
+approved knowledge, and assesses the resulting snapshot copy. Configure System 1
+readers with `backend.ai_service.create_processor(adapters=...)`; the returned
+callable retains `(request, emit_progress)`. Optional `extractor` and `retriever`
+arguments support backend configuration and deterministic testing. The default
+entry point supports supplied-fact demos; attachments require an authorized reader
+and otherwise fail technically. Live experts receive the prepared snapshot and
+selected passages. No shared contracts or System 1 records are changed.
+
+### Synthetic document and message extraction
+
+The v2 extractor accepts the generator's uppercase labels, including `TOTAL EUR`,
+`ITEM`, `BOOKING`, `FLIGHT`, `PIR REFERENCE` and `BAG TAG`, as well as the
+legacy receipt labels. Essential toiletries are an extracted purpose, not an
+eligibility decision. The generator populates `DATE` from `flight_date`, even
+on receipts; this becomes a flight date. A purchase date still requires explicit
+receipt evidence. The generator owner must supply a separate purchase date if
+the demo needs complete expense evidence.
+
+Snapshot message bodies support explicit booking/PIR/tag references and the
+generator's flight-number/date sentence. Extraction does not turn prose about
+spending into a receipt, or establish internal eligibility. Message provenance
+uses the message ID, snapshot version, SHA-256 of the UTF-8 body and exact body
+offsets. Known service senders are excluded by the workflow. The shared Message
+contract has no direction field; authoritative inbound/outbound classification
+remains a System 1 integration dependency.
+
+Distinct values are preserved for clarification. In particular, the current
+shared customer-fact vocabulary has one `baggage_reference` slot for both PIRs
+and bag tags; different identifiers will conservatively remain a conflict until
+the systems agree on separate identifier types or verified alias reconciliation.
+Unrecognized prose remains unextracted. No shared contract or generator is changed.

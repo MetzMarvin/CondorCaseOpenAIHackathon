@@ -24,7 +24,7 @@ class OpenAIExpertTests(unittest.TestCase):
                 before = request.model_dump_json()
                 baseline = offline(request, lambda _: None)
                 review = ExpertReview(supported=True, summary='Evidence and policy reviewed.',
-                                      source_ids=['demo-expense-policy'])
+                                      source_ids=[s.source_id for s in baseline.assessment.sources])
                 draft = ExpertDraft(action_type=baseline.proposed_action.type,
                     explanation='The reviewed evidence supports this demo proposal.',
                     sentiment='negative', customer_message='Customer care draft.')
@@ -57,6 +57,33 @@ class OpenAIExpertTests(unittest.TestCase):
                 if result.proposed_action.type == 'RESOLVE':
                     self.assertEqual(result.proposed_action.payload.financial_positions,
                                      baseline.proposed_action.payload.financial_positions)
+
+    def test_resolution_text_cannot_override_validated_financial_decision(self):
+        unsafe_texts = (
+            'Your reimbursement of 999.99 USD is approved.',
+            'Your reimbursement of nine hundred euros is approved.',
+            'We have transferred the reimbursement to your bank account.',
+            'Your payment has been processed successfully.',
+            'We cannot reimburse your expenses.',
+        )
+        request = demo_request('clear')
+        baseline = offline(request, lambda _: None)
+        for text in unsafe_texts:
+            with self.subTest(text=text), patch('backend.ai_service.experts.OpenAI') as client:
+                review = ExpertReview(supported=True, summary='Supported.', source_ids=[])
+                draft = ExpertDraft(action_type='RESOLVE', explanation=text,
+                                    sentiment='neutral', customer_message=text)
+                client.return_value.__enter__.return_value.responses.parse.side_effect = [
+                    SimpleNamespace(status='completed', output_parsed=value)
+                    for value in (review, review, draft)]
+                events = []
+                result = process_case(request, events.append)
+                self.assertEqual(result.status, 'SUCCEEDED')
+                self.assertEqual(result.proposed_action.payload, baseline.proposed_action.payload)
+                self.assertEqual(result.assessment.next_action_explanation,
+                                 baseline.assessment.next_action_explanation)
+                self.assertNotIn(text, result.model_dump_json())
+                self.assertTrue(all(text not in event.summary for event in events))
 
     def test_api_error_refusal_and_unknown_sources_fail_without_fallback(self):
         invalid = ExpertReview(supported=True, summary='Review', source_ids=['invented-source'])

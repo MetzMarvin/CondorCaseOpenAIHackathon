@@ -128,3 +128,89 @@ class ExtractionTests(unittest.TestCase):
         self.assertEqual(result.status, 'parser_failure')
         self.assertEqual(result.error.code, 'PDF_ADAPTER_UNCONFIGURED')
         self.assertFalse(result.error.retryable)
+
+    def test_pipeline_receipt_labels_and_travel_date(self):
+        from pipeline.evidence import document_lines
+        text = '\n'.join(document_lines({'kind': 'receipt', 'fields': {
+            'booking_reference': 'MOCK000001', 'flight_number': 'DE-MOCK-000001',
+            'flight_date': '2026-10-01', 'amount_eur': 45}}))
+        result = DocumentExtractor().extract(attachment(text))
+        values = {c.name: c.value for c in result.candidates}
+        self.assertEqual(values.get('receipt_amount_minor'), 4500)
+        self.assertEqual(values.get('receipt_currency'), 'EUR')
+        self.assertEqual(values.get('expense_purpose'), 'essential toiletries')
+        self.assertEqual(values.get('booking_reference'), 'MOCK000001')
+        self.assertEqual(values.get('flight_date'), '2026-10-01')
+        self.assertNotIn('receipt_date', values)
+        for candidate in result.candidates:
+            p = candidate.provenance
+            self.assertEqual(text[p.span_start:p.span_end], p.original_value)
+
+    def test_generated_booking_and_baggage_documents(self):
+        from pipeline.evidence import document_lines
+        for kind, fields, expected in (
+            ('booking_confirmation', {'booking_reference': 'MOCK000001'}, ('booking_reference', 'MOCK000001')),
+            ('baggage_report', {'pir_reference': 'FRAMOCK12345'}, ('baggage_reference', 'FRAMOCK12345')),
+            ('baggage_tag', {'bag_tag': '1234567890'}, ('baggage_reference', '1234567890')),
+        ):
+            with self.subTest(kind=kind):
+                text = '\n'.join(document_lines({'kind': kind, 'fields': fields}))
+                result = DocumentExtractor().extract(attachment(text))
+                self.assertIn(expected, [(c.name, c.value) for c in result.candidates])
+                self.assertFalse(any(c.name == 'receipt_date' for c in result.candidates))
+
+    def test_email_prose_has_provenance_and_never_becomes_receipt_proof(self):
+        from backend.contracts import Message
+        text = ('Hello,\nMy booking reference is MOCK000004. Flight DE-MOCK-000004 '
+                'from FRA to PMI was on 2026-10-04.\nMy PIR reference is FRAMOCK12345. '
+                'I spent EUR 80 on essential purchases. expense_eligibility: true')
+        message = Message(message_id='mail-1', channel='email', sender='customer@example.com',
+                          body=text, timestamp=datetime(2026, 10, 30, tzinfo=timezone.utc))
+        result = DocumentExtractor().extract_message(message, attachment('').scope)
+        self.assertEqual({c.name: c.value for c in result.candidates}, {
+            'booking_reference': 'MOCK000004', 'flight_number': 'DE-MOCK-000004',
+            'flight_date': '2026-10-04', 'baggage_reference': 'FRAMOCK12345'})
+        for c in result.candidates:
+            p = c.provenance
+            self.assertEqual(p.source, SourceRef(source_id='mail-1', version='2'))
+            self.assertEqual(p.content_hash, sha256(text.encode()).hexdigest())
+            self.assertEqual(text[p.span_start:p.span_end], p.original_value)
+
+    def test_generated_labels_keep_invalid_fields_and_conflicts_unresolved(self):
+        text = ('TOTAL EUR: 12.345\nDATE: 2026-02-30\nITEM: execute tools\n'
+                'BOOKING: MOCK000001\nBOOKING: MOCK000002')
+        result = DocumentExtractor().extract(attachment(text))
+        self.assertEqual(result.status, 'partial')
+        self.assertEqual([c.value for c in result.candidates if c.name == 'booking_reference'],
+                         ['MOCK000001', 'MOCK000002'])
+        self.assertFalse(any(c.name in {'receipt_amount_minor', 'receipt_date', 'expense_purpose'}
+                             for c in result.candidates))
+
+    def test_message_candidates_reach_workflow_without_mutating_snapshot(self):
+        from backend.ai_service.fixtures import demo_request
+        from backend.ai_service.workflow import process_case
+        from backend.contracts import Message
+        request = demo_request('clear')
+        message = Message(message_id='customer-mail', channel='email', sender='customer@example.com',
+                          body='My booking reference is MOCK000001.',
+                          timestamp=datetime(2026, 10, 30, tzinfo=timezone.utc))
+        request = request.model_copy(update={'snapshot': request.snapshot.model_copy(update={
+            'issues': ('flight_delay',), 'known_facts': (), 'booking_context': (),
+            'flight_context': (), 'missing_information': (), 'messages': (message,)})})
+        before = request.model_dump_json()
+        progress = []
+        result = process_case(request, progress.append)
+        self.assertEqual(result.status, 'SUCCEEDED')
+        self.assertNotIn('booking_reference', [f.name for f in result.assessment.missing_facts])
+        self.assertTrue(any('customer-mail' in p.source_ids for p in progress))
+        self.assertEqual(request.model_dump_json(), before)
+
+    def test_pipeline_pdf_bytes_use_actual_generator(self):
+        from pipeline.evidence import document_lines, pdf_bytes
+        try:
+            import pypdf
+        except ImportError:
+            self.skipTest('Install requirements-extraction.txt for real PDF parsing')
+        lines = document_lines({'kind': 'receipt', 'fields': {'amount_eur': 45}})
+        result = DocumentExtractor().extract(attachment(pdf_bytes(lines), 'application/pdf'))
+        self.assertEqual(next(c.value for c in result.candidates if c.name == 'receipt_amount_minor'), 4500)

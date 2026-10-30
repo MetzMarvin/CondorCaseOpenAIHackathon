@@ -1,18 +1,35 @@
 """Synchronous, offline demo assessment. Never executes proposed actions."""
 from typing import Callable
+from datetime import date
+from functools import partial
 from uuid import NAMESPACE_URL, uuid5
 
 from backend.contracts import (
-    Assessment, Handoff, HandoffPayload, InformationPayload, ProgressUpdate,
+    Fact, SourceRef, Assessment, Handoff, HandoffPayload, InformationPayload, ProgressUpdate,
     RequestInformation, ResolutionPayload, Resolve, RunRequest, RunResult, TechnicalError,
 )
-from backend.ai_service.assessment import POLICY, assess
+from backend.ai_service.assessment import CONTROL_FACTS, INTERNAL_FACTS, Decision, assess
+from backend.ai_service.evidence import AttachmentRequest, EvidenceScope, create_evidence_adapters
+from backend.ai_service.extraction import DocumentExtractor
+from backend.ai_service.reconciliation import prepare_evidence
+from backend.ai_service.retrieval import RetrievalQuery, retrieve
+from backend.ai_service.questions import QUESTIONS, missing_fact
 from backend.ai_service.questions import information_message
 
 ProgressCallback = Callable[[ProgressUpdate], None]
 
 
+def create_processor(*, adapters=None, extractor=None, retriever=None, context_callback=None):
+    """Bind backend-owned dependencies while preserving the two-argument contract."""
+    return partial(_process_case, adapters=adapters, extractor=extractor, retriever=retriever, context_callback=context_callback)
+
+
 def process_case(request: RunRequest, emit_progress: ProgressCallback) -> RunResult:
+    return _process_case(request, emit_progress)
+
+
+def _process_case(request: RunRequest, emit_progress: ProgressCallback, *,
+                  adapters=None, extractor=None, retriever=None, context_callback=None) -> RunResult:
     """Assess System 1's read-only snapshot and propose one action, or fail safely."""
     identity = dict(run_id=request.run_id, case_id=request.case_id,
                     based_on_case_version=request.case_version)
@@ -22,15 +39,92 @@ def process_case(request: RunRequest, emit_progress: ProgressCallback) -> RunRes
         if snapshot.owner.type != 'AI' or snapshot.status != 'IN_PROGRESS':
             return RunResult(**identity, status='FAILED', technical_error=TechnicalError(
                 code='INVALID_AI_CONTEXT', message='Processing requires an active AI-owned case.', retryable=False))
-        emit_progress(ProgressUpdate(step_id=step, type='step.started', summary='Checking supplied evidence.'))
+        emit_progress(ProgressUpdate(step_id=step, type='step.started', summary='Preparing case-scoped evidence.'))
+        customer_facts = []
+        scope = EvidenceScope(case_id=request.case_id, case_version=request.case_version)
+        reader = (adapters or create_evidence_adapters()).attachments
+        extractor = extractor or DocumentExtractor()
+        for message in snapshot.messages:
+            if message.sender in {snapshot.owner.id, 'AI', 'SYSTEM'}:
+                continue
+            extracted_message = DocumentExtractor().extract_message(message, scope)
+            if extracted_message.error:
+                emit_progress(ProgressUpdate(step_id=step, type='step.failed',
+                                             summary=extracted_message.error.message))
+                return RunResult(**identity, status='FAILED', technical_error=extracted_message.error)
+            customer_facts.extend(Fact(name=c.name, value=c.value, sources=(c.provenance.source,))
+                                  for c in extracted_message.candidates)
+        for reference in snapshot.attachments:
+            attachment = reader.read(AttachmentRequest(scope=scope, reference=reference))
+            if attachment.scope != scope or attachment.reference != reference:
+                raise ValueError('Attachment scope mismatch')
+            extracted = extractor.extract(attachment)
+            if extracted.scope != scope:
+                raise ValueError('Extraction scope mismatch')
+            if extracted.error:
+                emit_progress(ProgressUpdate(step_id=step, type='step.failed', summary=extracted.error.message))
+                return RunResult(**identity, status='FAILED', technical_error=extracted.error)
+            customer_facts.extend(Fact(name=c.name, value=c.value, sources=(c.provenance.source,))
+                                  for c in extracted.candidates)
+            if extracted.status == 'unreadable':
+                customer_facts.append(Fact(name='receipt_readable', value=False,
+                    sources=(attachment.source or SourceRef(source_id=reference.attachment_id, version=str(request.case_version)),)))
+        prepared = prepare_evidence(request, adapters, customer_facts=tuple(customer_facts))
+        if prepared.error:
+            emit_progress(ProgressUpdate(step_id=step, type='step.failed', summary=prepared.error.message))
+            return RunResult(**identity, status='FAILED', technical_error=prepared.error)
+        snapshot = prepared.request.snapshot
         facts = snapshot.known_facts + snapshot.customer_context + snapshot.booking_context + snapshot.flight_context
-        sources = tuple(dict.fromkeys((POLICY, *(source for fact in facts for source in fact.sources))))
-        emit_progress(ProgressUpdate(step_id=step, type='step.completed', summary='Supplied evidence references collected.'))
+        emit_progress(ProgressUpdate(step_id=step, type='step.completed', summary='Case evidence prepared.',
+                                     source_ids=tuple(s.source_id for s in prepared.sources)))
         step = 'retrieve_policy'
-        emit_progress(ProgressUpdate(step_id=step, type='step.completed', summary='Using synthetic demo policy v2.', source_ids=(POLICY.source_id,)))
+        emit_progress(ProgressUpdate(step_id=step, type='step.started', summary='Retrieving approved applicable knowledge.'))
+        # Conflicting or unsourced applicability values cannot select a rule.
+        values = {}
+        applicability_evidence = tuple(fact for fact in snapshot.known_facts + snapshot.customer_context
+            if fact.name not in INTERNAL_FACTS | CONTROL_FACTS) + snapshot.booking_context + snapshot.flight_context
+        for fact in applicability_evidence:
+            if fact.sources:
+                values.setdefault(fact.name, set()).add(str(fact.value))
+        applicability = {name: next(iter(items)) for name, items in values.items() if len(items) == 1}
+        event_date = None
+        try:
+            event_date = date.fromisoformat(applicability.get('event_date', applicability.get('flight_date', '')))
+        except ValueError:
+            pass
+        knowledge = (retriever or retrieve)(RetrievalQuery(issue_tags=snapshot.issues,
+            event_date=event_date, applicability_facts=applicability))
+        if knowledge.status == 'FAILED':
+            emit_progress(ProgressUpdate(step_id=step, type='step.failed', summary=knowledge.reason))
+            return RunResult(**identity, status='FAILED', technical_error=TechnicalError(
+                code=knowledge.error_code or 'KNOWLEDGE_UNAVAILABLE', message=knowledge.reason, retryable=True))
+        policy_sources = tuple(dict.fromkeys(SourceRef(source_id=p.source_id, version=p.version) for p in knowledge.passages))
+        sources = tuple(dict.fromkeys((*policy_sources, *prepared.sources)))
+        emit_progress(ProgressUpdate(step_id=step, type='step.completed', summary=knowledge.reason,
+                                     source_ids=tuple(s.source_id for s in policy_sources)))
+        if context_callback is not None:
+            context_callback(prepared.request, knowledge)
         step = 'assess'
         emit_progress(ProgressUpdate(step_id=step, type='step.started', summary='Checking evidence gaps and specialist needs.'))
         decision = assess(snapshot, sources)
+        # Evidence collection and serious-case routing remain possible without a
+        # resolution rule. A financial proposal always requires positive support.
+        if not decision.error and not decision.reason:
+            if knowledge.status == 'UNCLEAR_RULE':
+                decision = Decision(reason='UNCLEAR_RULE', explanation=knowledge.reason)
+            elif knowledge.status == 'APPLICABILITY_GAP':
+                gaps = tuple('flight_date' if gap == 'event_date' else gap for gap in knowledge.gaps)
+                if any(gap not in QUESTIONS for gap in gaps):
+                    decision = Decision(error=TechnicalError(code='INTERNAL_EVIDENCE_REQUIRED',
+                        message='Internal knowledge applicability facts are required.', retryable=False))
+                else:
+                    missing = {item.name: item for item in decision.missing}
+                    missing.update((gap, missing_fact(gap)) for gap in gaps)
+                    decision = Decision(missing=tuple(missing.values()), explanation=knowledge.reason)
+            elif not decision.missing and (knowledge.status != 'SUPPORTED' or not any(
+                    p.role == 'RULE' and p.rule_key == 'expense_reimbursement' and p.decision == 'supported'
+                    for p in knowledge.passages)):
+                decision = Decision(reason='UNSUPPORTED_ACTION', explanation='No approved rule supports automatic reimbursement.')
         if decision.error:
             emit_progress(ProgressUpdate(step_id=step, type='step.failed', summary=decision.error.message))
             return RunResult(**identity, status='FAILED', technical_error=decision.error)

@@ -43,7 +43,12 @@ Outcomes are deliberately distinct:
 Every non-supported outcome has no selected passages. Retrieval does not prove
 that arbitrary prose is supported or that every requested issue is resolved;
 proposal validation must verify the required rule keys and exact selected support.
-Workflow integration and run diagnostics are KA09/KA11 work.
+The active workflow now calls this retriever and propagates selected source
+versions to assessments, proposals and live expert context. Retrieval failure
+fails the run; applicability gaps request known customer fields or fail for missing
+internal facts. Automatic resolution requires the supported expense rule.
+Broader KA09 prompt minimization and substantive draft validation, and KA11
+persisted diagnostics, remain separate work.
 
 Validation performed: `python -m unittest tests.test_knowledge_retrieval
  tests.test_knowledge_registry` (15 tests), covering default no-date support,

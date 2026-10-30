@@ -6,7 +6,7 @@ from openai import OpenAI
 from pydantic import BaseModel, ConfigDict, Field
 
 from backend.contracts import ProgressUpdate, RunResult
-from backend.ai_service.assessment import INTAKE_REQUIREMENTS, POLICY, SERIOUS_ISSUES
+from backend.ai_service.assessment import INTAKE_REQUIREMENTS, SERIOUS_ISSUES
 from backend.ai_service.customer_email import CustomerEmail, EMAIL_INSTRUCTIONS
 
 
@@ -49,11 +49,11 @@ reported safety issue before agreeing it needs specialist review.
 """
 
 
-def run_experts(request, baseline, emit_progress, settings):
+def run_experts(request, baseline, emit_progress, settings, *, knowledge):
     allowed_sources = {s.source_id for s in baseline.assessment.sources}
     context = {
         'trigger': request.trigger,
-        'approved_policy': {'source': POLICY.model_dump(),
+        'approved_policy': {'retrieval': knowledge.model_dump(mode='json'),
                             'intake_requirements': INTAKE_REQUIREMENTS,
                             'serious_issues': sorted(SERIOUS_ISSUES)},
         'snapshot': request.snapshot.model_dump(mode='json', exclude={'attachments'}),
@@ -100,24 +100,30 @@ def run_experts(request, baseline, emit_progress, settings):
                          'Preserve every amount and currency.', ExpertDraft)
         if draft.action_type != action.type:
             raise ValueError('Expert changed the authorized action')
+        explanation = draft.explanation
         payload = action.payload.model_dump()
         if action.type == 'REQUEST_INFORMATION':
             payload['question_de'] = draft.render(request.case_id, action.payload.missing_facts)
             emit_progress(ProgressUpdate(step_id='request_information', type='step.completed',
                 summary='Customer email draft prepared; delivery is pending case-service validation.', simulation=False))
         elif action.type == 'RESOLVE':
-            payload.update(reply_de=draft.customer_message, explanation=draft.explanation)
+            # Free-form prose cannot reliably be checked for altered amounts,
+            # entitlements or claims of completed payment. Keep the reply rendered
+            # from the validated decision, and its explanation, authoritative.
+            # The communication expert may assess sentiment but cannot rewrite
+            # financial statements in the payload, assessment or completion event.
+            explanation = baseline.assessment.next_action_explanation
         else:
             payload['summary'] = draft.explanation + '\n' + draft.customer_message
         action_data = action.model_dump()
         action_data['payload'] = payload
         assessment = baseline.assessment.model_dump()
-        assessment.update(sentiment=draft.sentiment, next_action_explanation=draft.explanation)
+        assessment.update(sentiment=draft.sentiment, next_action_explanation=explanation)
         data = baseline.model_dump()
         data.update(proposed_action=action_data, assessment=assessment, simulation=False)
         result = RunResult.model_validate(data)
         emit_progress(ProgressUpdate(step_id='assess', type='step.completed',
-                                     summary=draft.explanation, simulation=False))
+                                     summary=explanation, simulation=False))
         emit_progress(ProgressUpdate(step_id='validate_action', type='step.completed',
                                      summary='Live expert proposal validated; execution belongs to the case service.', simulation=False))
         return result

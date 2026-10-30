@@ -2,17 +2,18 @@
 
 Consumes only verified System 1 reader results. Spans are zero-based, end-exclusive
 Unicode character offsets within the numbered page, not PDF byte offsets.
-Only explicit labelled fields are supported; arbitrary prose remains untrusted.
+Supports synthetic labels and bounded customer prose; claims are not authority.
 """
 from datetime import date
 from decimal import Decimal
+from hashlib import sha256
 import re
 from typing import Literal, Protocol
 from dataclasses import dataclass
 from io import BytesIO
 
 from backend.ai_service.evidence import AttachmentResult, EvidenceScope
-from backend.contracts import Contract, SourceRef, TechnicalError
+from backend.contracts import Contract, Message, SourceRef, TechnicalError
 
 
 class Provenance(Contract):
@@ -26,7 +27,8 @@ class Provenance(Contract):
 
 
 class ExtractionCandidate(Contract):
-    name: Literal['receipt_amount_minor', 'receipt_currency', 'receipt_date', 'expense_purpose']
+    name: Literal['receipt_amount_minor', 'receipt_currency', 'receipt_date', 'expense_purpose',
+                  'booking_reference', 'baggage_reference', 'flight_number', 'flight_date']
     value: str | int
     provenance: Provenance
 
@@ -36,7 +38,7 @@ class ExtractionResult(Contract):
     status: Literal['readable', 'partial', 'unreadable', 'parser_failure']
     candidates: tuple[ExtractionCandidate, ...] = ()
     simulation: bool = False
-    configuration_version: str = 'synthetic-labelled-fields-v1'
+    configuration_version: str = 'synthetic-fields-v2'
     error: TechnicalError | None = None
 
 
@@ -117,14 +119,14 @@ class DocumentExtractor:
             if len(pages) > 50 or sum(len(text) for text in pages) > 500_000:
                 return self._failure(attachment, 'EXTRACTION_OUTPUT_LIMIT', False, simulation)
             candidates = [c for page, text in enumerate(pages, 1)
-                          for c in self._fields(attachment, text, page)]
+                          for c in self._fields(text, page, attachment.source, attachment.content_hash)]
         except UnicodeDecodeError:
             return ExtractionResult(scope=attachment.scope, status='unreadable')
         except Exception:
             return self._failure(attachment, 'EXTRACTION_PARSER_FAILURE', True, simulation)
         names = {c.name for c in candidates}
         conflict = any(len({c.value for c in candidates if c.name == name}) > 1 for name in names)
-        status = 'readable' if not conflict and names == {'receipt_amount_minor', 'receipt_currency', 'receipt_date', 'expense_purpose'} else 'partial' if any(text.strip() for text in pages) else 'unreadable'
+        status = 'readable' if not conflict and {'receipt_amount_minor', 'receipt_currency', 'receipt_date', 'expense_purpose'} <= names else 'partial' if any(text.strip() for text in pages) else 'unreadable'
         return ExtractionResult(scope=attachment.scope, status=status, candidates=tuple(candidates), simulation=simulation)
 
     @staticmethod
@@ -132,33 +134,83 @@ class DocumentExtractor:
         return ExtractionResult(scope=attachment.scope, status='parser_failure', simulation=simulation,
             error=TechnicalError(code=code, message='Document extraction could not be completed.', retryable=retryable))
 
-    def _fields(self, attachment, text, page):
+    @staticmethod
+    def _candidate(name, value, match, group, page, source, content_hash):
+        return ExtractionCandidate(name=name, value=value, provenance=Provenance(
+            source=source, content_hash=content_hash, page=page,
+            span_start=match.start(group), span_end=match.end(group),
+            original_value=match.group(group), supporting_text=match.group()))
+
+    def _fields(self, text, page, source, content_hash):
         candidates = []
-        for match in re.finditer(r'(?m)^(Total|Currency|Date|Purpose):[ \t]*([^\r\n]+)', text):
-            label, raw = match.group(1, 2)
-            if label == 'Total':
+        # Generator DATE comes from flight_date, even on its receipts.
+        generated = 'DEMO - SYNTHETIC TEST DOCUMENT' in text
+        pattern = r'(?im)^[ \t]*(Total(?:[ \t]+(?P<currency>[A-Z]{3}))?|Currency|Date|Receipt date|Purpose|Item|Booking|Booking reference|Flight|PIR reference|Bag tag):[ \t]*(?P<value>[^\r\n]*?)[ \t]*$'
+        for match in re.finditer(pattern, text):
+            label, raw = match.group(1).lower(), match.group('value')
+            if match.group('currency'):
+                currency = match.group('currency').upper()
+                if currency in {'EUR', 'USD', 'GBP'}:
+                    candidates.append(self._candidate('receipt_currency', currency,
+                        match, 'currency', page, source, content_hash))
+            if label.startswith('total'):
                 if not re.fullmatch(r'[0-9]{1,9}(?:[.,][0-9]{2})?', raw):
                     continue
                 name, value = 'receipt_amount_minor', int(Decimal(raw.replace(',', '.')) * 100)
-            elif label == 'Currency':
-                if raw not in {'EUR', 'USD', 'GBP'}:
+            elif label == 'currency':
+                if raw.upper() not in {'EUR', 'USD', 'GBP'}:
                     continue
-                name, value = 'receipt_currency', raw
-            elif label == 'Date':
+                name, value = 'receipt_currency', raw.upper()
+            elif label in {'date', 'receipt date'}:
                 if not re.fullmatch(r'[0-9]{4}-[0-9]{2}-[0-9]{2}', raw):
                     continue
                 try:
                     value = date.fromisoformat(raw).isoformat()
                 except ValueError:
                     continue
-                name = 'receipt_date'
-            else:
-                # Closed synthetic vocabulary: document instructions are not facts.
-                if raw.lower() not in {'meals', 'hotel', 'transport'}:
+                name = 'flight_date' if generated and label == 'date' else 'receipt_date'
+            elif label in {'purpose', 'item'}:
+                if raw.lower() not in {'meals', 'hotel', 'transport', 'essential toiletries'}:
                     continue
                 name, value = 'expense_purpose', raw.lower()
-            candidates.append(ExtractionCandidate(name=name, value=value, provenance=Provenance(
-                source=attachment.source, content_hash=attachment.content_hash, page=page,
-                span_start=match.start(2), span_end=match.end(2), original_value=raw,
-                supporting_text=match.group())))
+            else:
+                if not re.fullmatch(r'[A-Z0-9][A-Z0-9-]{2,39}', raw):
+                    continue
+                name = {'booking': 'booking_reference', 'booking reference': 'booking_reference',
+                        'flight': 'flight_number', 'pir reference': 'baggage_reference',
+                        'bag tag': 'baggage_reference'}[label]
+                value = raw
+            candidates.append(self._candidate(name, value, match, 'value',
+                                              page, source, content_hash))
         return candidates
+
+    def extract_message(self, message: Message, scope: EvidenceScope) -> ExtractionResult:
+        """Bounded customer claims, with body offsets and snapshot-version sources.
+
+        Claimed spending is deliberately not promoted to receipt evidence.
+        """
+        text = message.body
+        if len(text) > 500_000:
+            return ExtractionResult(scope=scope, status='parser_failure', error=TechnicalError(
+                code='EXTRACTION_OUTPUT_LIMIT', message='Message extraction limit exceeded.', retryable=False))
+        source = SourceRef(source_id=message.message_id, version=str(scope.case_version))
+        content_hash = sha256(text.encode('utf-8')).hexdigest()
+        identifier = r'([A-Z0-9][A-Z0-9-]{2,39})(?=[.,;!?]?(?:\s|$))'
+        patterns = (
+            ('booking_reference', r'(?i:my booking reference is|booking reference:)[ \t]+' + identifier),
+            ('baggage_reference', r'(?i:my baggage reference is|my PIR reference is|PIR reference:|my bag tag is|bag tag:)[ \t]+' + identifier),
+            ('flight_number', r'\bFlight[ \t]+' + identifier),
+            ('flight_date', r'\bFlight[ \t]+[A-Z0-9-]+ from [A-Z]{3} to [A-Z]{3} was on ([0-9]{4}-[0-9]{2}-[0-9]{2})(?=[.,;!?]?(?:\s|$))'),
+        )
+        candidates = []
+        for name, pattern in patterns:
+            for match in re.finditer(pattern, text):
+                value = match.group(1)
+                if name == 'flight_date':
+                    try:
+                        value = date.fromisoformat(value).isoformat()
+                    except ValueError:
+                        continue
+                candidates.append(self._candidate(name, value, match, 1, 1, source, content_hash))
+        return ExtractionResult(scope=scope, status='partial' if text.strip() else 'unreadable',
+                                candidates=tuple(candidates))
