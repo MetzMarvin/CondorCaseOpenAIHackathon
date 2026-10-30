@@ -64,3 +64,30 @@ still require a concrete unsupported-adjudication handoff once intake is ready.
 Actual CRM matching, operational freshness checks and attachment byte/media limits
 remain System 1 dependencies (KA02–KA04); extraction and workflow consumption are
 subsequent System 2 tickets.
+
+## Evidence preparation (KA08)
+
+`reconciliation.prepare_evidence(request, adapters=None, *, customer_facts=())`
+returns `PreparedEvidence`: a copied effective request and source references, or
+an error with no effective request. The default supplied-fact path does no reads.
+It preserves prior messages, missing requirements and every sourced value;
+conflicting values remain available to the existing clarification/handoff logic.
+KA05 callers may supply already provenance-validated customer facts; only known
+customer question fields are accepted, never internal controls.
+
+Explicit `customer_match`, `booking_match` or `flight_match` entries in
+`missing_information` request CRM enrichment. Current scoped CRM results establish
+these facts using the value `matched`. CRM may also supply booking reference,
+flight number and flight date. Ambiguous/not-found outcomes retain the gap and
+ask for a booking identifier without candidate records. They defer operational
+lookup until the booking can be identified. CRM cannot provide payment controls.
+
+Configured operational enrichment fills absent expense eligibility and payment
+history for the supported expense-resolution path. Other intake-only issues and
+serious allegations retain existing specialist routing. Readers must return the
+exact case/version and `current` freshness; stale/unknown freshness, incomplete
+required records, scope mismatches and unavailable readers produce technical
+errors. Supplied snapshot facts are trusted as System 1's version-consistent
+snapshot; the shared Fact model does not carry independent freshness metadata.
+Reader exception text is never exposed. System 1 still owns actual adapters,
+matching, freshness verification, and all business effects; KA09 owns wiring.
