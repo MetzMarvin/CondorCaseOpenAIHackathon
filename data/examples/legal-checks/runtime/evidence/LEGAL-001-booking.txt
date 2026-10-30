@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-001
+Record: booking
+
+One confirmed adult passenger; operating carrier Condor demo, EU licensed; timely check-in; FRA–MAD nonstop; synthetic great-circle distance 1420 km.

@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-013
+Record: operations
+
+2026-10-10 delay 300 minutes. Operating-carrier record confirms non-EU carrier. No earlier EU departure on this booking.

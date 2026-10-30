@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-002
+Record: authority
+
+Simulated expense authority EUR 200.

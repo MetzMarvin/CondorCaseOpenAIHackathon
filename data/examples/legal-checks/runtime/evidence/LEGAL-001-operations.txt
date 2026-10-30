@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-001
+Record: operations
+
+Original departure 2026-10-10T16:00:00Z; arrival 2026-10-10T18:45:00Z. Cancellation notified at gate at 15:30Z that day. Replacement departure 2026-10-11T08:00:00Z; doors opened at MAD at 10:45Z. Cause field says WEATHER only; supporting weather/airport records and reasonable-measures analysis are absent.

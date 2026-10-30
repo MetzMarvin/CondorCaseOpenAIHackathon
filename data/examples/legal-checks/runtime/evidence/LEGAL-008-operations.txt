@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-008
+Record: operations
+
+Notice received 2026-10-08T12:00Z for 2026-10-10 departure 10:00Z and arrival 12:45Z. Offered replacement departed 09:30Z and doors opened 14:15Z. Confirmed notification and arrival records.

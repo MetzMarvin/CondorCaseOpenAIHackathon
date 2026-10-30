@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-014
+Record: operations
+
+Carrier confirms involuntary downgrade only on FRA–JFK. Fare allocation identifies EUR 1600 for affected flight excluding class-independent taxes/charges. Remaining EUR 400 belongs to unaffected travel. Both flights on time.

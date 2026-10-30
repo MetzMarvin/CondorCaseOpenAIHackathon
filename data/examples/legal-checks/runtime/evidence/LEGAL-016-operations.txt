@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-016
+Record: operations
+
+Bag delivered 2026-10-10T14:00Z; damage discovered immediately; written complaint and photos received 18:00Z the same day. Inspection attributes damage to handling in carrier custody, not inherent defect.

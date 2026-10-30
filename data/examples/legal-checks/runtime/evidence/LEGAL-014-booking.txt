@@ -1,0 +1,5 @@
+SYNTHETIC DEMO RECORD — NOT A REAL DOCUMENT
+Case: LEGAL-014
+Record: booking
+
+Booking LEGAL14; flight DE-MOCK-L14; one confirmed adult passenger; HAM–FRA–JFK single booking; Condor demo EU carrier; downgraded FRA–JFK leg 6200 km. All identities and records are synthetic.
