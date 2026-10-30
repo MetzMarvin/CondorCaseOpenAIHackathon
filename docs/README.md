@@ -2,6 +2,7 @@
 
 ## Current implementation
 
+- [Frontend design guidelines](architecture/frontend-design-guidelines.md): design language extracted from the demo, including colors, typography, layouts, component patterns, interaction rules and a developer checklist.
 - [Module contract visualization](architecture/module-contracts.html): HTML overview of module boundaries, payloads and endpoints.
 - [Executable contract guide](architecture/module-contracts.md): Pydantic models and integration responsibilities.
 - [Development setup and repository map](../README.md#start-working): installation, offline demo and tests.
