@@ -1,0 +1,255 @@
+<mxfile host="app.diagrams.net">
+  <diagram id="condor-claims" name="Architecture">
+    <mxGraphModel grid="1" gridSize="10" page="1" pageScale="1" pageWidth="1800" pageHeight="1490" background="#FFFFFF">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="&lt;b&gt;Condor Care Hub | Claims architecture&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=34;fontColor=#304B63;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="1720" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="Updated from hackathon-plan.md • Technology-neutral logical components&lt;br&gt;All customers, messages, payments and internal policies are synthetic or simulated." style="text;html=1;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=17;fontColor=#304B63;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="78" width="1700" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="hc" value="&lt;b&gt;CHANNELS &amp; WORKSPACES&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=17;fontColor=#304B63;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="155" width="380" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="hb" value="&lt;b&gt;AGENT BACKEND&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=17;fontColor=#304B63;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="580" y="155" width="560" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="hd" value="&lt;b&gt;SHARED RECORDS &amp; CONTROLS&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=17;fontColor=#304B63;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="1330" y="155" width="420" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="portal" value="&lt;b&gt;Customer portal &amp; account mock&lt;/b&gt;&lt;br&gt;&lt;br&gt;Form / chat • Image and PDF uploads&lt;br&gt;Bookings • My cases • Status&lt;br&gt;Email users can use an upload link" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=17;spacing=15;fillColor=#EAF3FF;strokeColor=#6C97C7;fontColor=#172B4D;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="215" width="360" height="145" as="geometry" />
+        </mxCell>
+        <mxCell id="email" value="&lt;b&gt;Email simulator&lt;/b&gt;&lt;br&gt;&lt;br&gt;Inbox and demo outbox&lt;br&gt;Attachments and threaded replies&lt;br&gt;No real customer messages" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=17;spacing=15;fillColor=#EAF3FF;strokeColor=#6C97C7;fontColor=#172B4D;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="405" width="360" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="staff" value="&lt;b&gt;Service console&lt;/b&gt;&lt;br&gt;&lt;br&gt;Queues, ownership, deadlines and priority&lt;br&gt;Full case history and handoff package&lt;br&gt;Manual decisions and exception approvals" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=17;spacing=15;fillColor=#FFF2DC;strokeColor=#C69840;fontColor=#172B4D;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="625" width="360" height="155" as="geometry" />
+        </mxCell>
+        <mxCell id="admin" value="&lt;b&gt;Team &amp; knowledge workspace&lt;/b&gt;&lt;br&gt;&lt;br&gt;Routing, capability and policy settings&lt;br&gt;Budget / disruption approvals&lt;br&gt;Review corrections before rule changes" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=17;spacing=15;fillColor=#FFF2DC;strokeColor=#C69840;fontColor=#172B4D;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="835" width="360" height="135" as="geometry" />
+        </mxCell>
+        <mxCell id="case" value="&lt;b&gt;Shared intake &amp; case service&lt;/b&gt;&lt;br&gt;&lt;br&gt;Normalize messages • Match threads • Prevent duplicates&lt;br&gt;Store original evidence and source-linked facts&lt;br&gt;Case state, ownership, version checks and reopen / resume" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=17;spacing=15;fillColor=#E5F4F1;strokeColor=#398B81;fontColor=#172B4D;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="580" y="215" width="560" height="145" as="geometry" />
+        </mxCell>
+        <mxCell id="agent" value="&lt;b&gt;Orchestrated AI workflow&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;Evidence &amp; triage&lt;/b&gt;&lt;br&gt;Read text / images / PDFs • Identify all issues&lt;br&gt;Assess completeness, severity and sentiment&lt;br&gt;&lt;br&gt;&lt;b&gt;Rules-based routing &amp; assignments&lt;/b&gt;&lt;br&gt;Capability, authority, category, language, deadline, capacity&lt;br&gt;One active owner • Separate business queues from AI jobs&lt;br&gt;&lt;br&gt;&lt;b&gt;Research, clarify &amp; resolve&lt;/b&gt;&lt;br&gt;Retrieve sources • Ask clear questions automatically&lt;br&gt;Validate facts, rules, response quality and authority&lt;br&gt;Resolve supported cases or prepare a human handoff" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=17;spacing=15;fillColor=#E5F4F1;strokeColor=#398B81;fontColor=#172B4D;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="580" y="425" width="560" height="370" as="geometry" />
+        </mxCell>
+        <mxCell id="actions" value="&lt;b&gt;Action control &amp; simulated fulfilment&lt;/b&gt;&lt;br&gt;&lt;br&gt;Recheck eligibility, authority and current owner before action&lt;br&gt;Auto-send when checks pass; special approval when required&lt;br&gt;Demo outbox • Budget reservations / bookings • Safe retries" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=17;spacing=15;fillColor=#E5F4F1;strokeColor=#398B81;fontColor=#172B4D;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="580" y="865" width="560" height="135" as="geometry" />
+        </mxCell>
+        <mxCell id="sf" value="&lt;b&gt;Salesforce-style shared mock&lt;/b&gt;&lt;br&gt;&lt;br&gt;Accounts, contacts, bookings and flight facts&lt;br&gt;Cases, messages, documents, queues, owners&lt;br&gt;Decisions, approvals and AI-run records" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=17;spacing=15;fillColor=#F0EDF9;strokeColor=#9782B9;fontColor=#172B4D;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="1330" y="215" width="420" height="145" as="geometry" />
+        </mxCell>
+        <mxCell id="kb" value="&lt;b&gt;Versioned knowledge&lt;/b&gt;&lt;br&gt;&lt;br&gt;Approved regulations and interpretation&lt;br&gt;DEMO policies and reviewed examples&lt;br&gt;Source, validity, language and version" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=17;spacing=15;fillColor=#F0EDF9;strokeColor=#9782B9;fontColor=#172B4D;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="1330" y="425" width="420" height="145" as="geometry" />
+        </mxCell>
+        <mxCell id="budget" value="&lt;b&gt;Authority, budgets &amp; disruptions&lt;/b&gt;&lt;br&gt;&lt;br&gt;Delegated limits and exceptional approvals&lt;br&gt;Time-bound disruption rules and goodwill pools&lt;br&gt;Separate compensation, expenses and goodwill&lt;br&gt;Reservations and simulated financial ledger" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=17;spacing=15;fillColor=#F0EDF9;strokeColor=#9782B9;fontColor=#172B4D;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="1330" y="635" width="420" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="events" value="&lt;b&gt;Event history &amp; measurement&lt;/b&gt;&lt;br&gt;&lt;br&gt;Case / step / owner / time / status / safe payload summary&lt;br&gt;Workflow, action, tool, queue and error events&lt;br&gt;Persisted history supports live updates and replay" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=17;spacing=15;fillColor=#E8F6FA;strokeColor=#5B9EAF;fontColor=#172B4D;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="580" y="1080" width="560" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="graph" value="&lt;b&gt;Live process graph&lt;/b&gt;&lt;br&gt;&lt;br&gt;Read-only pitch frontend&lt;br&gt;Active nodes / edges • Case timeline • Replay&lt;br&gt;Waiting, completion, failure and handoff states" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=17;spacing=15;fillColor=#E8F6FA;strokeColor=#5B9EAF;fontColor=#172B4D;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="1330" y="1035" width="420" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="metrics" value="&lt;b&gt;Operations &amp; quality dashboard&lt;/b&gt;&lt;br&gt;&lt;br&gt;Backlog, deadlines, sentiment and queue times&lt;br&gt;Human effort, AI cost, routing and quality&lt;br&gt;Distinguish simulated from measured results" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=17;spacing=15;fillColor=#E8F6FA;strokeColor=#5B9EAF;fontColor=#172B4D;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="1330" y="1210" width="420" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="eval" value="&lt;b&gt;Synthetic scenarios &amp; offline evaluation&lt;/b&gt;&lt;br&gt;&lt;br&gt;Planned: 3,000 cases • 2,100 dev / 450 validation / 450 test&lt;br&gt;Hidden test labels • Reviewed references • Versioned changes&lt;br&gt;Seed the mock; compare run results with held-out references" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=17;spacing=15;fillColor=#F5F6F8;strokeColor=#9CA7B4;fontColor=#172B4D;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="580" y="1275" width="560" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="stretch" value="&lt;b&gt;STRETCH CHANNELS&lt;/b&gt;&lt;br&gt;Messenger and voice / transcript simulators" style="text;html=1;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=17;fontColor=#304B63;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1025" width="380" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="rules" value="&lt;b&gt;OPERATING RULES&lt;/b&gt;&lt;br&gt;&lt;br&gt;Clear questions do not require human approval.&lt;br&gt;&lt;br&gt;Missing data, multiple issues or negative sentiment alone do not trigger handoff.&lt;br&gt;&lt;br&gt;Sentiment affects tone and limited priority; never the claim amount." style="text;html=1;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=17;fontColor=#304B63;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1145" width="410" height="225" as="geometry" />
+        </mxCell>
+        <mxCell id="footer" value="&lt;b&gt;Shared safeguards:&lt;/b&gt; role-based access • attachments are data, not instructions • source traceability • duplicate prevention • manual fallback" style="text;html=1;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=17;fontColor=#304B63;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1430" width="1700" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="Claims / status" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontFamily=Helvetica;fontSize=15;strokeWidth=2;strokeColor=#64748B;fontColor=#334155;labelBackgroundColor=#FFFFFF;endArrow=block;endFill=1;startArrow=block;startFill=1;exitX=1;exitY=.5;entryX=0;entryY=.5;" edge="1" parent="1" source="portal" target="case">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e2" value="Messages" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontFamily=Helvetica;fontSize=15;strokeWidth=2;strokeColor=#64748B;fontColor=#334155;labelBackgroundColor=#FFFFFF;endArrow=block;endFill=1;startArrow=block;startFill=1;exitX=1;exitY=.5;entryX=0;entryY=.85;" edge="1" parent="1" source="email" target="case">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="480" y="470" />
+              <mxPoint x="480" y="338" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e3" value="Read / write" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontFamily=Helvetica;fontSize=15;strokeWidth=2;strokeColor=#64748B;fontColor=#334155;labelBackgroundColor=#FFFFFF;endArrow=block;endFill=1;startArrow=block;startFill=1;exitX=1;exitY=.5;entryX=0;entryY=.5;" edge="1" parent="1" source="case" target="sf">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e4" value="Jobs / case updates" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontFamily=Helvetica;fontSize=15;strokeWidth=2;strokeColor=#64748B;fontColor=#334155;labelBackgroundColor=#FFFFFF;endArrow=block;endFill=1;startArrow=block;startFill=1;exitX=.5;exitY=1;entryX=.5;entryY=0;" edge="1" parent="1" source="case" target="agent">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e5" value="Work / handoff" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontFamily=Helvetica;fontSize=15;strokeWidth=2;strokeColor=#64748B;fontColor=#334155;labelBackgroundColor=#FFFFFF;endArrow=block;endFill=1;startArrow=block;startFill=1;exitX=1;exitY=.5;entryX=0;entryY=.75;" edge="1" parent="1" source="staff" target="agent">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e6" value="Configure / approve" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontFamily=Helvetica;fontSize=15;strokeWidth=2;strokeColor=#64748B;fontColor=#334155;labelBackgroundColor=#FFFFFF;endArrow=block;endFill=1;startArrow=block;startFill=1;exitX=1;exitY=.5;entryX=0;entryY=.3;" edge="1" parent="1" source="admin" target="actions">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e7" value="Retrieve sources" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontFamily=Helvetica;fontSize=15;strokeWidth=2;strokeColor=#64748B;fontColor=#334155;labelBackgroundColor=#FFFFFF;endArrow=block;endFill=1;startArrow=block;startFill=1;exitX=1;exitY=.2;entryX=0;entryY=.5;" edge="1" parent="1" source="agent" target="kb">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e8" value="Check authority" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontFamily=Helvetica;fontSize=15;strokeWidth=2;strokeColor=#64748B;fontColor=#334155;labelBackgroundColor=#FFFFFF;endArrow=block;endFill=1;startArrow=block;startFill=1;exitX=1;exitY=.8;entryX=0;entryY=.5;" edge="1" parent="1" source="agent" target="budget">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e9" value="Validated next action" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontFamily=Helvetica;fontSize=15;strokeWidth=2;strokeColor=#64748B;fontColor=#334155;labelBackgroundColor=#FFFFFF;endArrow=block;endFill=1;exitX=.5;exitY=1;entryX=.5;entryY=0;" edge="1" parent="1" source="agent" target="actions">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e10" value="Reserve / book" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontFamily=Helvetica;fontSize=15;strokeWidth=2;strokeColor=#64748B;fontColor=#334155;labelBackgroundColor=#FFFFFF;endArrow=block;endFill=1;startArrow=block;startFill=1;exitX=1;exitY=.5;entryX=.25;entryY=1;" edge="1" parent="1" source="actions" target="budget">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1435" y="932.5" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e11" value="Save &amp; deliver via channel" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontFamily=Helvetica;fontSize=15;strokeWidth=2;strokeColor=#64748B;fontColor=#334155;labelBackgroundColor=#FFFFFF;endArrow=block;endFill=1;exitX=0;exitY=.7;entryX=0;entryY=.3;" edge="1" parent="1" source="actions" target="case">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="450" y="959.5" />
+              <mxPoint x="450" y="258.5" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e12" value="Action events" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontFamily=Helvetica;fontSize=15;strokeWidth=2;strokeColor=#64748B;fontColor=#334155;labelBackgroundColor=#FFFFFF;endArrow=block;endFill=1;dashed=1;strokeColor=#5B9EAF;exitX=.5;exitY=1;entryX=.5;entryY=0;" edge="1" parent="1" source="actions" target="events">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e13" value="Case / workflow events" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontFamily=Helvetica;fontSize=15;strokeWidth=2;strokeColor=#64748B;fontColor=#334155;labelBackgroundColor=#FFFFFF;endArrow=block;endFill=1;dashed=1;strokeColor=#5B9EAF;exitX=1;exitY=.85;entryX=1;entryY=.3;" edge="1" parent="1" source="case" target="events">
+          <mxGeometry relative="1" as="geometry" x="0.7">
+            <Array as="points">
+              <mxPoint x="1220" y="338.25" />
+              <mxPoint x="1220" y="1116" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e14" value="Live feed" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontFamily=Helvetica;fontSize=15;strokeWidth=2;strokeColor=#64748B;fontColor=#334155;labelBackgroundColor=#FFFFFF;endArrow=block;endFill=1;dashed=1;strokeColor=#5B9EAF;exitX=1;exitY=.65;entryX=0;entryY=.7;" edge="1" parent="1" source="events" target="graph">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e15" value="Metrics" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontFamily=Helvetica;fontSize=15;strokeWidth=2;strokeColor=#64748B;fontColor=#334155;labelBackgroundColor=#FFFFFF;endArrow=block;endFill=1;dashed=1;strokeColor=#5B9EAF;exitX=1;exitY=.9;entryX=0;entryY=.5;" edge="1" parent="1" source="events" target="metrics">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1250" y="1188" />
+              <mxPoint x="1250" y="1272.5" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e16" value="Run evidence" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontFamily=Helvetica;fontSize=15;strokeWidth=2;strokeColor=#64748B;fontColor=#334155;labelBackgroundColor=#FFFFFF;endArrow=block;endFill=1;dashed=1;strokeColor=#5B9EAF;exitX=.5;exitY=1;entryX=.5;entryY=0;" edge="1" parent="1" source="events" target="eval">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="condor-flow" name="Action and handoff flow">
+    <mxGraphModel grid="1" gridSize="10" page="1" pageScale="1" pageWidth="1600" pageHeight="1290" background="#FFFFFF">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t" value="&lt;b&gt;Condor Care Hub | Action &amp; handoff flow&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=34;fontColor=#304B63;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="1500" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="s" value="Three outcomes at each step: ask clearly, resolve within authority, or hand off with full context.&lt;br&gt;All replies and financial actions are simulated. Current plan replaces blanket pilot approval." style="text;html=1;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=17;fontColor=#304B63;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="83" width="1500" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="intake" value="&lt;b&gt;Message or evidence arrives&lt;/b&gt;&lt;br&gt;&lt;br&gt;Email / portal / chat → same case and history&lt;br&gt;Deduplicate • Link customer • Read text / image / PDF" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=17;spacing=15;fillColor=#E5F4F1;strokeColor=#398B81;fontColor=#172B4D;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="560" y="180" width="480" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="triage" value="&lt;b&gt;Reassess the whole case&lt;/b&gt;&lt;br&gt;&lt;br&gt;Facts, all issues, severity and supported capabilities&lt;br&gt;Separate permission to ask from permission to decide&lt;br&gt;Check again after new evidence and before each action" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=17;spacing=15;fillColor=#E5F4F1;strokeColor=#398B81;fontColor=#172B4D;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="560" y="355" width="480" height="155" as="geometry" />
+        </mxCell>
+        <mxCell id="ask" value="&lt;b&gt;Clear, necessary question&lt;/b&gt;&lt;br&gt;&lt;br&gt;Check existing facts first&lt;br&gt;Ask automatically through the current channel&lt;br&gt;No human approval for supported clarification" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=17;spacing=15;fillColor=#E5F4F1;strokeColor=#398B81;fontColor=#172B4D;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="610" width="400" height="145" as="geometry" />
+        </mxCell>
+        <mxCell id="gate" value="&lt;b&gt;Decision &amp; action checks&lt;/b&gt;&lt;br&gt;&lt;br&gt;Complete, consistent facts • Applicable approved rules&lt;br&gt;Validate amounts, response quality and authority&lt;br&gt;Model confidence alone is insufficient" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=17;spacing=15;fillColor=#E5F4F1;strokeColor=#398B81;fontColor=#172B4D;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="560" y="610" width="480" height="145" as="geometry" />
+        </mxCell>
+        <mxCell id="handoff" value="&lt;b&gt;Prepared human handoff&lt;/b&gt;&lt;br&gt;&lt;br&gt;Unsupported action, serious issue, unresolved conflict,&lt;br&gt;unclear rules, authority limit or persistent failure&lt;br&gt;Facts, sources, history, prior attempts and reason" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=17;spacing=15;fillColor=#FFF2DC;strokeColor=#C69840;fontColor=#172B4D;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="610" width="400" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="wait" value="&lt;b&gt;Wait for customer&lt;/b&gt;&lt;br&gt;&lt;br&gt;AI keeps ownership&lt;br&gt;Reply / upload resumes triage on the same case&lt;br&gt;No progress after configured limit → handoff" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=17;spacing=15;fillColor=#E5F4F1;strokeColor=#398B81;fontColor=#172B4D;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="865" width="400" height="145" as="geometry" />
+        </mxCell>
+        <mxCell id="resolve" value="&lt;b&gt;Simulate reply &amp; resolution&lt;/b&gt;&lt;br&gt;&lt;br&gt;Supported cases: automatic decision and demo reply&lt;br&gt;Human cases: reviewed decision and demo reply&lt;br&gt;Required exception approval must be recorded" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=17;spacing=15;fillColor=#E5F4F1;strokeColor=#398B81;fontColor=#172B4D;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="560" y="865" width="480" height="145" as="geometry" />
+        </mxCell>
+        <mxCell id="human" value="&lt;b&gt;Specialist / authorized approver&lt;/b&gt;&lt;br&gt;&lt;br&gt;Take exclusive ownership; stop stale AI sends&lt;br&gt;Resolve, clarify or reassign with full context&lt;br&gt;Budget exception: obtain the required approval" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=17;spacing=15;fillColor=#FFF2DC;strokeColor=#C69840;fontColor=#172B4D;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="865" width="400" height="145" as="geometry" />
+        </mxCell>
+        <mxCell id="closed" value="&lt;b&gt;Record outcome → resolved / closed&lt;/b&gt;&lt;br&gt;&lt;br&gt;New relevant information can reopen the same case" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=17;spacing=15;fillColor=#E5F4F1;strokeColor=#398B81;fontColor=#172B4D;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="560" y="1085" width="480" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="note1" value="&lt;b&gt;FINANCIAL POSITIONS&lt;/b&gt;&lt;br&gt;Compensation, ticket / expense reimbursement and voluntary goodwill remain distinct.&lt;br&gt;Goodwill budget never caps a statutory claim." style="text;html=1;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=16;fontColor=#304B63;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1080" width="440" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="note2" value="&lt;b&gt;OBSERVE EVERY TRANSITION&lt;/b&gt;&lt;br&gt;Case, step, owner, reason and time feed the live graph, audit history and metrics." style="text;html=1;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=16;fontColor=#304B63;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="1080" width="400" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="foot" value="Negative sentiment or multiple supported issues alone do not trigger handoff. Customer replies always trigger a fresh eligibility check." style="text;html=1;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=17;fontColor=#304B63;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1220" width="1510" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="p1" value="Updated case" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontFamily=Helvetica;fontSize=15;strokeWidth=2;strokeColor=#64748B;fontColor=#334155;labelBackgroundColor=#FFFFFF;endArrow=block;endFill=1;" edge="1" parent="1" source="intake" target="triage">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p2" value="Missing facts; clear question" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontFamily=Helvetica;fontSize=15;strokeWidth=2;strokeColor=#64748B;fontColor=#334155;labelBackgroundColor=#FFFFFF;endArrow=block;endFill=1;exitX=0;exitY=.6;entryX=.5;entryY=0;" edge="1" parent="1" source="triage" target="ask">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="240" y="448" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p3" value="Ready to assess" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontFamily=Helvetica;fontSize=15;strokeWidth=2;strokeColor=#64748B;fontColor=#334155;labelBackgroundColor=#FFFFFF;endArrow=block;endFill=1;exitX=.5;exitY=1;entryX=.5;entryY=0;" edge="1" parent="1" source="triage" target="gate">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p4" value="Concrete escalation reason" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontFamily=Helvetica;fontSize=15;strokeWidth=2;strokeColor=#64748B;fontColor=#334155;labelBackgroundColor=#FFFFFF;endArrow=block;endFill=1;exitX=1;exitY=.6;entryX=.5;entryY=0;" edge="1" parent="1" source="triage" target="handoff">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1360" y="448" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p5" value="Request sent" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontFamily=Helvetica;fontSize=15;strokeWidth=2;strokeColor=#64748B;fontColor=#334155;labelBackgroundColor=#FFFFFF;endArrow=block;endFill=1;" edge="1" parent="1" source="ask" target="wait">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p6" value="Reply / upload" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontFamily=Helvetica;fontSize=15;strokeWidth=2;strokeColor=#64748B;fontColor=#334155;labelBackgroundColor=#FFFFFF;endArrow=block;endFill=1;exitX=1;exitY=.4;entryX=0;entryY=.85;" edge="1" parent="1" source="wait" target="triage">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="490" y="923" />
+              <mxPoint x="490" y="486.75" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p7" value="All checks pass" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontFamily=Helvetica;fontSize=15;strokeWidth=2;strokeColor=#64748B;fontColor=#334155;labelBackgroundColor=#FFFFFF;endArrow=block;endFill=1;exitX=.5;exitY=1;entryX=.5;entryY=0;" edge="1" parent="1" source="gate" target="resolve">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p8" value="Exception / failure" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontFamily=Helvetica;fontSize=15;strokeWidth=2;strokeColor=#64748B;fontColor=#334155;labelBackgroundColor=#FFFFFF;endArrow=block;endFill=1;exitX=1;exitY=.5;entryX=0;entryY=.5;" edge="1" parent="1" source="gate" target="handoff">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p9" value="Route to queue / owner" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontFamily=Helvetica;fontSize=15;strokeWidth=2;strokeColor=#64748B;fontColor=#334155;labelBackgroundColor=#FFFFFF;endArrow=block;endFill=1;" edge="1" parent="1" source="handoff" target="human">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p10" value="Human decision" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontFamily=Helvetica;fontSize=15;strokeWidth=2;strokeColor=#64748B;fontColor=#334155;labelBackgroundColor=#FFFFFF;endArrow=block;endFill=1;exitX=0;exitY=.5;entryX=1;entryY=.5;" edge="1" parent="1" source="human" target="resolve">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p11" value="Save message, decision and financial result" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontFamily=Helvetica;fontSize=15;strokeWidth=2;strokeColor=#64748B;fontColor=#334155;labelBackgroundColor=#FFFFFF;endArrow=block;endFill=1;" edge="1" parent="1" source="resolve" target="closed">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
