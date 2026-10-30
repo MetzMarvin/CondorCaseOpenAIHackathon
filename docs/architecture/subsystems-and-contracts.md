@@ -1,6 +1,8 @@
 # Subsystems and interface contracts
 
-Status: implementation agreement for the 3-hour Condor Care Hub mockup. These interfaces are proposed contracts, not a claim that endpoints already exist.
+Status: implementation agreement for the 3-hour Condor Care Hub mockup. Shared
+contracts and the integrated demo endpoints are implemented in `backend/contracts.py`
+and `demo_backend/app.py`; see README and the verification record for actual checks.
 
 This document translates the subsystem proposal into the scope in [AGENTS.md](../../AGENTS.md). Use the [hackathon plan](../planning/hackathon-plan.md) as business context. Where the broader plan or architecture diagrams imply workers, mandatory approvals, extra channels or large datasets, the current demo scope below takes precedence.
 
@@ -16,7 +18,7 @@ Start with 6–10 synthetic cases. Simulate AI, email, payments and integrations
 | **2. Orchestrated AI Service** | Extract evidence; identify issues; assess completeness, severity and sentiment; retrieve approved knowledge; formulate questions, resolutions and handoffs | Synchronous workflow, stored AI outputs, source references, structured assessments and run diagnostics; no direct case writes |
 | **3. Service Operations & Live Demo Console** | Show queues and case details; simulate incoming claims/replies; enable human takeover and handling; display activity and, after core flows work, a process graph | React UI and presentation state; all business changes go through System 1 |
 
-System 1 supplies intake capabilities; System 3 owns the minimal demo controls that exercise them. A separate customer portal and full account experience are deferred. System 2's knowledge fixtures are distinct from System 1's Salesforce-style customer and case records.
+System 1 supplies intake capabilities; System 3 owns the minimal demo controls that exercise them. The four-minute pitch now includes a small customer perspective in the same React application, using the same System 1 case and messages. Full accounts and authentication remain deferred. System 2's knowledge fixtures are distinct from System 1's Salesforce-style customer and case records.
 
 The central rule: **System 1 owns the case, System 2 proposes the next action, and System 3 lets people inspect and act.** Valid AI actions execute automatically through System 1. This does not introduce mandatory human approval.
 

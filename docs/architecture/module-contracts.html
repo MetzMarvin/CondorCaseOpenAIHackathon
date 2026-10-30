@@ -18,7 +18,7 @@
 <div class="arrow">HTTP requests<b>→</b><code>InboundMessageRequest<br>ProcessRequest<br>TakeoverRequest<br>ProposedAction</code><b>←</b>Case details + results + events</div>
 <div class="node case"><div class="eyebrow">System 1</div><h3>Intake &amp; case service</h3><p>FastAPI / persistence</p><small>Creates snapshots, validates authority, applies actions and records events.</small></div>
 <div class="arrow">Synchronous call<b>→</b><code>RunRequest<br>+ emit_progress</code><b>←</b><code>RunResult<br>ProgressUpdate</code></div>
-<div class="node ai"><div class="eyebrow">System 2</div><h3>AI orchestration</h3><p>Python / stored outputs</p><small>Read-only evidence, approved knowledge, assessments and German replies.</small></div>
+<div class="node ai"><div class="eyebrow">System 2</div><h3>AI orchestration</h3><p>Python / stored outputs</p><small>Read-only evidence, approved knowledge, assessments and English replies.</small></div>
 </div>
 <div class="authority">System 1 alone writes case records, resolves case-scoped evidence references and executes simulated messages or financial actions.</div>
 </section>
@@ -32,8 +32,8 @@
 <h2>Three typed business actions</h2>
 <p>Common envelope: <code>actionId · caseId · expectedCaseVersion · runId (AI) · sources · type · payload</code></p>
 <div class="grid">
-<div class="card"><div class="type">REQUEST_INFORMATION</div><h3>Ask for evidence</h3><p>Missing facts, reasons and a German customer-facing question.</p><ul><li>Simulated outbound question</li><li>Status → WAITING_FOR_CUSTOMER</li><li>Current owner retained</li></ul></div>
-<div class="card"><div class="type">RESOLVE</div><h3>Resolve a supported case</h3><p>Outcome, explanation, versioned sources, German reply and financial positions.</p><ul><li>Compensation / reimbursement / goodwill</li><li>Integer minor units + currency</li><li>Status → RESOLVED after execution</li></ul></div>
+<div class="card"><div class="type">REQUEST_INFORMATION</div><h3>Ask for evidence</h3><p>Missing facts, reasons and a English customer-facing question.</p><ul><li>Simulated outbound question</li><li>Status → WAITING_FOR_CUSTOMER</li><li>Current owner retained</li></ul></div>
+<div class="card"><div class="type">RESOLVE</div><h3>Resolve a supported case</h3><p>Outcome, explanation, versioned sources, English reply and financial positions.</p><ul><li>Compensation / reimbursement / goodwill</li><li>Integer minor units + currency</li><li>Status → RESOLVED after execution</li></ul></div>
 <div class="card"><div class="type">HANDOFF</div><h3>Prepare specialist handling</h3><p>Reason code, queue, summary, facts, evidence, unresolved questions and prior attempts.</p><ul><li>Concrete reason required</li><li>Status → WAITING_FOR_SPECIALIST</li><li>Missing evidence or anger alone is insufficient</li></ul></div>
 </div>
 <h2>Console ↔ FastAPI contracts</h2>

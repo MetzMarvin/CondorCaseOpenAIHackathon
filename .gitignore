@@ -3,6 +3,7 @@
 
 # Local demo runtime
 .venv/
+.venv-python39-backup/
 __pycache__/
 *.pyc
 demo_backend/*.sqlite*

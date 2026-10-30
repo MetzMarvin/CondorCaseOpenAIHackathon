@@ -1,10 +1,10 @@
 # System 3: Service Operations & Live Demo Console — TDD subtasks
 
-Implementation checklist for the owner of **System 3**, based on [subsystems and contracts](../architecture/subsystems-and-contracts.md). This was written before implementation. A runnable mock now exists; see the [startup and integration guide](../../README.md) and [performed checks](demo-verification.md). The original checklist below remains available for reviewing remaining integration work; unchecked items are not a claim that every feature is absent.
+Implementation checklist for the owner of **System 3**, based on [subsystems and contracts](../architecture/subsystems-and-contracts.md). This was written before implementation. The shared-contract integration, dashboard and customer perspective now exist; see the [startup and integration guide](../../README.md) and [performed checks](demo-verification.md). The original checklist below remains available for reviewing remaining integration work; unchecked items are not a claim that every feature is absent.
 
 ## Target and working assumptions
 
-Build one React/JavaScript/Vite screen with a case list and selected case detail. Use English UI text and a persistent “Demo – KI, E-Mail und Zahlungen simuliert” label. System 1 owns business state and validation; the console only submits commands and displays responses.
+Build one React/JavaScript/Vite screen with a case list and selected case detail. Use English UI text and a persistent “Demo – AI, email and payments simulated” label. System 1 owns business state and validation; the console only submits commands and displays responses.
 
 **First working milestone:** select a fixture case, inspect its messages, trigger processing, and see the returned resolution and simulated reply. Then extend the same screen for missing evidence and human handover.
 
@@ -34,14 +34,14 @@ Dependency: agreement with System 1; temporary fixtures allow progress while its
 
 - [ ] **Red:** clicking a case fetches its detail and shows its subject, English status, owner and messages. Selecting another case replaces those details.
 - [ ] **Green:** implement list/detail on one screen, showing summary category, queue, priority and next action where supplied. Detail shows facts, missing information, source references and attachment links from System 1.
-- [ ] Add a small test for loading and failed reads: “Wird geladen …” and a useful error with “Erneut laden”. An empty list shows “Keine Fälle vorhanden”.
+- [ ] Add a small test for loading and failed reads: “Loading …” and a useful error with “Reload”. An empty list shows “No cases available”.
 - [ ] **Done:** select cases reliably; a failed load never displays a different case's details as the selected case. Attachment links use the case-scoped API route.
 
 Dependency: task 1. Basic display first; advanced filtering can wait.
 
 ### 3. Complete the clear-case flow — 25 min
 
-- [ ] **Red:** “KI-Bearbeitung starten” sends exactly one `POST /api/cases/{caseId}/process` with `requestId` and the latest `expectedCaseVersion`; its response changes the visible status to “Erledigt” and shows the simulated outgoing reply.
+- [ ] **Red:** “Start AI processing” sends exactly one `POST /api/cases/{caseId}/process` with `requestId` and the latest `expectedCaseVersion`; its response changes the visible status to “Resolved” and shows the simulated outgoing reply.
 - [ ] **Green:** disable processing while pending, consume the returned case and refresh the list/detail as needed. Do not infer successful resolution from a click or a progress event.
 - [ ] Use a clear but angry fixture to verify that the UI still displays the returned automatic resolution. The console must not derive a handoff from sentiment.
 - [ ] **Done — first working milestone:** list → detail → process → resolved case and reply, without a human approval step. Start trying this against System 1 now if available.
@@ -52,7 +52,7 @@ Dependency: task 2. Backend decides and executes the outcome; the frontend test 
 
 - [ ] **Red:** submitting a new simulated message calls `POST /api/inbound/messages`, selects the returned case, then calls `/process` exactly once with the returned version.
 - [ ] **Green:** add a small prefilled demo-message control. Keep sender/channel fixed to agreed fixtures; allow editing the body.
-- [ ] **Red:** the missing-evidence case shows “Warten auf Kundenantwort” and the outgoing question. “Kundenantwort simulieren” sends a new `messageId` with the existing case/thread reference, then processes that same case once with its updated version. The final response shows “Erledigt”, both customer messages and the reply.
+- [ ] **Red:** the missing-evidence case shows “Waiting for customer” and the outgoing question. “Simulate customer reply” sends a new `messageId` with the existing case/thread reference, then processes that same case once with its updated version. The final response shows “Resolved”, both customer messages and the reply.
 - [ ] **Green:** add a prefilled reply control and synthetic evidence upload to the existing case. Upload first through `POST /api/cases/{caseId}/attachments`, then include the returned attachment ID in the inbound message. Use a shared tiny local demo file; do not send filesystem paths.
 - [ ] **Done:** evidence remains attached to the same case; no duplicate case or implicit second processing run. Missing evidence alone never causes a UI-created handoff. A failed upload preserves the draft and stops the subsequent submission.
 
@@ -60,9 +60,9 @@ Dependency: task 3 plus agreed inbound/upload responses. For a human-owned case,
 
 ### 5. Show a handoff and complete human handling — 25 min
 
-- [ ] **Red:** a serious/unsupported case displays “Warten auf Spezialisten”, the returned reason, queue, summary, facts, evidence, unresolved questions and prior attempts.
+- [ ] **Red:** a serious/unsupported case displays “With specialists”, the returned reason, queue, summary, facts, evidence, unresolved questions and prior attempts.
 - [ ] **Green:** render the handoff context directly from the case/run response.
-- [ ] **Red:** “Fall übernehmen” sends `actionId`, current `expectedCaseVersion` and the fixed demo operator ID to `/takeover`; the returned owner is human. An edited English reply submitted via `/actions` with a new action ID and current version displays the returned human resolution.
+- [ ] **Red:** “Take over case” sends `actionId`, current `expectedCaseVersion` and the fixed demo operator ID to `/takeover`; the returned owner is human. An edited English reply submitted via `/actions` with a new action ID and current version displays the returned human resolution.
 - [ ] **Green:** add takeover and one minimal human `RESOLVE` form using an agreed permitted outcome and the shared action envelope. Include required explanation/source/financial fields from the contract; never invent authority or financial limits in the UI.
 - [ ] **Done:** handoff → takeover → human reply/resolution works. Automatic processing controls are disabled for human-owned cases; only returned authoritative state updates ownership and status.
 
@@ -72,7 +72,7 @@ Dependency: task 3 and System 1's supported demo role/action payload. General re
 
 - [ ] **Red:** the selected case's `GET /api/events?caseId=…` response renders ordered event summaries once; a repeated page creates no duplicate entries. Switching cases clears the previous case's history and cursor.
 - [ ] **Green:** add a plain timeline, ordered by `sequence` and deduplicated by `eventId`; pass the returned cursor as `after` on subsequent reads. Fetch on selection and after actions, including failed runs.
-- [ ] **Done:** action history, handover and run failures are visible. Events do not independently overwrite case status or ownership. Post-run history is sufficient for this milestone; any later animation of stored events must say “Wiedergabe”.
+- [ ] **Done:** action history, handover and run failures are visible. Events do not independently overwrite case status or ownership. Post-run history is sufficient for this milestone; any later animation of stored events must say “Replay”.
 
 Dependency: tasks 3–5 and System 1 event fixtures. Live polling during a synchronous request and a process graph are optional extensions.
 

@@ -4,7 +4,10 @@ The [subsystem agreement](subsystems-and-contracts.md) governs ownership.
 [Shared Pydantic models](../../backend/contracts.py) now define the Python/JSON
 boundary; [System 2 protocol](../../backend/ai_service/__init__.py) defines the
 synchronous callable shape. The System 2 processor now implements this interface with deterministic offline
-demo logic and recorded outputs. HTTP routes remain unimplemented. The older TypeScript exploration is not authoritative.
+demo logic and recorded outputs. FastAPI routes in `demo_backend/app.py` now expose
+these models and call the shared processor. The React console, dashboard and
+customer perspective consume them through a display adapter. The older TypeScript
+exploration is not authoritative.
 
 ```mermaid
 flowchart LR
@@ -62,11 +65,16 @@ integer minor units and a three-letter currency. Timestamps require time zones;
 System 1 must emit UTC. Snapshot models prohibit field reassignment and use tuples
 for collections; consumers must also treat nested JSON fact values as read-only.
 
-Cross-system additions: common models and the Pydantic dependency. System 1 still
-owns route wiring, error handlers (including mapping FastAPI validation failures
-to `ApiError`), database transactions, case-scoped attachment resolution, permission
-checks, stale-version rejection, idempotency and event sequencing. Schema validation
-does not implement those business guarantees. System 2 provides its offline workflow, deterministic snapshots and stored outputs; System 3 still needs to consume these responses.
+System 1 implements route wiring, `ApiError` responses, SQLite transactions,
+case-scoped attachments, demo permissions, stale-version rejection, idempotency
+and event sequencing. The shared AI call runs outside the database lock; accepted
+effects recheck ownership/version so human takeover invalidates an in-flight AI
+result. Financial effects are simulated and persisted once. Accepted
+`action.applied` events carry `data.actionId` and `data.financialPositions`, which
+both UI perspectives use for reimbursement display. System 2 provides its offline
+workflow, deterministic snapshots and stored outputs. See the README for Python
+3.11+ setup and the integrated demo; schema validation alone does not provide
+these business guarantees.
 
 Validate locally:
 

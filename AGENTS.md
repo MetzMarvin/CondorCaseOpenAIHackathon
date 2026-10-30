@@ -10,7 +10,8 @@ Prioritize a reliable demo over production architecture.
 - The stack below overrides the stack proposed in the plan.
 
 ## Tech stack
-- Backend: Python and FastAPI with Pydantic models.
+- Backend: Python 3.11 or newer and FastAPI with Pydantic models.
+- Use `.venv/bin/python` and `.venv/bin/uvicorn` for backend commands; the local environment uses Python 3.13. Do not use the macOS system Python 3.9.
 - Frontend: React with JavaScript and Vite. No TypeScript or Next.js.
 - SQLite with SQLAlchemy for local persistence.
 - Local files for synthetic attachments.
@@ -23,6 +24,10 @@ Show a case list and case details with three flows:
 3. Serious or unsupported case → AI hands over with context and a reason.
 
 Missing information or negative sentiment alone must not trigger handover.
+
+For the four-minute pitch, include a small dashboard and a customer perspective
+of the same selected case. Both views use System 1's API and persisted state;
+do not add a separate customer database or full account/authentication flow.
 
 ## Subsystems and contracts
 - Follow `docs/architecture/subsystems-and-contracts.md` for subsystem ownership,
@@ -53,9 +58,9 @@ Missing information or negative sentiment alone must not trigger handover.
 - Simulate AI, email, payments and integrations; clearly label simulations.
 - Add dependencies only when the demo needs them.
 - Defer extra channels, authentication and large datasets.
-- Use English only throughout the demo, synthetic data, fixtures, stored AI
-  outputs, customer messages, UI text and interfaces, including API field names
-  and human-readable responses. This overrides language choices in the plan.
+- Use English only throughout the demo: UI text, synthetic data, customer
+  messages, stored AI outputs and human-readable API responses. Preserve shared
+  API field names for compatibility.
 - Keep secrets and model calls in FastAPI.
 - Ensure the demo works without model access using stored example outputs.
 
