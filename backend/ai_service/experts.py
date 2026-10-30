@@ -57,6 +57,22 @@ reported safety issue before agreeing it needs specialist review.
 """
 
 
+REVIEW_TASKS = {
+    'extract_evidence': '''Evidence reviewer: independently check proposed_action against
+the sourced facts and missing_fields. Distinguish customer evidence from internal
+checks. Check exact amount/currency, prior payment, conflicting values and remaining
+customer questions. Presence-only projections do not establish the hidden value's
+meaning. Do not assume the candidate is correct because it is deterministic.
+Return supported=false for contradictions or insufficient support for this action.''',
+    'retrieve_policy': '''Policy reviewer: independently check proposed_action against
+approved_passages, including every prerequisite and exception. Check permitted_actions,
+financial_limits, the exact financial positions and handoff reason_code. A retrieved
+passage or a matching citation alone does not establish entitlement. Do not infer
+real legal rights from synthetic demo rules. Return supported=false if the candidate
+is unsupported; do not repair or change the action.''',
+}
+
+
 def run_experts(request, baseline, emit_progress, settings, *, bundle):
     context = expert_context(bundle, baseline)
     expected_citations = {Citation(**c) for c in context['required_citations']}
@@ -84,7 +100,7 @@ def run_experts(request, baseline, emit_progress, settings, *, bundle):
                     summary=f'Decisions reviewed {len(report.verdicts)} policy checks; draft restrictions preserved.',
                     source_ids=tuple(context['required_source_ids']), simulation=False))
                 continue
-            review = call('Review the deterministic next action. Cite every required source and every exact selected passage, including prerequisites and exceptions.', ExpertReview)
+            review = call(REVIEW_TASKS[step] + '\nCite every required source and every exact selected passage, including prerequisites and exceptions.', ExpertReview)
             if (not review.supported or set(review.source_ids) != set(context['required_source_ids'])
                     or set(review.citations) != expected_citations or len(review.citations) != len(expected_citations)):
                 raise ValueError('Expert review could not validate exact support')
