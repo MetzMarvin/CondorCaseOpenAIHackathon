@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.1",
+  "seed": 261,
+  "count": 30,
+  "base_date": "2026-10-01",
+  "german_fraction": 0.8,
+  "category_weights": {
+    "delay": 750,
+    "cancellation": 600,
+    "denied_boarding": 150,
+    "baggage": 450,
+    "refund": 450,
+    "service": 450,
+    "unknown": 150
+  },
+  "scenario_weights": {
+    "complete": 12,
+    "angry_complete": 3,
+    "missing_receipt": 9,
+    "serious": 3,
+    "conflicting_evidence": 3
+  },
+  "baggage_scenario_weights": {
+    "complete": 3,
+    "angry_complete": 1,
+    "missing_receipt": 2,
+    "missing_pir": 2,
+    "missing_bag_tag": 1,
+    "attachment_only": 1,
+    "unreadable_document": 1,
+    "serious": 1,
+    "conflicting_evidence": 1
+  },
+  "routes": [
+    [
+      "FRA",
+      "PMI"
+    ],
+    [
+      "FRA",
+      "HRG"
+    ],
+    [
+      "DUS",
+      "LPA"
+    ]
+  ],
+  "policy": {
+    "version": "demo-workflow-2",
+    "supported_categories": [
+      "delay",
+      "cancellation",
+      "baggage",
+      "refund",
+      "service"
+    ],
+    "description": "Synthetic workflow expectations only. Resolution means prepare a simulated answer under demo authority; no legal entitlement or payment amount is asserted."
+  }
+}

@@ -1,0 +1,59 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+5 0 obj
+<< /Length 427 >>
+stream
+BT /F1 12 Tf 50 780 Td 21 TL
+(DEMO - SYNTHETIC TEST DOCUMENT) Tj
+T*
+(BAGGAGE IRREGULARITY REPORT) Tj
+T*
+() Tj
+T*
+(BOOKING: MOCK000007) Tj
+T*
+(FLIGHT: DE-MOCK-000007) Tj
+T*
+(DATE: 2026-10-07) Tj
+T*
+(ROUTE: FRA / PMI) Tj
+T*
+(PIR REFERENCE: DEMO-PIR-000007) Tj
+T*
+(BAG TAG: DEMO-BAG-000007) Tj
+T*
+(BAG DESCRIPTION: BLACK HARD SHELL SUITCASE) Tj
+T*
+(BAG STATUS: NOT DELIVERED) Tj
+T*
+() Tj
+T*
+(NOT VALID FOR TRAVEL OR PAYMENT) Tj
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000247 00000 n 
+0000000317 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+795
+%%EOF
