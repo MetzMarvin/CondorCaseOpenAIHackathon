@@ -29,18 +29,25 @@ class DiagnosticsTests(unittest.TestCase):
     def test_attachment_bytes_and_extractor_configuration_are_traceable_without_content(self):
         from datetime import datetime, timezone
         from backend.ai_service.evidence import AttachmentResult, EvidenceScope, FakeAttachmentReader, create_evidence_adapters
-        from backend.contracts import AttachmentRef, SourceRef
+        from backend.contracts import AttachmentRef, SourceRef, Message
         request = demo_request('missing')
         reference = AttachmentRef(attachment_id='receipt', filename='private-customer.txt',
                                   media_type='text/plain', local_reference='/private/case/token')
-        request = request.model_copy(update={'snapshot': request.snapshot.model_copy(update={'attachments': (reference,)})})
+        request = request.model_copy(update={'snapshot': request.snapshot.model_copy(update={'attachments': (reference,), 'messages': (
+            Message(message_id='msg-001', channel='email', sender='guest@example.test',
+                    body='My booking reference is MOCK123.', timestamp=datetime(2026, 10, 30, tzinfo=timezone.utc)),)})})
         # Known independent SHA-256 test vector, deliberately unreadable as a receipt.
         read = AttachmentResult(scope=EvidenceScope(case_id=request.case_id, case_version=request.case_version),
             reference=reference, status='found', content=b'abc', source=SourceRef(source_id='receipt', version='7'),
             content_hash='ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad',
             observed_at=datetime(2026, 10, 30, tzinfo=timezone.utc))
+        from backend.ai_service.extraction import DocumentExtractor
+        class VersionedExtractor(DocumentExtractor):
+            def extract(self, attachment):
+                return super().extract(attachment).model_copy(update={'configuration_version': 'attachment-test-v1'})
         manifests = []
         result = create_processor(settings=Settings('offline', ''), diagnostic_sink=manifests.append,
+            extractor=VersionedExtractor(),
             adapters=create_evidence_adapters(attachments=FakeAttachmentReader((read,))))(request, lambda _: None)
         self.assertEqual(result.proposed_action.type, 'REQUEST_INFORMATION')
         manifest = manifests[0]
@@ -48,7 +55,7 @@ class DiagnosticsTests(unittest.TestCase):
         self.assertEqual((attachment.attachment_id, attachment.source_version, attachment.content_hash),
             ('receipt', '7', 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad'))
         self.assertEqual(attachment.extraction_status, 'partial')
-        self.assertEqual(attachment.extraction_configuration_version, 'synthetic-labelled-fields-v1')
+        self.assertEqual(attachment.extraction_configuration_version, 'attachment-test-v1')
         self.assertEqual(manifest.retrieval_configuration_version, 'lexical-approved-v1')
         self.assertIn(SourceRef(source_id='receipt', version='7'), manifest.evidence_sources)
         self.assertNotIn('private', manifest.model_dump_json())
@@ -177,5 +184,5 @@ class DiagnosticsTests(unittest.TestCase):
         self.assertEqual(manifests[0].error.code, 'EXTRACTION_PARSER_FAILURE')
         self.assertTrue(manifests[0].error.retryable)
         self.assertEqual(manifests[0].attachments[0].source_version, '9')
-        self.assertEqual(manifests[0].attachments[0].extraction_configuration_version, 'synthetic-labelled-fields-v1')
+        self.assertEqual(manifests[0].attachments[0].extraction_configuration_version, 'synthetic-fields-v2')
         self.assertNotIn('private', manifests[0].model_dump_json())

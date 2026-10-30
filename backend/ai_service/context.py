@@ -9,6 +9,7 @@ class ProcessingBundle:
     effective_request: RunRequest | None = None
     attachments: list = field(default_factory=list)
     extractions: list = field(default_factory=list)
+    message_extractions: list = field(default_factory=list)
     retrieval: object | None = None
 
     mode: str = 'unknown'

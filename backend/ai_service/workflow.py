@@ -64,7 +64,7 @@ def run_workflow(request, emit_progress, *, bundle, adapters=None, extractor=Non
             if message.sender in {snapshot.owner.id, 'AI', 'SYSTEM', 'condor-service@example.com'}:
                 continue
             extracted_message = DocumentExtractor().extract_message(message, scope)
-            bundle.extractions.append(extracted_message)
+            bundle.message_extractions.append(extracted_message)
             if extracted_message.error:
                 return RunResult(**identity, status='FAILED', technical_error=extracted_message.error)
             for candidate in extracted_message.candidates:
