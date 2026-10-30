@@ -7,6 +7,64 @@ from backend.ai_service.reconciliation import prepare_evidence
 
 
 class ReconciliationTests(unittest.TestCase):
+    def conflicted_request(self, name):
+        from backend.contracts import Fact, SourceRef
+        request = demo_request('clear')
+        value = 'ineligible' if name == 'expense_eligibility' else 'prior_reimbursement_exists'
+        conflicting = Fact(name=name, value=value, sources=(SourceRef(source_id='conflicting-record', version='1'),))
+        return request.model_copy(update={'snapshot': request.snapshot.model_copy(update={
+            'booking_context': (conflicting,)})})
+
+    def test_authoritative_refresh_resolves_each_internal_conflict_and_retains_history(self):
+        from backend.ai_service.assessment import assess
+        for name in ('expense_eligibility', 'payment_history'):
+            with self.subTest(name=name):
+                request = self.conflicted_request(name)
+                before = request.model_dump_json()
+                calls = []
+                resolved = next(f for f in request.snapshot.flight_context if f.name == name)
+                class Reader:
+                    def lookup(self, lookup):
+                        calls.append(lookup)
+                        return LookupResult(scope=lookup.scope, status='found', facts=(resolved,),
+                            observed_at=datetime.now(timezone.utc), freshness='current')
+                prepared = prepare_evidence(request, create_evidence_adapters(operational=Reader()))
+                self.assertIsNone(prepared.error)
+                self.assertEqual(calls[0].fact_names, (name,))
+                self.assertEqual(calls[0].snapshot, request.snapshot)
+                self.assertIsNotNone(assess(prepared.request.snapshot, prepared.sources).position)
+                self.assertEqual(len(prepared.superseded_facts), 2)
+                self.assertIn('conflicting-record', {s.source_id for s in prepared.sources})
+                self.assertEqual(request.model_dump_json(), before)
+
+    def test_unresolved_refreshed_conflict_hands_off_with_original_context(self):
+        from backend.ai_service.assessment import assess
+        request = self.conflicted_request('expense_eligibility')
+        scope = EvidenceScope(case_id=request.case_id, case_version=request.case_version)
+        for status in ('found', 'ambiguous'):
+            with self.subTest(status=status):
+                facts = tuple(f for f in request.snapshot.booking_context + request.snapshot.flight_context
+                              if f.name == 'expense_eligibility') if status == 'found' else ()
+                reader = FakeRecordReader({scope: LookupResult(scope=scope, status=status, facts=facts,
+                    observed_at=datetime.now(timezone.utc), freshness='current')})
+                prepared = prepare_evidence(request, create_evidence_adapters(operational=reader))
+                self.assertIsNone(prepared.error)
+                self.assertEqual(assess(prepared.request.snapshot, prepared.sources).reason, 'UNRESOLVED_CONFLICT')
+                self.assertEqual(prepared.superseded_facts, ())
+                self.assertIn(request.snapshot.booking_context[0], prepared.request.snapshot.booking_context)
+
+    def test_conflict_refresh_outage_or_stale_result_is_technical_failure(self):
+        request = self.conflicted_request('payment_history')
+        prepared = prepare_evidence(request, create_evidence_adapters())
+        self.assertIsNone(prepared.request)
+        self.assertEqual(prepared.error.code, 'EVIDENCE_UNAVAILABLE')
+        scope = EvidenceScope(case_id=request.case_id, case_version=request.case_version)
+        reader = FakeRecordReader({scope: LookupResult(scope=scope, status='found',
+            facts=request.snapshot.flight_context, observed_at=datetime.now(timezone.utc), freshness='stale')})
+        prepared = prepare_evidence(request, create_evidence_adapters(operational=reader))
+        self.assertIsNone(prepared.request)
+        self.assertEqual(prepared.error.code, 'EVIDENCE_STALE')
+
     def test_missing_internal_records_are_enriched_without_mutating_original(self):
         original = demo_request('clear')
         request = original.model_copy(update={'snapshot': original.snapshot.model_copy(update={'flight_context': ()})})
