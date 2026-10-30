@@ -38,9 +38,10 @@ review summaries are discarded and never forwarded into another model or events.
 Provider errors, refusals and invalid drafts fail without offline fallback.
 
 The internal `ProcessingBundle` retains per-run observations for diagnostics;
-`diagnostic_sink(bundle, result)` is invoked on successful and failed configured
-runs. It contains sensitive internal data and must never be serialized wholesale.
-The sink must project a safe manifest. A sink exception invalidates the run.
+`create_processor(diagnostic_sink=...)` invokes the sink with a strict safe
+`RunManifest` on successful and failed configured runs. The private bundle contains
+sensitive data and is never passed to that sink. A sink exception invalidates the
+run. See [diagnostics and storage responsibilities](DIAGNOSTICS.md).
 System 1 owns any actual persistence, access controls and retention, plus final
 case-version, ownership, authority and idempotency enforcement.
 
