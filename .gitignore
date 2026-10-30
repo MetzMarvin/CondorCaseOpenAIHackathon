@@ -1,3 +1,5 @@
+.env
+
 # Windows download metadata
 *:Zone.Identifier
 
@@ -31,3 +33,19 @@ test-results/
 # Rebuildable pipeline outputs; pinned raw snapshot and small examples stay tracked.
 data/normalized/
 data/processed/
+
+# Local Python environments and tooling caches
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Local intake runtime and frontend builds
+*.pyo
+*.pyd
+data/care-hub.sqlite3*
+data/attachments/
+data-*/
+frontend/node_modules/
+frontend/dist/
+CondorCaseOpenAIHackathon/tmp/
+CondorCaseOpenAIHackathon/output/

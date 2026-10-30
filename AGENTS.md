@@ -53,6 +53,14 @@ do not add a separate customer database or full account/authentication flow.
   event feed for the graph; label animation of stored events as replay.
 - The broader diagrams and plan do not expand the 6–10-case demo scope.
 
+## Current delivery: intake and preparation
+- The implemented slice includes the customer portal, simulated email intake, follow-up
+  messages, attachments and the synchronous preparation queue. Preparation extracts and enriches
+  facts; it does not assess claims, invoke decision processing or generate replies.
+- Keep customer-facing views separate from internal case fields and event history.
+- Seeded outbound messages and statuses are stored examples, clearly labeled in the UI.
+- Run the backend intake tests and frontend build after changing these contracts.
+
 ## Implementation
 - Start with 6–10 synthetic cases.
 - Simulate AI, email, payments and integrations; clearly label simulations.

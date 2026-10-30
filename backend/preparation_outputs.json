@@ -1,0 +1,108 @@
+{
+  "version": "1",
+  "facts": {
+    "a12d56f0a2514bf824955262dafc423b3afa87b1e54c83e0916511d6a4b691ac": {
+      "values": []
+    },
+    "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b": {
+      "values": []
+    },
+    "2502f18e673d7e45f78e8b2be73ba053be4ae64fa24d4549fa3243cdc12a4ff3": {
+      "values": []
+    },
+    "4c7f8a02904b1818c2a2088a73489520965e19be8135fc49f8ff149659ac7137": {
+      "values": []
+    },
+    "86d04eb322a1cfa66a2f2da8a0f1d25c1deb7d4f13d1d802d00ebf828d140d77": {
+      "values": []
+    },
+    "2f5258724219ad753c0d0119bb67321656b524d04fd3a5bf64aa4446a7a931cb": {
+      "values": []
+    },
+    "658ce32b2f787b3c221001d6896bdeec1ce07a69cede0afec18612fc6d071008": {
+      "values": []
+    },
+    "db073ac52ffbf9cc949149e352af149c42d0b8a0766161f78473214418bc6063": {
+      "values": []
+    },
+    "1bbd3d4e776f8016dc60b4d5e592dc89735b7e6cedfdc2b7d7cb7264ae9c0ac7": {
+      "values": []
+    },
+    "bd6580b3371c7a84f2efeedfaadc72d0b6cc1658d7480453074ed6577a0d6b37": {
+      "values": []
+    },
+    "26c68f58af275eaa61570c13b1c0a6a703973dc57fa16768299f52fb561ac03b": {
+      "values": [
+        {
+          "name": "customer_id",
+          "value": "12345",
+          "quote": "customer ID is 12345"
+        },
+        {
+          "name": "flight_number",
+          "value": "87B6",
+          "quote": "flight number 87B6"
+        },
+        {
+          "name": "customer_statement",
+          "value": "bag got damaged",
+          "quote": "my bag got damaged"
+        }
+      ]
+    },
+    "0c0eb5af063dc8632bfaf4f18f68474dcbac74a3b7510ef46f564676c7d629d5": {
+      "values": [
+        {
+          "name": "customer_id",
+          "value": "99999",
+          "quote": "99999"
+        },
+        {
+          "name": "flight_number",
+          "value": "87B6",
+          "quote": "87B6"
+        }
+      ]
+    },
+    "d02cdf94ac1678e45a03146343207fa04d9988f2c9d893c264bd000a5be9ec5f": {
+      "values": [
+        {
+          "name": "customer_id",
+          "value": "22222",
+          "quote": "22222"
+        },
+        {
+          "name": "flight_number",
+          "value": "87B6",
+          "quote": "87B6"
+        }
+      ]
+    },
+    "f1301ac33b3744b7b745511df6cd36e78880c3a58f1fe59d2c9d105eeedad535": {
+      "values": [
+        {
+          "name": "customer_id",
+          "value": "12345",
+          "quote": "12345"
+        },
+        {
+          "name": "customer_id",
+          "value": "99999",
+          "quote": "99999"
+        }
+      ]
+    },
+    "5ee7e7c57f6e34816d25b432c8b281917e56fc937ce3a28be76c82e85d0d9a90": {
+      "values": [
+        {
+          "name": "customer_statement",
+          "value": "SYNTHETIC RECEIPT - EUR 42.00",
+          "quote": "SYNTHETIC RECEIPT - EUR 42.00"
+        }
+      ]
+    }
+  },
+  "transcriptions": {
+    "712d9989dac1a79ebeb6d56878d105e0f238e770f08b6658fba2b81004b76784": "SYNTHETIC RECEIPT - EUR 42.00"
+  }
+}

@@ -213,3 +213,21 @@ This guide was extracted from source. It does not record a new browser-based vis
 | [`README.md`](../../README.md) | Local startup, demo scenarios and integration limitations. |
 
 When implementation changes, update this guide in the same change so developers can distinguish established patterns from future recommendations.
+
+
+## Customer portal adaptation
+
+`frontend/src/portal/CustomerPortal.jsx` and `portal.css` apply this design language
+to the customer-only intake UI. Use the white header, navy text, yellow primary
+actions, Arial stack, neutral cards and status treatments above. Portal forms reflow
+at 1000px and 650px; they do not use presentation-canvas scaling.
+
+The customer shell exposes claim submission and case-specific status, correspondence
+and evidence updates. It must not expose scenario pickers, global case lists, email
+simulation/reply controls, staff response composition, ownership, processing or replay.
+Existing service messages are read-only customer correspondence. Customer updates
+always enter through the PORTAL channel. Email workflows belong to the separate service.
+
+Portal styles are scoped under `.customer-app` so they can coexist with the operations
+console. The operations source map above refers to the remote service-console work;
+this customer-only checkout does not replace or import that separate application.

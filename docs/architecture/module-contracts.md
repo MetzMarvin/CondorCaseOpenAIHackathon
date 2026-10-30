@@ -4,10 +4,7 @@ The [subsystem agreement](subsystems-and-contracts.md) governs ownership.
 [Shared Pydantic models](../../backend/contracts.py) now define the Python/JSON
 boundary; [System 2 protocol](../../backend/ai_service/__init__.py) defines the
 synchronous callable shape. The System 2 processor now implements this interface with deterministic offline
-demo logic and recorded outputs. FastAPI routes in `demo_backend/app.py` now expose
-these models and call the shared processor. The React console, dashboard and
-customer perspective consume them through a display adapter. The older TypeScript
-exploration is not authoritative.
+demo logic and recorded outputs. The operations API in `demo_backend/app.py` calls the shared processor. The separate intake API in `backend/main.py` implements customer intake and preparation. They currently use separate persistence and incompatible inbound request/response shapes; integration between them remains pending. The older TypeScript exploration is not authoritative.
 
 ```mermaid
 flowchart LR
@@ -25,8 +22,9 @@ flowchart LR
 |---|---|---|
 | List cases | GET `/api/cases` with status/queue/owner filters | `list[CaseSummary]` |
 | Read case | GET `/api/cases/{caseId}` | `CaseDetail` |
-| Intake / reply | POST `/api/inbound/messages`: `InboundMessageRequest` | `CaseDetail` |
-| Upload attachment | POST `/api/cases/{caseId}/attachments`: multipart file | `AttachmentRef` |
+| Intake / reply | POST `/api/inbound/messages`: `InboundMessage` from `backend/intake_contracts.py` (JSON or multipart metadata + files) | `IntakeReceipt` |
+| Customer case | GET `/api/portal/cases/{caseId}` | `PortalCase`, excluding internal fields |
+| Upload attachment | Included atomically with intake messages; standalone POST is deferred | Receipt with customer case URL |
 | Read attachment | GET `/api/cases/{caseId}/attachments/{attachmentId}` | File bytes with media type |
 | Process | POST `/api/cases/{caseId}/process`: `ProcessRequest` | `ProcessResponse` |
 | Take over | POST `/api/cases/{caseId}/takeover`: `TakeoverRequest` | `CaseDetail` |
@@ -34,7 +32,7 @@ flowchart LR
 | Event feed | GET `/api/events` with caseId/after filters | `EventPage` |
 | AI call | `RunRequest`, `ProgressCallback` | `RunResult` |
 | AI progress | `ProgressUpdate` | System 1 stamps/persists a `ProcessEvent` |
-| HTTP errors | Invalid input / missing resource / conflicting mutation | `ApiError` (422 / 404 / 409) |
+| HTTP errors | Invalid input / missing resource / conflicting mutation | `{error: ApiError}` (422 / 404 / 409); storage errors 503 |
 
 ```mermaid
 classDiagram
@@ -83,3 +81,8 @@ python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 .venv/bin/python -m unittest discover -s tests -p 'test_contracts.py' -v
 ```
+
+Intake uses the shared `CaseSummary` and `EventPage` without parallel versions.
+The old `InboundMessageRequest` is retained for earlier design consumers; the implemented
+intake model adds subject, strict channels and explicit reply references and does not
+accept arbitrary attachment IDs. AI integration and full internal case views remain deferred.

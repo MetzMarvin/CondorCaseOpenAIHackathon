@@ -2,6 +2,21 @@
 
 Hackathon demo with an English React/Vite service console and process replay. The customer view belongs to System 1; System 3 provides Dashboard & Service and Process view only. System 1 owns FastAPI/SQLite state and simulated effects; System 2 supplies structured decisions; System 3 displays the outcome and recorded workflow. All demo labels and messages use English. All data, messages and financial actions are synthetic.
 
+System 1 now includes synchronous claim preparation; see **Claim preparation queue** below
+for configuration, retry endpoints and the boundary with System 2.
+
+Local airline-complaint mocks for the Condor AI Week hackathon.
+
+## Current integration boundary
+
+The operations console (`/`, `demo_backend.app:app`) and customer portal
+(`/portal`, `backend.main:app`) currently require their respective backend.
+Vite uses one `API_PROXY_TARGET` for all `/api` requests. Switching that target
+switches the backend for the entire frontend; it does not connect the two stores.
+The default launcher starts only the operations backend. Portal intake requires
+the separate startup instructions under **Local intake application** below.
+Do not point both backends at the same SQLite file: their table schemas differ.
+
 ## Start locally
 
 From the **repository root** (`CondorCaseOpenAIHackathon/`), run:
@@ -136,6 +151,8 @@ cp .env.example .env
 | Earlier interface exploration | Detailed workflow contract and interactive ownership map | Design references; not implemented application code |
 
 The demo integration connects the shared AI processor to the FastAPI case service and the React console. Continue to use the subsystem ownership and contracts when adding features. Broader dataset tooling and the complaint explorer are review utilities, not dependencies of the six-case pitch.
+
+The separate intake/preparation backend in `backend/main.py` is not connected to that operations demo. Its customer portal and stored evidence use a different database and inbound contract. Unifying those implementations remains integration work.
 
 ## Preview the existing work
 
@@ -311,3 +328,205 @@ progress, proposals, an SVG PR preview and a JSON baseline:
 
 See [the workflow evaluation guide](docs/development/workflow-evaluation.md) for
 PR artifacts, failure checks, baseline comparison and adding scenarios.
+
+## Local intake application
+
+The customer-only portal saves claims, customer updates and attachments through
+one FastAPI intake service. Email simulation and staff response workflows belong to
+the separate service, not this frontend. The UI, fixtures and errors are in English.
+Intake **does not invoke System 2 or generate replies**. Existing AI work remains
+available independently. Seeded service messages are explicitly labeled stored examples.
+
+### Setup and startup
+
+Run from the repository root, containing `AGENTS.md`, `backend` and `frontend`.
+Requires Python 3.12+ and Node.js 22.12+. Tested with Python 3.14 and Node.js 24.11.
+Internet is needed for dependency installation; the installed demo needs no model
+access, API keys, real mailbox, payment provider or other external service.
+
+Terminal 1 (Windows / PowerShell):
+
+```powershell
+python -m venv .venv
+./.venv/Scripts/python.exe -m pip install -r backend/requirements-lock.txt
+./.venv/Scripts/python.exe -m backend.seed
+./.venv/Scripts/python.exe -m uvicorn backend.main:app --host 127.0.0.1 --port 8000
+```
+
+The lockfile includes tested runtime and test dependencies. Direct dependencies
+are listed in `backend/requirements.txt` and `backend/requirements-dev.txt`.
+On macOS/Linux, use `.venv/bin/python` in place of `./.venv/Scripts/python.exe`.
+
+Terminal 2:
+
+```powershell
+cd frontend
+npm ci
+npm run dev
+```
+
+Open the [customer portal](http://127.0.0.1:5173/portal).
+The former `/email` and `/demo/cases` screens are removed. Existing case links at
+`/portal/cases/{caseId}` continue to show customer-visible correspondence.
+Vite forwards `/api` to FastAPI on port 8000. Keep both processes running;
+stop them with `Ctrl+C`. [OpenAPI schemas](http://127.0.0.1:8000/docs) describe the intake routes.
+
+### Persistence and demo data
+
+Startup creates the SQLite tables and adds missing fixtures. The seed command can
+also initialize them without starting the server. Existing cases and replies are
+never reset by startup or reseeding.
+
+- SQLite: `data/care-hub.sqlite3`; local uploaded files: `data/attachments/`.
+- Set `CONDOR_DATA_DIR` before backend startup to use a different local folder.
+  For a fresh demo, choose a new empty directory, for example
+  `$env:CONDOR_DATA_DIR = "$PWD/data-demo-2"`. Earlier German fixture copies are
+  not overwritten; use a fresh directory for the English examples.
+- Local runtime data, uploads, environments and frontend build outputs are ignored
+  by Git. The existing pinned data-pipeline inputs remain tracked.
+- Demo links have no authentication. Use synthetic data on localhost only.
+
+| Case | Initial scenario |
+|---|---|
+| `case-clear` | Complete flight-delay claim, newly received |
+| `case-evidence` | Hotel expenses, with a stored request for evidence |
+| `case-serious` | Serious incident, prepared as a specialist-routing example |
+| `case-incomplete` | Missing baggage with limited details; no intake-driven handoff |
+| `case-human` | Human-owned case awaiting a customer reply |
+| `case-resolved` | Resolved example that can reopen on a new message |
+
+Stable intake fixtures are in `backend/fixtures.py`. Expected actions are fixture
+metadata, not executed decisions. They are separate from System 2's sourced expense
+snapshots; evidence extraction and snapshot assembly remain future integration work.
+
+### Customer walkthrough
+
+1. Submit a fictional email address, subject and message through the portal. Open
+   the receipt link and verify the case is **Received**.
+2. Keep the case link to view the customer-visible status and correspondence.
+3. Add a customer update or upload `backend/demo-files/hotel-receipt.png` through
+   that case page. The message and file stay on the same case.
+
+For local fixture checks, open `/portal/cases/case-evidence` directly. There is no
+global case picker or operator navigation in the customer portal. Staff responses
+are displayed when supplied by the service, never composed here.
+
+Design: [frontend guidelines](docs/architecture/frontend-design-guidelines.md).
+The portal component and scoped styles are in `frontend/src/portal/` to keep them
+separate from the team's operations-console frontend.
+
+### Intake interfaces
+
+`POST /api/inbound/messages` accepts JSON or multipart with one JSON text field
+called `metadata` and repeated file fields called `files`.
+
+```json
+{
+  "messageId": "msg-demo-unique-001",
+  "channel": "PORTAL",
+  "sender": "demo@example.com",
+  "subject": "Hotel expenses",
+  "body": "Here is the receipt for my overnight stay.",
+  "caseId": "case-evidence"
+}
+```
+
+New claims omit `caseId`. Email replies additionally require `inReplyTo`, such as
+`msg-case-evidence-out`. No matching by subject, sender, name or booking takes place.
+Original submitted text is preserved. Unknown fields, client filesystem paths and
+arbitrary attachment IDs are rejected.
+
+Receipts contain `messageId`, `caseId`, `caseVersion` and `customerCaseUrl`.
+Identical retries return the original receipt; changed content, including file
+contents, returns `409`. The mounted form retains text, files and the retry ID after
+failure. Drafts do not persist across navigation or reloads.
+
+| Implemented route | Purpose |
+|---|---|
+| `GET /api/health` | Local demo status |
+| `POST /api/inbound/messages` | Shared intake, including atomic message uploads |
+| `GET /api/cases?status=…&queue=…&owner=…` | Shared `CaseSummary` records, including `owner` object and `version` |
+| `GET /api/portal/cases/{caseId}` | Customer-visible status, messages and attachments only |
+| `GET /api/cases/{caseId}/attachments/{attachmentId}` | Download a customer-visible attachment belonging to that case |
+| `GET /api/events?caseId=…&after=…` | Shared `EventPage`; up to 200 ordered records and a continuation cursor |
+
+Intake request/receipt and portal projections live in `backend/intake_contracts.py`.
+They inherit the shared `Contract` conventions (Python snake_case, JSON camelCase).
+Case summaries, statuses and events reuse `backend/contracts.py` directly. The older
+`InboundMessageRequest` is a planning-era shape; this implemented route uses the
+stricter `InboundMessage` with subject, explicit reply references and message-scoped uploads.
+
+Uploads accept five PDF/JPEG/PNG files, up to 10 MiB each (shown as 10 MB in the UI).
+Content is parsed to reject damaged, encrypted or incorrectly labeled files.
+Storage names are generated IDs; display filenames do not control filesystem paths.
+There is no OCR or document extraction.
+
+Database records and events commit together. On failure, the transaction rolls back
+and newly written files are removed. SQLite serializes writes, including duplicate
+checks. A hard process termination during file writing can leave an unreferenced
+local file; crash recovery and production upload hardening are deferred.
+
+Every valid, nonempty reply is treated as relevant in this slice. It reopens
+`WAITING_FOR_CUSTOMER`, `RESOLVED` and `CLOSED` as `IN_PROGRESS`. Ownership and queue
+are preserved; `WAITING_FOR_SPECIALIST` remains unchanged. No automatic action follows.
+
+Not wired into intake: AI processing, `/process`, `/takeover`, `/actions`, the full
+internal case-detail API, separate attachment uploads, Salesforce context and graph views.
+See the [subsystem agreement](docs/architecture/subsystems-and-contracts.md).
+
+### Checks
+
+```powershell
+./.venv/Scripts/python.exe -m pytest backend/tests tests -q
+cd frontend
+npm run build
+```
+
+Backend checks use temporary databases and exercise both channels, cross-channel
+replies, ownership, customer visibility, content/size limits, concurrent duplicates,
+failed writes, event cursors and restart persistence. The frontend build is written
+to `frontend/dist`; `npm run preview` serves it on port 4173 with the backend running.
+
+
+## Claim preparation queue (System 1)
+
+Install `backend/requirements-lock.txt` and run the existing FastAPI server. Startup
+adds the preparation tables without resetting existing data. Intake commits a pending
+entry with the message, then prepares it synchronously. The intake receipt stays unchanged.
+Ten seed cases now include Sophie, an unmatched customer, ambiguous journeys and conflicting IDs.
+Seed cases start pending: use the explicit prepare endpoint to inspect them.
+
+Configuration is shown in `.env.example`. The server loads root `.env` without overriding
+process environment variables. Default `CONDOR_PREPARATION_MODE=offline` makes no model calls.
+Set it to `live` and set `CONDOR_EXTRACTION_MODEL` to a vision/structured-output-capable
+OpenAI model to enable extraction with `OPENAI_API_KEY`. Credentials never reach React.
+Calls have a 30-second timeout and no SDK retries. A case with many scanned pages can
+therefore take longer than 30 seconds; processing remains synchronous for this demo.
+
+- `GET /api/preparation/queue`: inspect persisted preparation entries.
+- `GET /api/cases/{caseId}/preparation`: inspect the current version.
+- `POST /api/cases/{caseId}/prepare`: JSON `{"requestId":"retry-1","expectedCaseVersion":1}`.
+  Repeating a completed request returns its original result. Use a new ID for a new attempt.
+  Startup returns interrupted attempts to pending; retry explicitly. Run one backend process.
+
+Queue states are PENDING, PREPARING, READY, READY_WITH_ERRORS and SUPERSEDED.
+Replies supersede older versions. Preparation never changes ownership, business status,
+financial authority, or case version. Failed extraction/enrichment preserves original
+messages and recovered text in READY_WITH_ERRORS. Unmatched records are not missing-evidence
+judgments. Progress uses the common event feed's extract_evidence step.
+
+PDFs use embedded text first, then local rendering and vision transcription. Partial or
+unreadable pages have explicit diagnostics. No raw PDFs or resolvable original attachment
+references go to System 2; originals remain available through customer download routes.
+Offline outputs are content-addressed and versioned, with no fabricated fallback for unknown
+inputs. `backend/demo-files/preparation-receipt.png` has a stored transcription for offline demos.
+
+`PreparationService.run_request` constructs the shared RunRequest only for a current,
+AI-owned IN_PROGRESS case. Authority is supplied by trusted System 1 orchestration and
+otherwise defaults to none. Issues/missing_information remain unassessed. System 2 must
+add topic extraction before consuming these snapshots for real decisions; preparation does
+not invoke it, send replies, or execute actions. Its present empty-topic handoff is not an
+end-to-end integration. The Salesforce adapter uses only synthetic read-only fixtures.
+
+Run `python -m pytest backend/tests -q` and `python -m unittest discover -s tests -q`.
+Automated preparation tests use offline or mocked model responses, not live credentials.
