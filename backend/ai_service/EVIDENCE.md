@@ -98,9 +98,10 @@ approved knowledge, and assesses the resulting snapshot copy. Configure System 1
 readers with `backend.ai_service.create_processor(adapters=...)`; the returned
 callable retains `(request, emit_progress)`. Optional `extractor` and `retriever`
 arguments support backend configuration and deterministic testing. The default
-entry point supports supplied-fact demos; attachments require an authorized reader
-and otherwise fail technically. Live experts receive the prepared snapshot and
-selected passages. No shared contracts or System 1 records are changed.
+entry point supports supplied-fact demos; attachments needed to fill evidence gaps
+require an authorized reader and otherwise fail technically. Live experts receive
+an allowlisted projection of prepared facts and whole selected passages, bounded
+to 32,000 UTF-8 bytes; raw messages and attachment text are excluded. No shared contracts or System 1 records are changed.
 
 ### Synthetic document and message extraction
 
