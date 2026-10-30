@@ -8,7 +8,7 @@ BACKEND_PORT="${BACKEND_PORT:-8000}"
 FRONTEND_PORT="${FRONTEND_PORT:-5173}"
 if [[ "${1:-}" == "--help" ]]; then
   echo 'Usage: ./start.sh'
-  echo 'Starts the backend and frontend; AI_MODE=offline selects stored demo behavior.'
+  echo 'Starts the unified backend and frontend; set AI_MODE=offline CONDOR_PREPARATION_MODE=offline for a stored demo.'
   echo 'Optional: BACKEND_PORT=8002 FRONTEND_PORT=5174 ./start.sh'
   echo 'Put OPENAI_API_KEY in the project .env or your environment.'
   exit 0
@@ -39,8 +39,8 @@ for port in ports:
         except OSError:
             sys.exit(f'Port {port} is in use. Stop the old server or set BACKEND_PORT / FRONTEND_PORT.')
 PY
-if ! .venv/bin/python -c 'import fastapi, uvicorn, sqlalchemy, pydantic, openai, dotenv, multipart, httpx' 2>/dev/null; then
-  .venv/bin/python -m pip install -r requirements.txt -r demo_backend/requirements.txt
+if ! .venv/bin/python -c 'import fastapi, uvicorn, sqlalchemy, pydantic, openai, dotenv, multipart, httpx, pypdf, PIL, pypdfium2' 2>/dev/null; then
+  .venv/bin/python -m pip install -r backend/requirements-lock.txt
 fi
 if [[ ! -f frontend/node_modules/vite/bin/vite.js ]]; then
   (cd frontend && npm ci)
@@ -59,10 +59,10 @@ trap cleanup EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
 
-echo 'Starting AI; live configuration/provider failures remain failed runs. Use AI_MODE=offline for the deterministic demo.'
+echo 'Starting AI; live configuration/provider failures remain failed runs. Use AI_MODE=offline CONDOR_PREPARATION_MODE=offline for the deterministic demo.'
 echo 'Credentials: project .env or OPENAI_API_KEY. Existing case progress is preserved.'
 AI_MODE="${AI_MODE:-openai}" \
-  .venv/bin/uvicorn demo_backend.app:app --host 127.0.0.1 --port "$BACKEND_PORT" &
+  .venv/bin/python -m uvicorn backend.main:app --host 127.0.0.1 --port "$BACKEND_PORT" &
 backend_pid=$!
 (
   cd frontend

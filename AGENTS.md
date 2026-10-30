@@ -53,10 +53,13 @@ do not add a separate customer database or full account/authentication flow.
   event feed for the graph; label animation of stored events as replay.
 - The broader diagrams and plan do not expand the 6–10-case demo scope.
 
-## Current delivery: intake and preparation
-- The implemented slice includes the customer portal, simulated email intake, follow-up
-  messages, attachments and the synchronous preparation queue. Preparation extracts and enriches
-  facts; it does not assess claims, invoke decision processing or generate replies.
+## Current delivery: unified System 1
+- `backend.main:app` is the authoritative intake, preparation and operations backend.
+  `demo_backend.app:app` is a compatibility launcher using the same persistence.
+- Preparation extracts and enriches facts; System 2 interprets and assesses them.
+  Explicit processing through System 1 validates and executes simulated actions.
+- Preserve existing intake data and leave the legacy operations database untouched.
+  Use a new `CONDOR_DATA_DIR` for fresh rehearsals; do not reset participant progress.
 - Keep customer-facing views separate from internal case fields and event history.
 - Seeded outbound messages and statuses are stored examples, clearly labeled in the UI.
 - Run the backend intake tests and frontend build after changing these contracts.

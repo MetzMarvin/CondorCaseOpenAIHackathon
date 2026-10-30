@@ -1,13 +1,13 @@
 // Shared API contracts stay canonical; this adapter only prepares display fields.
 export function caseForView(value) {
-  if (!value || !value.caseId) return value;
+  if (!value || !value.caseId || value.messageId) return value;
   const snapshot = value.snapshot;
   const runs = value.runResults || [];
   const latest = runs.at(-1)?.proposedAction;
   return {
     ...value, id: value.caseId, caseVersion: value.version,
     messages: (snapshot?.messages || []).map(message => ({ ...message,
-      direction: message.sender === 'condor-service@example.com' ? 'OUTBOUND' : 'INBOUND' })),
+      direction: message.direction || (message.sender === 'condor-service@example.com' ? 'OUTBOUND' : 'INBOUND') })),
     attachments: snapshot?.attachments || [],
     facts: (snapshot?.knownFacts || []).map(fact => `${fact.name}: ${typeof fact.value === 'object' ? JSON.stringify(fact.value) : fact.value}`),
     missingInformation: (snapshot?.missingInformation || []).map(fact => fact.name),
@@ -18,14 +18,14 @@ export function caseForView(value) {
 }
 export async function api(path, body) {
   const response = await fetch(`/api${path}`, body === undefined ? {} : {
-    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+    method: 'POST', ...(body instanceof FormData ? { body } : { headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }),
   });
   let data;
   try { data = await response.json(); } catch { data = {}; }
   if (!response.ok) {
-    const error = new Error(data.message || data.detail?.message || (response.status === 422 ? 'Please check your input.' : 'Request failed.'));
+    const error = new Error(data.error?.message || data.message || data.detail?.message || (response.status === 422 ? 'Please check your input.' : 'Request failed.'));
     error.status = response.status;
-    error.code = data.code || data.detail?.code;
+    error.code = data.error?.code || data.code || data.detail?.code;
     throw error;
   }
   if (Array.isArray(data)) return data.map(caseForView);

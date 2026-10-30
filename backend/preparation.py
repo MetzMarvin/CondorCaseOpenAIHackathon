@@ -120,7 +120,7 @@ class PreparationService:
                 raise IntakeError(409,'INVALID_AI_CONTEXT','An active AI-owned case is required.')
             claim=PreparedClaim.model_validate(row.payload)
             snapshot=CaseSnapshot(status=case.status,owner=Owner(type='AI',id='demo-ai'),language='en',
-                messages=tuple(SnapshotMessage(message_id=m['messageId'],channel=m['channel'],sender=m['sender'],body=m['body'],timestamp=m['timestamp']) for m in claim.messages),
+                messages=tuple(SnapshotMessage(message_id=m['messageId'],channel=m['channel'],sender=m['sender'],body=m['body'],timestamp=m['timestamp'],direction=m['direction'],subject=m['subject']) for m in claim.messages),
                 attachments=(),known_facts=claim.facts,issues=(),missing_information=(),customer_context=claim.lookup.customer_context,
                 booking_context=claim.lookup.booking_context,flight_context=claim.lookup.flight_context,
                 permitted_actions=permitted_actions,financial_limits=financial_limits,extracted_documents=claim.documents,preparation_diagnostics=claim.diagnostics)

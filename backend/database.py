@@ -57,6 +57,7 @@ class Event(Base):
     sequence: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     id: Mapped[str] = mapped_column(String, unique=True)
     case_id: Mapped[str] = mapped_column(ForeignKey("cases.id"), index=True)
+    run_id: Mapped[str | None] = mapped_column(String, nullable=True)
     type: Mapped[str] = mapped_column(String)
     step_id: Mapped[str | None] = mapped_column(String, nullable=True)
     timestamp: Mapped[str] = mapped_column(String)
@@ -81,6 +82,14 @@ class PreparationRequest(Base):
     result: Mapped[dict | None] = mapped_column(JSON, nullable=True)
 
 
+class Operation(Base):
+    __tablename__ = "operations"
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    case_id: Mapped[str] = mapped_column(String, index=True)
+    kind: Mapped[str] = mapped_column(String)
+    data: Mapped[dict] = mapped_column(JSON)
+
+
 class Database:
     def __init__(self, data_dir: Path):
         data_dir.mkdir(parents=True, exist_ok=True)
@@ -98,5 +107,12 @@ class Database:
             cursor.execute("PRAGMA journal_mode=WAL")
             cursor.close()
 
+        # Additive v1 migration: preserve existing intake tables and event sequence.
+        from sqlalchemy import inspect, text
+        with self.engine.begin() as connection:
+            connection.execute(text("CREATE TABLE IF NOT EXISTS schema_versions (version INTEGER PRIMARY KEY)"))
+            if "events" in inspect(connection).get_table_names() and "run_id" not in {c['name'] for c in inspect(connection).get_columns('events')}:
+                connection.execute(text("ALTER TABLE events ADD COLUMN run_id VARCHAR"))
+            connection.execute(text("INSERT OR IGNORE INTO schema_versions VALUES (1)"))
         Base.metadata.create_all(self.engine)
         self.session = sessionmaker(self.engine, expire_on_commit=False)

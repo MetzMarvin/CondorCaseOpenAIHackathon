@@ -39,6 +39,13 @@ SCENARIOS.extend([
 ])
 
 
+from .ai_service.interpretation import CLEAR, MISSING, SERIOUS
+for scenario, body in zip(SCENARIOS[:3], (CLEAR, MISSING, SERIOUS)):
+    scenario.update(body=body, status='NEW', owner='AI')
+    scenario.pop('reply', None)
+    scenario.pop('queue', None)
+
+
 def seed(db):
     """Add missing fixtures only; never reset a participant's changes."""
     with db.session() as session:
